@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -8,6 +10,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace Onliner_for_windows_10.Login
 {
@@ -22,7 +25,9 @@ namespace Onliner_for_windows_10.Login
         private string ResultResponceToken { get; set; }
         private string JsonRequest = "";
         public string ResultPostRequest
-        { get { return _resultPostRequest; } }
+        { get { return _resultPostRequest; }
+            set { _resultPostRequest = value; }
+        }
 
 
 
@@ -50,10 +55,9 @@ namespace Onliner_for_windows_10.Login
             var responseBodyAsText = await response.Content.ReadAsStringAsync();
             string bufferToken = Regex.Match(responseBodyAsText, @"(?=token)(.*)(?=')").Value;
             string token = bufferToken.Replace("token('", "");
-            ResultResponceToken = token;
             var json = new JsonParams
             {
-                Token = ResultResponceToken,
+                Token = token,
                 Login = login,
                 Password = password,
                 Session_id = "null",
@@ -84,7 +88,16 @@ namespace Onliner_for_windows_10.Login
                 }
             }
             saveCookie = cookieContainer;
-            _resultPostRequest = responseText.ToString();
+            ResultPostRequest = responseText.ToString();
+
+            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            localSettings.Values["cookies"] = cookieContainer.ToString();
+            MyCookie.cookie = cookieContainer;
+
+
+
         }
-    }
+
+        
+        }
 }
