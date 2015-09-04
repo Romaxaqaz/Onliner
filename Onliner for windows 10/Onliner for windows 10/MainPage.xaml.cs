@@ -26,5 +26,17 @@ namespace Onliner_for_windows_10
         {
             this.InitializeComponent();
         }
+
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (LoginTextBox.Text == "") { var dialog = new Windows.UI.Popups.MessageDialog("Введите логин"); await dialog.ShowAsync(); }
+            else if (PasswordBox.Password == "") { var dialog = new Windows.UI.Popups.MessageDialog("Введите пароль"); await dialog.ShowAsync(); }
+            else
+            {
+                onliner.Login.Request requestToApi = new onliner.Login.Request();
+                requestToApi.PostRequestUserApi(LoginTextBox.Text, PasswordBox.Password);
+                //  Frame.Navigate(typeof(ProfilePage.ProfilePage), requestToApi.ResultPostRequest);
+            }
+        }
     }
 }

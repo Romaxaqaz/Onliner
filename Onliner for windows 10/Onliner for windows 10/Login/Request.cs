@@ -9,9 +9,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace onliner.Login
+namespace Onliner_for_windows_10.Login
 {
-
     public class Request
     {
         private const string UserApiOnliner = "https://user.api.onliner.by/login";
@@ -20,10 +19,10 @@ namespace onliner.Login
 
         private string _resultPostRequest = "";
         CookieContainer saveCookie;
-        private string ResultResponceToken {get;set;}
+        private string ResultResponceToken { get; set; }
         private string JsonRequest = "";
         public string ResultPostRequest
-        { get { return _resultPostRequest;} }
+        { get { return _resultPostRequest; } }
 
 
 
@@ -35,13 +34,13 @@ namespace onliner.Login
 
 
 
-        public string  GetRequestOnliner(string url)
+        public string GetRequestOnliner(string url)
         {
             HttpClientHandler handler = new HttpClientHandler();
             handler.CookieContainer = saveCookie;
             HttpClient httpClient = new HttpClient(handler);
             var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
-            return  response.Content.ReadAsStringAsync().ToString();
+            return response.Content.ReadAsStringAsync().ToString();
         }
 
         public async void PostRequestUserApi(string login, string password)

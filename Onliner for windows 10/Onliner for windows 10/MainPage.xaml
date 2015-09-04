@@ -8,6 +8,23 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+        <Hub VerticalAlignment="Top" Height="50" Background="Yellow">
+            <HubSection>
+                <DataTemplate>
+                    <TextBlock Text="onliner.by" FontSize="22"></TextBlock>
+                </DataTemplate>
+            </HubSection>
+        </Hub>
+        <StackPanel HorizontalAlignment="Center" Margin="0,50,0,0" VerticalAlignment="Center">
+            <TextBlock Text="Войти" FontSize="28"/>
+            <TextBox  Name="LoginTextBox" MinWidth="300"/>
+            <TextBlock Text="Пароль" FontSize="28" Margin="0,10,0,0"/>
+            <PasswordBox Name="PasswordBox"  MinWidth="300"/>
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <CheckBox Name="SaveCheckBox" Content="запомнить"></CheckBox>
+                <Button Name="LaterLogIn" Content="Позже" Margin="10,0,10,0" Width="100"/>
+                <Button Name="LoginButton" Content="Войти" Margin="10,0,0,0" Width="100" Background="Yellow" Click="LoginButton_Click"/>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </Page>
