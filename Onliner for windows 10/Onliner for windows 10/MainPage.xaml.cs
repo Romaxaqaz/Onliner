@@ -22,6 +22,7 @@ namespace Onliner_for_windows_10
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        Login.Request requestToApi = new Login.Request();
         public MainPage()
         {
             this.InitializeComponent();
@@ -33,9 +34,7 @@ namespace Onliner_for_windows_10
             else if (PasswordBox.Password == "") { var dialog = new Windows.UI.Popups.MessageDialog("Введите пароль"); await dialog.ShowAsync(); }
             else
             {
-                Login.Request requestToApi = new Login.Request();
                 requestToApi.PostRequestUserApi(LoginTextBox.Text, PasswordBox.Password);
-                Frame.Navigate(typeof(ProfilePage.ProfilePage));
             }
         }
 

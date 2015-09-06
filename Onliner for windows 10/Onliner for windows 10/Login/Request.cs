@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -17,36 +18,36 @@ namespace Onliner_for_windows_10.Login
     public class Request
     {
         private const string UserApiOnliner = "https://user.api.onliner.by/login";
-        private string login = "";
-        private string password = "";
+
+        private HttpClient httpClient = new HttpClient();
+        CookieContainer CookieSession;
+        HttpResponseMessage response;
 
         private string _resultPostRequest = "";
-        CookieContainer saveCookie;
         private string ResultResponceToken { get; set; }
+        public string ResultGetRequsetString { get; set; }
         private string JsonRequest = "";
         public string ResultPostRequest
-        { get { return _resultPostRequest; }
+        {
+            get { return _resultPostRequest; }
             set { _resultPostRequest = value; }
         }
 
 
-
-
-        private HttpClient httpClient = new HttpClient();
-        HttpResponseMessage response;
-
-        public Request() { }
-
-
-
-        public string GetRequestOnliner(string url)
+        public async void GetRequestOnliner(string url)
         {
+            Loadcookie("cookie");
             HttpClientHandler handler = new HttpClientHandler();
-            handler.CookieContainer = saveCookie;
+            if (CookieSession != null)
+            {
+                handler.CookieContainer = CookieSession;
+            }
             HttpClient httpClient = new HttpClient(handler);
             var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
-            return response.Content.ReadAsStringAsync().ToString();
+            ResultGetRequsetString = await response.Content.ReadAsStringAsync();
         }
+
+
 
         public async void PostRequestUserApi(string login, string password)
         {
@@ -87,17 +88,40 @@ namespace Onliner_for_windows_10.Login
                     cookieContainer.SetCookies(pageUri, c);
                 }
             }
-            saveCookie = cookieContainer;
             ResultPostRequest = responseText.ToString();
-
-            Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            localSettings.Values["cookies"] = cookieContainer.ToString();
-            MyCookie.cookie = cookieContainer;
-
-
+            Savecookie("cookie", cookieContainer, pageUri);
 
         }
 
-        
+        private async void Savecookie(string filename, CookieContainer rcookie, Uri uri)
+        {
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            StorageFile sampleFile = await localFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
+
+            using (StorageStreamTransaction transaction = await sampleFile.OpenTransactedWriteAsync())
+            {
+                SerializeCookie.Serialize(rcookie.GetCookies(uri), uri, transaction.Stream.AsStream());
+                await transaction.CommitAsync();
+            }
         }
+
+        private async void Loadcookie(string filename)
+        {
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            StorageFile sampleFile;
+            try
+            {
+                sampleFile = await localFolder.GetFileAsync(filename);
+
+                using (Stream stream = await sampleFile.OpenStreamForReadAsync())
+                {
+                    CookieSession = SerializeCookie.Deserialize(stream, new Uri("http://www.onliner.by"));
+                }
+            }
+            catch
+            {
+                return;
+            }
+        }
+    }
 }

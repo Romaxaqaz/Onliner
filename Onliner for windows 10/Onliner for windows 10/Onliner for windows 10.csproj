@@ -101,6 +101,7 @@
     </Compile>
     <Compile Include="Login\JsonParams.cs" />
     <Compile Include="Login\Request.cs" />
+    <Compile Include="Login\SerializeCookie.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -149,7 +150,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="PageResources\" />
     <Folder Include="Pages\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
