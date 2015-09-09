@@ -11,13 +11,7 @@
     
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Hub VerticalAlignment="Top" Height="50" Background="Yellow">
-            <HubSection>
-                <DataTemplate>
-                    <TextBlock Text="onliner.by" FontSize="22"></TextBlock>
-                </DataTemplate>
-            </HubSection>
-        </Hub>
+
         <StackPanel HorizontalAlignment="Center" Margin="0,50,0,0" VerticalAlignment="Center">
             <TextBlock Text="Войти" FontSize="28"/>
             <TextBox  Name="LoginTextBox" MinWidth="300"/>

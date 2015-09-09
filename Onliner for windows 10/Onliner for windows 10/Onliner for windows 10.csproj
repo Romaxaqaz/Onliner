@@ -99,6 +99,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="IsTypePresentStateTrigger.cs" />
     <Compile Include="Login\JsonParams.cs" />
     <Compile Include="Login\Request.cs" />
     <Compile Include="Login\SerializeCookie.cs" />
@@ -106,11 +107,18 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MyCookie.cs" />
-    <Compile Include="ProfilePage\ProfilePage.xaml.cs">
+    <Compile Include="ParsingHtml\ParsingHtml.cs" />
+    <Compile Include="ProfilePage\ProfileData.cs" />
+    <Compile Include="SearchCatalog\CatalogData.cs" />
+    <Compile Include="SearchCatalog\SearchCatalog.cs" />
+    <Compile Include="Views\NewsPage.xaml.cs">
+      <DependentUpon>NewsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ProfilePage.xaml.cs">
       <DependentUpon>ProfilePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Shell.xaml.cs">
+    <Compile Include="Views\Shell.xaml.cs">
       <DependentUpon>Shell.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -140,17 +148,29 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ProfilePage\ProfilePage.xaml">
+    <Page Include="Views\NewsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Shell.xaml">
+    <Page Include="Views\ProfilePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Shell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Pages\" />
+    <Folder Include="Style\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="HtmlAgilityPack-PCL">
+      <HintPath>C:\Users\romax\Desktop\HtmlAgilityPack-PCL.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

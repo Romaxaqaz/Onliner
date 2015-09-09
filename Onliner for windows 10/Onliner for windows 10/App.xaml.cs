@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Onliner_for_windows_10.Views;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,6 +23,7 @@ namespace Onliner_for_windows_10
     /// </summary>
     sealed partial class App : Application
     {
+        private Shell shell;
         /// <summary>
         /// Инициализирует одноэлементный объект приложения.  Это первая выполняемая строка разрабатываемого
         /// кода; поэтому она является логическим эквивалентом main() или WinMain().
@@ -42,6 +44,7 @@ namespace Onliner_for_windows_10
         /// <param name="e">Сведения о запросе и обработке запуска.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
@@ -50,32 +53,53 @@ namespace Onliner_for_windows_10
             }
 #endif
 
-            Frame rootFrame = Window.Current.Content as Frame;
+            Frame rootFrame = null;
 
             // Не повторяйте инициализацию приложения, если в окне уже имеется содержимое,
             // только обеспечьте активность окна
+            if (this.shell == null)
+            {
+                // create new shell
+                this.shell = new Shell();
+            }
+
             if (rootFrame == null)
             {
-                // Создание фрейма, который станет контекстом навигации, и переход к первой странице
+                // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
+                // Set the default language
+                rootFrame.Language = Windows.Globalization.ApplicationLanguages.Languages[0];
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
-                    //TODO: Загрузить состояние из ранее приостановленного приложения
+                    //TODO: Load state from previously suspended application
                 }
+            
 
-                // Размещение фрейма в текущем окне
-                Window.Current.Content = rootFrame;
-            }
+            shell.DataContext = rootFrame;
+
+            // Place the shell with frame as content in the current Window
+            Window.Current.Content = shell;
+        }
 
             if (rootFrame.Content == null)
             {
                 // Если стек навигации не восстанавливается для перехода к первой странице,
                 // настройка новой страницы путем передачи необходимой информации в качестве параметра
                 // параметр
-                rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                var value = localSettings.Values["Autorization"];
+
+                if (value == null)
+                {
+                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                }
+                else
+                {
+                    rootFrame.Navigate(typeof(ProfilePage.ProfilePage), e.Arguments);
+                }
+                
             }
             // Обеспечение активности текущего окна
             Window.Current.Activate();

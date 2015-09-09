@@ -22,6 +22,7 @@ namespace Onliner_for_windows_10.Login
         private HttpClient httpClient = new HttpClient();
         CookieContainer CookieSession;
         HttpResponseMessage response;
+       
 
         private string _resultPostRequest = "";
         private string ResultResponceToken { get; set; }
@@ -52,6 +53,7 @@ namespace Onliner_for_windows_10.Login
         public async void PostRequestUserApi(string login, string password)
         {
             HttpRequestMessage req = new HttpRequestMessage(System.Net.Http.HttpMethod.Get, UserApiOnliner);
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             response = await httpClient.SendAsync(req);
             var responseBodyAsText = await response.Content.ReadAsStringAsync();
             string bufferToken = Regex.Match(responseBodyAsText, @"(?=token)(.*)(?=')").Value;
@@ -89,6 +91,7 @@ namespace Onliner_for_windows_10.Login
                 }
             }
             ResultPostRequest = responseText.ToString();
+            localSettings.Values["Autorization"] = "yes";
             Savecookie("cookie", cookieContainer, pageUri);
 
         }
