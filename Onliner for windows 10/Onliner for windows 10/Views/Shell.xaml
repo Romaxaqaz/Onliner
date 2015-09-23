@@ -6,7 +6,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+  
     <Grid Background="Gray">
+        <!--Visual state-->
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
                 <VisualState x:Name="VisualState">
@@ -27,32 +29,49 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="533*"/>
-            <ColumnDefinition Width="907*"/>
-        </Grid.ColumnDefinitions>
-        <StackPanel Background="Yellow" VerticalAlignment="Top" Height="50" Grid.ColumnSpan="2">
+        <!-- Header button-->
+        <StackPanel Background="Yellow"
+                    VerticalAlignment="Top" 
+                    Height="50" 
+                    Grid.ColumnSpan="2">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="4*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Button Width="50" Height="50" Grid.Column="4" Style="{StaticResource ButtonHeader}" Tag="&#xE715;"></Button>
-                <Button Name="BackButton" Width="50" Height="50" Grid.Column="1" Style="{StaticResource ButtonHeader}" Tag="&#xE112;" Click="BackButton_Click"></Button>
-                <Button Name="HamburgerButton" Style="{StaticResource ButtonHeader}" Tag="&#xE700;" Width="50" Height="50" Grid.Column="0" Click="HamburgerButton_Click"></Button>
-                <SearchBox x:Name="mySearchBox" 
-    FocusOnKeyboardInput="True"
-    Height="25" Grid.Column="3" 
-                           SuggestionsRequested="mySearchBox_SuggestionsRequested"
-                           DataContextChanged="mySearchBox_DataContextChanged"/>
+                <Button Width="50" 
+                        Height="50" 
+                        Grid.Column="4" 
+                        Style="{StaticResource ButtonHeader}" 
+                        Tag="&#xE715;"/>
+                <Button Name="BackButton" 
+                            Width="50" 
+                            Height="50" 
+                            Grid.Column="1" 
+                            Style="{StaticResource ButtonHeader}" 
+                            Tag="&#xE112;" 
+                            Click="BackButton_Click"/>
+                <Button Name="HamburgerButton" 
+                        Style="{StaticResource ButtonHeader}" 
+                        Tag="&#xE700;" 
+                        Width="50" 
+                        Height="50" 
+                        Grid.Column="0" 
+                        Click="HamburgerButton_Click" 
+                        Foreground="Black"/>
             </Grid>
-
         </StackPanel>
-        <SplitView x:Name="SplitView"  OpenPaneLength="150" CompactPaneLength="50"
-        DisplayMode="CompactOverlay" IsPaneOpen="False" PaneBackground="Yellow" Content="{Binding}" Margin="0,50,0,0" Grid.ColumnSpan="2">
+        <!-- Hamburger menu-->
+        <SplitView x:Name="SplitView"  
+                   OpenPaneLength="150" 
+                   CompactPaneLength="50"
+                   DisplayMode="CompactOverlay" 
+                   IsPaneOpen="False" 
+                   PaneBackground="Yellow" 
+                   Content="{Binding}" 
+                   Margin="0,50,0,0" Grid.ColumnSpan="2">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
                     <VisualState x:Name="HardwareButtons">
@@ -79,7 +98,10 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="50"/>
                                 </Grid.RowDefinitions>
-                                <Ellipse Width="35" Height="35" Grid.Column="0">
+                                <Ellipse Width="35" 
+                                         Height="35" 
+                                         Grid.Column="0" 
+                                         Name="ImageAccaunt">
                                     <Ellipse.Fill>
                                         <ImageBrush>
                                             <ImageBrush.ImageSource>
@@ -88,7 +110,11 @@
                                         </ImageBrush>
                                     </Ellipse.Fill>
                                 </Ellipse>
-                                <TextBlock FontSize="14" FontFamily="Segoe UI" Height="25" Grid.Column="1" HorizontalAlignment="Center">
+                                <TextBlock FontSize="14" 
+                                           FontFamily="Segoe UI"
+                                           Height="25" 
+                                           Grid.Column="1" 
+                                           HorizontalAlignment="Center">
                             	<Run FontSize="15" Text="Профиль"/>
                                 </TextBlock>
                             </Grid>
@@ -99,7 +125,13 @@
                         <RadioButton x:Name="ForumRadiadoButton" Click="ForumRadiadoButton_Click" Style="{StaticResource NavRadioButtonStyle}" Tag="&#xE76E;" Content="Форум" GroupName="Navigation" Height="50"/>
                     </StackPanel>
                     <StackPanel  Grid.Row="2">
-                        <RadioButton x:Name="SettingRadioButton" Click="SettingRadioButton_Click" Style="{StaticResource NavRadioButtonStyle}" Tag="&#xE713;" Content="Setting" GroupName="Navigation" Height="50"/>
+                        <RadioButton x:Name="SettingRadioButton" 
+                                     Click="SettingRadioButton_Click" 
+                                     Style="{StaticResource NavRadioButtonStyle}" 
+                                     Tag="&#xE713;" 
+                                     Content="Setting" 
+                                     GroupName="Navigation" 
+                                     Height="50"/>
                     </StackPanel>
                 </Grid>
             </SplitView.Pane>

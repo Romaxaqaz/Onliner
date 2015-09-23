@@ -20,20 +20,20 @@ namespace Onliner_for_windows_10.Login
         private const string UserApiOnliner = "https://user.api.onliner.by/login";
 
         private HttpClient httpClient = new HttpClient();
-        CookieContainer CookieSession;
-        HttpResponseMessage response;
-       
+        private CookieContainer CookieSession;
+        private HttpResponseMessage response;
+
 
         private string _resultPostRequest = "";
         private string ResultResponceToken { get; set; }
         public string ResultGetRequsetString { get; set; }
         private string JsonRequest = "";
+
         public string ResultPostRequest
         {
             get { return _resultPostRequest; }
             set { _resultPostRequest = value; }
         }
-
 
         public async void GetRequestOnliner(string url)
         {
@@ -47,9 +47,6 @@ namespace Onliner_for_windows_10.Login
             var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
             ResultGetRequsetString = await response.Content.ReadAsStringAsync();
         }
-
-
-
         public async void PostRequestUserApi(string login, string password)
         {
             HttpRequestMessage req = new HttpRequestMessage(System.Net.Http.HttpMethod.Get, UserApiOnliner);

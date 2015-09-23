@@ -99,6 +99,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Model\CategoryNews.cs" />
+    <Compile Include="Converters\TextIcoNewsConverter.cs" />
+    <Compile Include="Interfaces\INewsItems.cs" />
     <Compile Include="IsTypePresentStateTrigger.cs" />
     <Compile Include="Login\JsonParams.cs" />
     <Compile Include="Login\Request.cs" />
@@ -106,11 +109,11 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Model\ItemsNews.cs" />
     <Compile Include="MyCookie.cs" />
     <Compile Include="ParsingHtml\ParsingHtml.cs" />
     <Compile Include="ProfilePage\ProfileData.cs" />
-    <Compile Include="SearchCatalog\CatalogData.cs" />
-    <Compile Include="SearchCatalog\SearchCatalog.cs" />
+    <Compile Include="Converters\ImageUrlConverter.cs" />
     <Compile Include="Views\NewsPage.xaml.cs">
       <DependentUpon>NewsPage.xaml</DependentUpon>
     </Compile>
@@ -129,6 +132,7 @@
     <None Include="Onliner for windows 10_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Image\123.jpg" />
     <Content Include="Image\6tag_160815-221534.jpg" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
@@ -145,6 +149,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="MainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Test.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

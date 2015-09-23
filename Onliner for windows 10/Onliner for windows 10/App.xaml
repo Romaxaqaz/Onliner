@@ -7,7 +7,7 @@
 
 
     <Application.Resources>
-        <SolidColorBrush x:Key="NavButtonPressedBackgroundBrush" Color="White" Opacity="0.3" />
+        <SolidColorBrush x:Key="NavButtonPressedBackgroundBrush" Color="#FF464040" Opacity="0.3" />
         <SolidColorBrush x:Key="NavButtonCheckedBackgroundBrush" Color="White" Opacity="0.2" />
         <SolidColorBrush x:Key="NavButtonHoverBackgroundBrush" Color="White" Opacity="0.1" />
 
@@ -43,9 +43,25 @@
                                 </VisualStateGroup>
                                 <VisualStateGroup x:Name="CheckStates">
                                     <VisualState x:Name="Checked">
+                                        <VisualState.Setters>
+                                            <Setter Target="textBlock.(TextBlock.Foreground).(SolidColorBrush.Color)">
+                                                <Setter.Value>
+                                                    <Color>White</Color>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Target="ContentPresenter.(ContentPresenter.Foreground).(SolidColorBrush.Color)">
+                                                <Setter.Value>
+                                                    <Color>White</Color>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </VisualState.Setters>
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="BackgroundGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource NavButtonCheckedBackgroundBrush}"/>
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <SolidColorBrush Color="Black" Opacity="0.20000000298023224"/>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
@@ -67,7 +83,7 @@
                                     <RowDefinition Height="50"/>
                                 </Grid.RowDefinitions>
 
-                                <TextBlock FontSize="20" Text="{TemplateBinding Tag}" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <TextBlock x:Name="textBlock" FontSize="20" Text="{TemplateBinding Tag}" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" Grid.Column="1" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" TextWrapping="Wrap" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" VerticalContentAlignment="Center"/>
                             </Grid>
                         </Border>
@@ -79,12 +95,13 @@
         <Style x:Key="ButtonHeader" TargetType="Button">
             <Setter Property="Template">
                 <Setter.Value >
-                <ControlTemplate TargetType="Button">
-                    <TextBlock FontSize="20" Height="25" Text="{TemplateBinding Tag}" FontFamily="Segoe MDL2 Assets" Margin="5,8,5,5" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                </ControlTemplate>
+                    <ControlTemplate TargetType="Button">
+                        <TextBlock FontSize="20" Height="25" Text="{TemplateBinding Tag}" FontFamily="Segoe MDL2 Assets" Margin="5,8,5,5" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        
+
+
     </Application.Resources>
 </Application>
