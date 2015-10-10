@@ -8,57 +8,46 @@
     mc:Ignorable="d">
 
     <Grid Background="LightCyan">
-        <StackPanel Width="320" Margin="5" Background="White">
-
-            <TextBlock x:Name="ThemeTextBlock" 
-                                   Text="технологии / наука" 
-                                   Foreground="Blue"
-                                   TextWrapping="Wrap"
-                       FontSize="12"/>
-            <TextBlock x:Name="titleTextBlock" 
-                                   Text="На «Линии Сталина» отпраздновали День танкиста" 
-                                   Foreground="Black"
-                                   TextWrapping="Wrap"
-                       FontSize="14" />
-          
-                <Image Source="ms-appx:///Image/123.jpg"/>
-            <Grid HorizontalAlignment="Stretch">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <TextBlock FontSize="15" Text="&#xE890;" FontFamily="Segoe MDL2 Assets"/>
-                        <TextBlock Text="37999" Foreground="Black" TextWrapping="Wrap" FontSize="10" Margin="3,0,0,0"/>
-                    </StackPanel>
-                <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <TextBlock FontSize="15" Text="&#xE8F2;" FontFamily="Segoe MDL2 Assets" Foreground="Black"/>
-                        <TextBlock Text="999" Foreground="Black" TextWrapping="Wrap" FontSize="10" Margin="3,0,0,0"/>
-                    </StackPanel>
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <TextBlock FontSize="15" Text="&#xE114;" FontFamily="Segoe MDL2 Assets"/>
-                        <TextBlock Text="999" Foreground="Black" TextWrapping="Wrap" FontSize="10" Margin="3,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Grid.Column="3" Orientation="Horizontal" Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <TextBlock FontSize="15" Text="&#xE116;" FontFamily="Segoe MDL2 Assets"/>
-                        <TextBlock Text="999" Foreground="Black" TextWrapping="Wrap" FontSize="10" Margin="3,0,0,0"/>
-                    </StackPanel>
-         
-            </Grid>
-
-            <TextBlock x:Name="subtitleTextBlock" 
-                                   Text="Компания SpaceX показала внутреннее убранство капсулы Crew Dragon, которая будет использоваться для доставки экипажа на Международную космическую станцию и обратно. Интерьер представлен на фотографиях и в коротком видеоролике. Как отмечает The Verge, все вокруг напоминает салон спортивного автомобиля класса «люкс»" 
-                                   Foreground="Gray"
-                                   TextWrapping="Wrap" TextTrimming="CharacterEllipsis"
-                       Padding="5" FontSize="12"  TextAlignment="Justify"/>
-            <TextBlock x:Name="descriptionTextBlock" 
-                                   Text="11.09.2015 в 13:26. Просмотров: 4501. Автор: Ян Альшевский" 
-                                   Foreground="Gray"
-                                   TextWrapping="Wrap" FontSize="11"/>
-            <Line Stroke="Black" Height="5" X1="0" X2="320" Margin="5"/>
-        </StackPanel>
+        <Grid Width="320" Background="{Binding ColorItem}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="12*"/>
+                <ColumnDefinition Width="11*"/>
+                <ColumnDefinition Width="37*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="3*"/>
+                <RowDefinition/>
+                <RowDefinition Height="59*"/>
+            </Grid.RowDefinitions>
+            <Ellipse Grid.Column="0" Grid.Row="1" Width="35" Height="35" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Ellipse.Fill>
+                    <ImageBrush>
+                        <ImageBrush.ImageSource>
+                            <BitmapImage DecodePixelHeight="250" DecodePixelWidth="250" UriSource="{Binding Image}" />
+                        </ImageBrush.ImageSource>
+                    </ImageBrush>
+                </Ellipse.Fill>
+            </Ellipse>
+            <TextBlock Text="{Binding Nickname}" FontWeight="Bold" FontSize="8" TextAlignment="Center" VerticalAlignment="Center" Margin="0,1,0,0.333"/>
+            <TextBlock Text="{Binding Time}" Grid.Row="0" Grid.Column="1" FontSize="8" TextAlignment="Left" VerticalAlignment="Center" Margin="5,2,0,2.333" Foreground="Gray" Grid.ColumnSpan="2"/>
+            <TextBlock Text="{Binding Data}" Grid.Row="1" Grid.Column="1" FontSize="12" Margin="2,1.667,2,2" TextWrapping="Wrap" Grid.ColumnSpan="2"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" Margin="3,0,0,0">
+                <TextBlock Text="&#xE19F;" FontSize="8" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding LikeCount}" FontSize="8" Margin="2,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="&#xE10E;" FontFamily="Segoe MDL2 Assets" FontSize="8"  VerticalAlignment="Center"/>
+                    <TextBlock Text="Ответить" FontSize="8"  VerticalAlignment="Center" Margin="2,0,0,0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="4,0,0,0">
+                    <TextBlock Text="&#xE89B;" FontFamily="Segoe MDL2 Assets" FontSize="8"  VerticalAlignment="Center"/>
+                    <TextBlock Text="Цитировать" FontSize="8"  VerticalAlignment="Center" Margin="2,0,0,0"/>
+                </StackPanel>
+            </StackPanel>
+            <Rectangle Fill="Red" Width="100" Height="100" Grid.Row="3" Grid.ColumnSpan="3"/>
+            
+        </Grid>
     </Grid>
 </Page>

@@ -96,12 +96,14 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstract\IFullNewsItem.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\TextTrimmingConverter.cs" />
     <Compile Include="Model\CategoryNews.cs" />
     <Compile Include="Converters\TextIcoNewsConverter.cs" />
-    <Compile Include="Interfaces\INewsItems.cs" />
+    <Compile Include="Abstract\INewsItems.cs" />
     <Compile Include="IsTypePresentStateTrigger.cs" />
     <Compile Include="Login\JsonParams.cs" />
     <Compile Include="Login\Request.cs" />
@@ -109,8 +111,11 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Model\CommentsItem.cs" />
+    <Compile Include="Model\FullItemNews.cs" />
     <Compile Include="Model\ItemsNews.cs" />
     <Compile Include="MyCookie.cs" />
+    <Compile Include="ParsingHtml\ParsingFullNewsPage.cs" />
     <Compile Include="ParsingHtml\ParsingHtml.cs" />
     <Compile Include="ProfilePage\ProfileData.cs" />
     <Compile Include="Converters\ImageUrlConverter.cs" />
@@ -124,6 +129,9 @@
     <Compile Include="Views\Shell.xaml.cs">
       <DependentUpon>Shell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ViewNewsPage.xaml.cs">
+      <DependentUpon>ViewNewsPage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -132,6 +140,7 @@
     <None Include="Onliner for windows 10_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\LockScreenLogo.scale-100.png" />
     <Content Include="Image\123.jpg" />
     <Content Include="Image\6tag_160815-221534.jpg" />
     <Content Include="Properties\Default.rd.xml" />
@@ -169,6 +178,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Shell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ViewNewsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

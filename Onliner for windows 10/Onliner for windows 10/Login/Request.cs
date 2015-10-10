@@ -23,12 +23,11 @@ namespace Onliner_for_windows_10.Login
         private CookieContainer CookieSession;
         private HttpResponseMessage response;
 
+        private string JsonRequest = string.Empty;
+        private string _resultPostRequest = string.Empty;
 
-        private string _resultPostRequest = "";
         private string ResultResponceToken { get; set; }
         public string ResultGetRequsetString { get; set; }
-        private string JsonRequest = "";
-
         public string ResultPostRequest
         {
             get { return _resultPostRequest; }
@@ -47,23 +46,25 @@ namespace Onliner_for_windows_10.Login
             var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
             ResultGetRequsetString = await response.Content.ReadAsStringAsync();
         }
-        public async void PostRequestUserApi(string login, string password)
+
+        public async Task<bool> PostRequestUserApi(string login, string password)
         {
+            bool resultReques = false;
             HttpRequestMessage req = new HttpRequestMessage(System.Net.Http.HttpMethod.Get, UserApiOnliner);
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             response = await httpClient.SendAsync(req);
             var responseBodyAsText = await response.Content.ReadAsStringAsync();
             string bufferToken = Regex.Match(responseBodyAsText, @"(?=token)(.*)(?=')").Value;
             string token = bufferToken.Replace("token('", "");
+
             var json = new JsonParams
             {
                 Token = token,
                 Login = login,
                 Password = password,
                 Session_id = "null",
-                Recaptcha_challenge_field = "",
-                Recaptcha_response_field = "",
-
+                Recaptcha_challenge_field = string.Empty,
+                Recaptcha_response_field = string.Empty,
             };
 
             JsonRequest = JsonConvert.SerializeObject(json);
@@ -80,6 +81,7 @@ namespace Onliner_for_windows_10.Login
 
             var cookieContainer = new CookieContainer();
             IEnumerable<string> cookies;
+
             if (response.Headers.TryGetValues("set-cookie", out cookies))
             {
                 foreach (var c in cookies)
@@ -88,9 +90,19 @@ namespace Onliner_for_windows_10.Login
                 }
             }
             ResultPostRequest = responseText.ToString();
-            localSettings.Values["Autorization"] = "yes";
-            Savecookie("cookie", cookieContainer, pageUri);
 
+            switch ((int)response.StatusCode)
+            {
+                case 200:
+                    resultReques = true;
+                    localSettings.Values["Autorization"] = "yes";
+                    Savecookie("cookie", cookieContainer, pageUri);
+                    break;
+                case 400:
+                    resultReques = false;
+                    break;
+            }
+            return resultReques;
         }
 
         private async void Savecookie(string filename, CookieContainer rcookie, Uri uri)
@@ -112,7 +124,6 @@ namespace Onliner_for_windows_10.Login
             try
             {
                 sampleFile = await localFolder.GetFileAsync(filename);
-
                 using (Stream stream = await sampleFile.OpenStreamForReadAsync())
                 {
                     CookieSession = SerializeCookie.Deserialize(stream, new Uri("http://www.onliner.by"));

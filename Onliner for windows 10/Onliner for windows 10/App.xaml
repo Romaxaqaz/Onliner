@@ -94,7 +94,7 @@
 
         <Style x:Key="ButtonHeader" TargetType="Button">
             <Setter Property="Template">
-                <Setter.Value >
+                <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <TextBlock FontSize="20" Height="25" Text="{TemplateBinding Tag}" FontFamily="Segoe MDL2 Assets" Margin="5,8,5,5" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </ControlTemplate>

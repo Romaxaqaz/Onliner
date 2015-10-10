@@ -147,5 +147,7 @@ namespace Onliner_for_windows_10.Model
                 _title = value;
             }
         }
+
+        public string LinkNews { get; set; }
     }
 }

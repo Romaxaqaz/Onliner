@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-  
+
     <Grid Background="Gray">
         <!--Visual state-->
         <VisualStateManager.VisualStateGroups>
@@ -41,6 +41,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
+                
                 <Button Width="50" 
                         Height="50" 
                         Grid.Column="4" 
@@ -53,6 +54,7 @@
                             Style="{StaticResource ButtonHeader}" 
                             Tag="&#xE112;" 
                             Click="BackButton_Click"/>
+                
                 <Button Name="HamburgerButton" 
                         Style="{StaticResource ButtonHeader}" 
                         Tag="&#xE700;" 
@@ -60,7 +62,13 @@
                         Height="50" 
                         Grid.Column="0" 
                         Click="HamburgerButton_Click" 
-                        Foreground="Black"/>
+                        Foreground="Black"
+                        >
+                    
+                    <Button.Background>
+                        <SolidColorBrush Color="#337E5555" Opacity="0.02"/>
+                    </Button.Background>
+                </Button>
             </Grid>
         </StackPanel>
         <!-- Hamburger menu-->
@@ -98,12 +106,12 @@
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="50"/>
                                 </Grid.RowDefinitions>
-                                <Ellipse Width="35" 
-                                         Height="35" 
+                                <Ellipse Width="30" 
+                                         Height="30" 
                                          Grid.Column="0" 
                                          Name="ImageAccaunt">
                                     <Ellipse.Fill>
-                                        <ImageBrush>
+                                        <ImageBrush Stretch="Uniform">
                                             <ImageBrush.ImageSource>
                                                 <ImageSource>ms-appx:///Image/6tag_160815-221534.jpg</ImageSource>
                                             </ImageBrush.ImageSource>

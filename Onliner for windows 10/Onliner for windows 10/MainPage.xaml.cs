@@ -13,13 +13,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// Документацию по шаблону элемента "Пустая страница" см. по адресу http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
-
 namespace Onliner_for_windows_10
 {
-    /// <summary>
-    /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
-    /// </summary>
     public sealed partial class MainPage : Page
     {
         Login.Request requestToApi = new Login.Request();
@@ -30,11 +25,28 @@ namespace Onliner_for_windows_10
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            if (LoginTextBox.Text == "") { var dialog = new Windows.UI.Popups.MessageDialog("Введите логин"); await dialog.ShowAsync(); }
-            else if (PasswordBox.Password == "") { var dialog = new Windows.UI.Popups.MessageDialog("Введите пароль"); await dialog.ShowAsync(); }
+            if (LoginTextBox.Text == "")
+            {
+                var dialog = new Windows.UI.Popups.MessageDialog("Введите логин");
+                await dialog.ShowAsync();
+            }
+            else if (PasswordBox.Password == "")
+            {
+                var dialog = new Windows.UI.Popups.MessageDialog("Введите пароль");
+                await dialog.ShowAsync();
+            }
             else
             {
-                requestToApi.PostRequestUserApi(LoginTextBox.Text, PasswordBox.Password);
+                bool Status = await requestToApi.PostRequestUserApi(LoginTextBox.Text, PasswordBox.Password);
+                if (Status)
+                {
+                    Frame.Navigate(typeof(ProfilePage.ProfilePage));
+                }
+                else
+                {
+                    var dialog = new Windows.UI.Popups.MessageDialog("Неверный логин или пароль"); await dialog.ShowAsync();
+                }
+
             }
         }
 

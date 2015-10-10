@@ -1,10 +1,11 @@
 ﻿<Page
-    x:Class="Onliner_for_windows_10.Views.NewsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Onliner_for_windows_10"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Model="using:Onliner_for_windows_10.Model"
+    x:Class="Onliner_for_windows_10.Views.NewsPage"
     mc:Ignorable="d">
     <Page.Resources>
         <!-- Style for flipview-->
@@ -213,7 +214,7 @@
                                 <TextBlock FontSize="20" Text="{TemplateBinding Content}" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </ContentPresenter>
                             <Grid Grid.Row="1">
-                                <Rectangle x:Name="CheckGlyph" Fill="Yellow" Height="2" Opacity="0" UseLayoutRounding="False"></Rectangle>
+                                <Rectangle x:Name="CheckGlyph" Fill="Yellow" Height="3" Opacity="0" UseLayoutRounding="False"/>
                             </Grid>
                         </Grid>
                     </ControlTemplate>
@@ -223,26 +224,25 @@
 
         <local:ImageUrlConverters x:Key="ImageUrlConverter" />
         <local:TextIcoNewsConverter x:Key="TextIcoNewsConverter"/>
-
+        <local:TextTrimmingConverter x:Key="TextTrimmingConverter"/>
         <DataTemplate x:Key="NewsThemeList">
             <StackPanel x:Name="ActualWidthStack"  
-                        Width="{Binding WidthStack}" 
-                        Margin="2" 
-                        Background="White" 
-                        BorderThickness="0" >
+        		Width="{Binding WidthStack}" 
+        		Margin="2" 
+        		Background="White" 
+        		BorderThickness="0" >
                 <TextBlock x:Name="ThemeTextBlock" 
-                                   Text="{Binding Themes}" 
-                                   Foreground="Blue"
-                                   TextWrapping="Wrap"
-                                   FontSize="12"/>
+        			Text="{Binding Themes}" 
+        			Foreground="Blue"
+        			TextWrapping="Wrap"
+        			FontSize="12"/>
                 <TextBlock x:Name="titleTextBlock" 
-                                   Text="{Binding Title}" 
-                                   Foreground="Black"
-                                   TextWrapping="Wrap"
-                                   FontSize="14" />
-
-                <Image Source="{Binding Image, Converter={StaticResource ImageUrlConverter}}"/>
-                <Grid HorizontalAlignment="Stretch">
+        			Text="{Binding Title, Converter={StaticResource TextTrimmingConverter},ConverterParameter=60}" 
+        			Foreground="Black"
+        			TextWrapping="WrapWholeWords"
+        			FontSize="14" MinHeight="50"/>
+                <Image x:Name="NewsImage"  Source="{Binding Image, Converter={StaticResource ImageUrlConverter}}" ImageOpened="NewsImage_ImageOpened"/>
+                <Grid HorizontalAlignment="Stretch" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
@@ -251,76 +251,75 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" 
-                                Orientation="Horizontal" 
-                                Margin="10" 
-                                VerticalAlignment="Center" 
-                                HorizontalAlignment="Center">
+        				Orientation="Horizontal" 
+        				Margin="10" 
+        				VerticalAlignment="Center" 
+        				HorizontalAlignment="Center">
                         <TextBlock FontSize="15" 
-                                   Text="&#xE890;" 
-                                   FontFamily="Segoe MDL2 Assets"/>
+        					Text="&#xE890;" 
+        					FontFamily="Segoe MDL2 Assets"/>
                         <TextBlock Text="{Binding Popularcount, Converter={StaticResource TextIcoNewsConverter}}" 
-                                   Foreground="Black" 
-                                   TextWrapping="Wrap" 
-                                   FontSize="10" 
-                                   Margin="3,0,0,0"/>
+        					Foreground="Black" 
+        					TextWrapping="Wrap" 
+        					FontSize="10" 
+        					Margin="3,0,0,0"/>
                     </StackPanel>
                     <StackPanel Grid.Column="1" 
-                                Orientation="Horizontal" 
-                                Margin="5" 
-                                VerticalAlignment="Center" 
-                                HorizontalAlignment="Center">
+        				Orientation="Horizontal" 
+        				Margin="5" 
+        				VerticalAlignment="Center" 
+        				HorizontalAlignment="Center">
                         <TextBlock FontSize="15" 
-                                   Text="&#xE8F2;" 
-                                   FontFamily="Segoe MDL2 Assets" 
-                                   Foreground="Black"/>
+        					Text="&#xE8F2;" 
+        					FontFamily="Segoe MDL2 Assets" 
+        					Foreground="Black"/>
                         <TextBlock Text="{Binding CountViews}" 
-                                   Foreground="Black" 
-                                   TextWrapping="Wrap" 
-                                   FontSize="10" 
-                                   Margin="3,0,0,0"/>
+        					Foreground="Black" 
+        					TextWrapping="Wrap" 
+        					FontSize="10" 
+        					Margin="3,0,0,0"/>
                     </StackPanel>
                     <StackPanel Grid.Column="2" 
-                                Orientation="Horizontal" 
-                                Margin="5" 
-                                VerticalAlignment="Center" 
-                                HorizontalAlignment="Center">
+        				Orientation="Horizontal" 
+        				Margin="5" 
+        				VerticalAlignment="Center" 
+        				HorizontalAlignment="Center">
                         <TextBlock FontSize="15" 
-                                   Text="&#xE114;" 
-                                   FontFamily="Segoe MDL2 Assets"/>
+        					Text="&#xE114;" 
+        					FontFamily="Segoe MDL2 Assets"/>
                         <TextBlock Text="{Binding Bmediaicon}" 
-                                   Foreground="Black" 
-                                   TextWrapping="Wrap" 
-                                   FontSize="10" 
-                                   Margin="3,0,0,0"/>
+        					Foreground="Black" 
+        					TextWrapping="Wrap" 
+        					FontSize="10" 
+        					Margin="3,0,0,0"/>
                     </StackPanel>
                     <StackPanel Grid.Column="3" 
-                                Orientation="Horizontal" 
-                                Margin="5" 
-                                VerticalAlignment="Center" 
-                                HorizontalAlignment="Center">
+        				Orientation="Horizontal" 
+        				Margin="5" 
+        				VerticalAlignment="Center" 
+        				HorizontalAlignment="Center">
                         <TextBlock FontSize="15" 
-                                   Text="&#xE116;" 
-                                   FontFamily="Segoe MDL2 Assets"/>
+        					Text="&#xE116;" 
+        					FontFamily="Segoe MDL2 Assets"/>
                         <TextBlock Text="{Binding Mediaicongray}" 
-                                   Foreground="Black" 
-                                   TextWrapping="Wrap" 
-                                   FontSize="10" Margin="3,0,0,0"/>
+        					Foreground="Black" 
+        					TextWrapping="Wrap" 
+        					FontSize="10" Margin="3,0,0,0"/>
                     </StackPanel>
 
                 </Grid>
                 <TextBlock x:Name="subtitleTextBlock" 
-                                   Text="{Binding Description}" 
-                                   Foreground="Gray"
-                                   TextWrapping="Wrap" 
-                                   TextTrimming="CharacterEllipsis"
-                                   Padding="5" 
-                                   FontSize="12"  
-                                   TextAlignment="Justify"
-                                   MaxLines="30" />
+        			Text="{Binding Description, Converter={StaticResource TextTrimmingConverter},ConverterParameter=200}" 
+        			Foreground="Gray"
+        			TextWrapping="WrapWholeWords" 
+        			TextTrimming="CharacterEllipsis"
+        			Padding="5" 
+        			FontSize="12"  
+        			TextAlignment="Justify" />
                 <TextBlock x:Name="descriptionTextBlock" 
-                                   Text="{Binding Footer}" 
-                                   Foreground="Gray"
-                                   TextWrapping="Wrap" FontSize="11"/>
+        			Text="{Binding Footer}" 
+        			Foreground="Gray"
+        			TextWrapping="WrapWholeWords" FontSize="11"/>
             </StackPanel>
         </DataTemplate>
 
@@ -358,9 +357,9 @@
         </VisualStateManager.VisualStateGroups>
         <!--Static pivot menu-->
         <Grid x:Name="grid" 
-              VerticalAlignment="Top" 
-              HorizontalAlignment="Left" 
-              Height="35" MinWidth="320">
+			VerticalAlignment="Top" 
+			HorizontalAlignment="Stretch" 
+			Height="50" MinWidth="320">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -369,77 +368,79 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <RadioButton Content="&#xE1E4;" Tag="0" Click="RadioButton_Click" Height="35" Grid.Column="0" FontSize="12" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle}"></RadioButton>
-            <RadioButton Content="&#xE125;" Tag="1" Click="RadioButton_Click" Height="35" Grid.Column="1" FontSize="12" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle}"></RadioButton>
-            <RadioButton Content="&#xEC47;" Tag="2" Click="RadioButton_Click" Height="35" Grid.Column="2" FontSize="12" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle}"></RadioButton>
-            <RadioButton Content="&#xE825;" Tag="3" Click="RadioButton_Click" Height="35" Grid.Column="3" FontSize="12" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle}"></RadioButton>
-            <RadioButton Content="&#xE2AF;" Tag="3" Click="RadioButton_Click" Height="35" Grid.Column="4" FontSize="12" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle}"></RadioButton>
+            <RadioButton Content="&#xE1E4;" Tag="0" Click="RadioButton_Click" Height="50" Grid.Column="0" FontSize="16" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle}"/>
+            <RadioButton Content="&#xE125;" Tag="1" Click="RadioButton_Click" Height="50" Grid.Column="1" FontSize="16" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle}"/>
+            <RadioButton Content="&#xEC47;" Tag="2" Click="RadioButton_Click" Height="50" Grid.Column="2" FontSize="16" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle}"/>
+            <RadioButton Content="&#xE825;" Tag="3" Click="RadioButton_Click" Height="50" Grid.Column="3" FontSize="16" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle}"/>
+            <RadioButton Content="&#xE2AF;" Tag="3" Click="RadioButton_Click" Height="50" Grid.Column="4" FontSize="16" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle}"/>
         </Grid>
         <!--Flipview for static pivot-->
-        <FlipView Margin="0,35,0,0" 
-                  Name="_flip" 
-                  Style="{StaticResource NewsFlipViewStyle}"  >
+        <FlipView Margin="0,50,0,0" 
+			x:Name="_flip" 
+			Style="{StaticResource NewsFlipViewStyle}"  >
             <FlipViewItem>
                 <GridView x:Name="TechGridView" 
-                          ItemTemplate="{StaticResource NewsThemeList}"  
-                          SizeChanged="myGridView_SizeChanged" 
-                          BorderThickness="0">
+					ItemTemplate="{StaticResource NewsThemeList}"  
+					SizeChanged="myGridView_SizeChanged" 
+					BorderThickness="0"
+					SelectionChanged="NewsGridView_SelChange">
                     <GridView.ItemContainerTransitions>
                         <TransitionCollection>
                             <EntranceThemeTransition IsStaggeringEnabled="True" 
-                                 FromVerticalOffset="300" 
-                                 FromHorizontalOffset="0"/>
+								FromVerticalOffset="300" 
+								FromHorizontalOffset="0"/>
                             <AddDeleteThemeTransition />
                             <NavigationThemeTransition/>
                             <ContentThemeTransition/>
                         </TransitionCollection>
                     </GridView.ItemContainerTransitions>
-                    <GridView.Items/>
                 </GridView>
             </FlipViewItem>
             <FlipViewItem>
-                <GridView x:Name="PeopleGridView" ItemTemplate="{StaticResource NewsThemeList}"  SizeChanged="myGridView_SizeChanged">
+                <GridView x:Name="PeopleGridView" ItemTemplate="{StaticResource NewsThemeList}"  SizeChanged="myGridView_SizeChanged" SelectionChanged="NewsGridView_SelChange">
                     <GridView.ItemContainerTransitions>
                         <TransitionCollection>
                             <EntranceThemeTransition IsStaggeringEnabled="True" 
-                                 FromVerticalOffset="300" 
-                                 FromHorizontalOffset="0"/>
+								FromVerticalOffset="300" 
+								FromHorizontalOffset="0"/>
                             <AddDeleteThemeTransition/>
                             <NavigationThemeTransition/>
                             <ContentThemeTransition/>
                         </TransitionCollection>
                     </GridView.ItemContainerTransitions>
-                    <GridView.Items/>
+                    <GridViewItem Background="White">
+                        <GridViewItem.DataContext>
+                            <Model:ItemsNews Footer=""/>
+                        </GridViewItem.DataContext>
+                    </GridViewItem>
                 </GridView>
             </FlipViewItem>
             <FlipViewItem>
-                <GridView x:Name="AutoGridView" ItemTemplate="{StaticResource NewsThemeList}"  SizeChanged="myGridView_SizeChanged">
+                <GridView x:Name="AutoGridView" ItemTemplate="{StaticResource NewsThemeList}"  SizeChanged="myGridView_SizeChanged" SelectionChanged="NewsGridView_SelChange">
                     <GridView.ItemContainerTransitions>
                         <TransitionCollection>
                             <EntranceThemeTransition IsStaggeringEnabled="True" 
-                                 FromVerticalOffset="300" 
-                                 FromHorizontalOffset="0"/>
+								FromVerticalOffset="300" 
+								FromHorizontalOffset="0"/>
                             <AddDeleteThemeTransition/>
                             <NavigationThemeTransition/>
                             <ContentThemeTransition/>
                         </TransitionCollection>
                     </GridView.ItemContainerTransitions>
-                    <GridView.Items/>
                 </GridView>
             </FlipViewItem>
             <FlipViewItem>
-                <GridView x:Name="HouseGridView" ItemTemplate="{StaticResource NewsThemeList}"  SizeChanged="myGridView_SizeChanged">
+                <GridView x:Name="HouseGridView" ItemTemplate="{StaticResource NewsThemeList}"  SizeChanged="myGridView_SizeChanged" SelectionChanged="NewsGridView_SelChange">
                     <GridView.ItemContainerTransitions>
                         <TransitionCollection>
                             <EntranceThemeTransition IsStaggeringEnabled="True" 
-                                 FromVerticalOffset="300" 
-                                 FromHorizontalOffset="0"/>
+								FromVerticalOffset="300" 
+								FromHorizontalOffset="0"/>
                             <AddDeleteThemeTransition/>
                             <NavigationThemeTransition/>
                             <ContentThemeTransition/>
                         </TransitionCollection>
                     </GridView.ItemContainerTransitions>
-                    <GridView.Items/>
                 </GridView>
             </FlipViewItem>
             <FlipViewItem>
@@ -447,21 +448,20 @@
                     <GridView.ItemContainerTransitions>
                         <TransitionCollection>
                             <EntranceThemeTransition IsStaggeringEnabled="True" 
-                                 FromVerticalOffset="300" 
-                                 FromHorizontalOffset="0"/>
+								FromVerticalOffset="300" 
+								FromHorizontalOffset="0"/>
                             <AddDeleteThemeTransition/>
                             <NavigationThemeTransition/>
                             <ContentThemeTransition/>
                         </TransitionCollection>
                     </GridView.ItemContainerTransitions>
-                    <GridView.Items/>
                 </GridView>
             </FlipViewItem>
         </FlipView>
         <AppBar VerticalAlignment="Bottom">
-            <AppBarButton Content="dasds" Icon="AllApps" HorizontalAlignment="Right">
-            </AppBarButton>
+            <AppBarButton Content="dasds" Icon="AllApps" HorizontalAlignment="Right"/>
         </AppBar>
+        <ProgressRing Name="MainPageProgressRing" Height="50" Width="50" Foreground="Blue" IsActive="True"/>
     </Grid>
 
 </Page>
