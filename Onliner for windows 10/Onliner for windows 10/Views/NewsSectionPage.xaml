@@ -5,9 +5,17 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Model="using:Onliner_for_windows_10.Model"
+    xmlns:UserControls="using:Onliner_for_windows_10.UserControls"
     x:Class="Onliner_for_windows_10.Views.NewsPage"
     mc:Ignorable="d">
     <Page.Resources>
+
+        <Storyboard x:Key="storyboard">
+            <DoubleAnimation Storyboard.TargetName="ImageListSectionNews"
+                             Storyboard.TargetProperty="Opacity"
+                             EnableDependentAnimation="True"
+                             From="0" To="100" Duration="0:0:1" />
+        </Storyboard>
         <!-- Style for flipview-->
         <Style x:Key="NewsFlipViewStyle" TargetType="FlipView">
             <Setter Property="Background" Value="{ThemeResource SystemControlPageBackgroundListLowBrush}"/>
@@ -236,12 +244,15 @@
         			Foreground="Blue"
         			TextWrapping="Wrap"
         			FontSize="12"/>
-                <TextBlock x:Name="titleTextBlock" 
-        			Text="{Binding Title, Converter={StaticResource TextTrimmingConverter},ConverterParameter=60}" 
+                <TextBlock x:Name="titleTextBlock"
+        			Text="{Binding Title, ConverterParameter=60, Converter={StaticResource TextTrimmingConverter}}" 
         			Foreground="Black"
         			TextWrapping="WrapWholeWords"
         			FontSize="14" MinHeight="50"/>
-                <Image x:Name="NewsImage"  Source="{Binding Image, Converter={StaticResource ImageUrlConverter}}" ImageOpened="NewsImage_ImageOpened"/>
+                <Grid>
+                    <ProgressRing Height="50" Width="50" Foreground="Blue" IsActive="True"/>
+                   <Image Name="ImageListSectionNews" Opacity="100" Source="{Binding Image, Converter={StaticResource ImageUrlConverter}}"   Loaded="Image_Loaded"/>
+                </Grid>
                 <Grid HorizontalAlignment="Stretch" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -309,7 +320,7 @@
 
                 </Grid>
                 <TextBlock x:Name="subtitleTextBlock" 
-        			Text="{Binding Description, Converter={StaticResource TextTrimmingConverter},ConverterParameter=200}" 
+        			Text="{Binding Description, ConverterParameter=200, Converter={StaticResource TextTrimmingConverter}}" 
         			Foreground="Gray"
         			TextWrapping="WrapWholeWords" 
         			TextTrimming="CharacterEllipsis"
@@ -322,7 +333,19 @@
         			TextWrapping="WrapWholeWords" FontSize="11"/>
             </StackPanel>
         </DataTemplate>
-
+        <DataTemplate x:Key="ListViewMobileTrigger">
+            <StackPanel x:Name="ActualWidthStack"  
+        		Width="400" 
+        		Margin="2" 
+        		Background="White" 
+        		BorderThickness="0" >
+                <TextBlock x:Name="titleTextBlock" 
+        			Text="{Binding Title}" 
+        			Foreground="Black"
+        			TextWrapping="WrapWholeWords"
+        			FontSize="14" MinHeight="50"/>
+            </StackPanel>
+        </DataTemplate>
     </Page.Resources>
 
     <Grid Background="LightCyan">
@@ -384,6 +407,11 @@
 					SizeChanged="myGridView_SizeChanged" 
 					BorderThickness="0"
 					SelectionChanged="NewsGridView_SelChange">
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
                     <GridView.ItemContainerTransitions>
                         <TransitionCollection>
                             <EntranceThemeTransition IsStaggeringEnabled="True" 
@@ -394,6 +422,7 @@
                             <ContentThemeTransition/>
                         </TransitionCollection>
                     </GridView.ItemContainerTransitions>
+                    
                 </GridView>
             </FlipViewItem>
             <FlipViewItem>
@@ -408,11 +437,6 @@
                             <ContentThemeTransition/>
                         </TransitionCollection>
                     </GridView.ItemContainerTransitions>
-                    <GridViewItem Background="White">
-                        <GridViewItem.DataContext>
-                            <Model:ItemsNews Footer=""/>
-                        </GridViewItem.DataContext>
-                    </GridViewItem>
                 </GridView>
             </FlipViewItem>
             <FlipViewItem>
@@ -459,9 +483,9 @@
             </FlipViewItem>
         </FlipView>
         <AppBar VerticalAlignment="Bottom">
-            <AppBarButton Content="dasds" Icon="AllApps" HorizontalAlignment="Right"/>
+            <AppBarButton Content="change" Icon="AllApps" HorizontalAlignment="Right" Click="AppBarButton_Click"/>
         </AppBar>
-        <ProgressRing Name="MainPageProgressRing" Height="50" Width="50" Foreground="Blue" IsActive="True"/>
+        <ProgressRing x:Name="MainPageProgressRing" Height="50" Width="50" Foreground="Blue" IsActive="True"/>
     </Grid>
 
 </Page>

@@ -14,7 +14,17 @@ namespace Onliner_for_windows_10.ParsingHtml
 {
     public class ParsingFullNewsPage
     {
-        private const string BackGroundColorListItem = "LightGray";
+        private readonly string TagTypeClass = "class";
+        private readonly string NameTagDiv = "div";
+        private readonly string NameTagSpan = "span";
+        private readonly string NameTagStrong = "strong";
+        private readonly string NameTagFigure = "figure";
+        private readonly string NameTagImg = "img";
+        private readonly string NameTagA = "a";
+        private readonly string NameTagLi = "li";
+        private readonly string AttributeTagSRC = "src";
+
+        private readonly string BackGroundColorListItem = "#FFF7F7F7";
         private string urlPageNews = string.Empty;
         private string loadePage = string.Empty;
 
@@ -44,12 +54,12 @@ namespace Onliner_for_windows_10.ParsingHtml
             htmlDoc.LoadHtml(loadePage);
             await Task.Run(() =>
             {
-                fullNews.Category = htmlDoc.DocumentNode.Descendants("div").Where(div => div.GetAttributeValue("class", string.Empty) == "b-post-tags-1").LastOrDefault().Descendants("strong").LastOrDefault().Descendants("a").LastOrDefault().InnerText;
-                fullNews.DataTime = htmlDoc.DocumentNode.Descendants("div").Where(div => div.GetAttributeValue("class", string.Empty) == "b-post-tags-1").LastOrDefault().Descendants("time").FirstOrDefault().InnerText;
-                fullNews.TitleNews = htmlDoc.DocumentNode.Descendants("h3").Where(div => div.GetAttributeValue("class", string.Empty) == "b-posts-1-item__title").LastOrDefault().Descendants("a").FirstOrDefault().InnerText;
-                fullNews.Image = htmlDoc.DocumentNode.Descendants("figure").Where(div => div.GetAttributeValue("class", string.Empty) == "b-posts-1-item__image").LastOrDefault().Descendants("img").FirstOrDefault().Attributes["src"].Value;
+                fullNews.Category = htmlDoc.DocumentNode.Descendants(NameTagDiv).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-post-tags-1").LastOrDefault().Descendants(NameTagStrong).LastOrDefault().Descendants(NameTagA).LastOrDefault().InnerText;
+                fullNews.DataTime = htmlDoc.DocumentNode.Descendants(NameTagDiv).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-post-tags-1").LastOrDefault().Descendants("time").FirstOrDefault().InnerText;
+                fullNews.TitleNews = htmlDoc.DocumentNode.Descendants("h3").Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-posts-1-item__title").LastOrDefault().Descendants(NameTagA).FirstOrDefault().InnerText;
+                fullNews.Image = htmlDoc.DocumentNode.Descendants(NameTagFigure).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-posts-1-item__image").LastOrDefault().Descendants(NameTagImg).FirstOrDefault().Attributes[AttributeTagSRC].Value;
 
-                var ListPTag = htmlDoc.DocumentNode.Descendants("div").Where(div => div.GetAttributeValue("class", string.Empty) == "b-posts-1-item__text").ToList();
+                var ListPTag = htmlDoc.DocumentNode.Descendants(NameTagDiv).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-posts-1-item__text").ToList();
                 foreach (var item in ListPTag)
                 {
                     fullNews.PostItem += item.InnerHtml;
@@ -65,16 +75,16 @@ namespace Onliner_for_windows_10.ParsingHtml
             int step = 0;
             await Task.Run(() =>
             {
-                var commentsList = htmlDoc.DocumentNode.Descendants("li").Where(div => div.GetAttributeValue("class", string.Empty) == "b-comments-1__list-item commentListItem").ToList();
+                var commentsList = htmlDoc.DocumentNode.Descendants(NameTagLi).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-comments-1__list-item commentListItem").ToList();
                 foreach (var item in commentsList)
                 {
                     step++;
                     commentsParams = new CommentsItem();
-                    commentsParams.Nickname = item.Descendants("strong").Where(div => div.GetAttributeValue("class", string.Empty) == "author").FirstOrDefault().InnerText;
-                    commentsParams.Time = item.Descendants("span").Where(div => div.GetAttributeValue("class", string.Empty) == "date").FirstOrDefault().InnerText;
-                    commentsParams.Image = item.Descendants("figure").Where(div => div.GetAttributeValue("class", string.Empty) == "author-image").FirstOrDefault().Descendants("img").FirstOrDefault().Attributes["src"].Value;
-                    commentsParams.Data = item.Descendants("div").Where(div => div.GetAttributeValue("class", string.Empty) == "comment-content").LastOrDefault().InnerText.Trim();
-                    commentsParams.LikeCount = item.Descendants("span").Where(div => div.GetAttributeValue("class", string.Empty) == "_counter").LastOrDefault().InnerText;
+                    commentsParams.Nickname = item.Descendants(NameTagStrong).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "author").FirstOrDefault().InnerText;
+                    commentsParams.Time = item.Descendants(NameTagSpan).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "date").FirstOrDefault().InnerText;
+                    commentsParams.Image = item.Descendants(NameTagFigure).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "author-image").FirstOrDefault().Descendants(NameTagImg).FirstOrDefault().Attributes[AttributeTagSRC].Value;
+                    commentsParams.Data = item.Descendants(NameTagDiv).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "comment-content").LastOrDefault().InnerText.Trim();
+                    commentsParams.LikeCount = item.Descendants(NameTagSpan).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "_counter").LastOrDefault().InnerText;
                     if (step % 2 == 0)
                     {
                         commentsParams.ColorItem = BackGroundColorListItem;

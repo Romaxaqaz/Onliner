@@ -19,7 +19,8 @@ namespace Onliner_for_windows_10.Model
         private string _popularcount = string.Empty;
         private string _bmediaicon = string.Empty;
 
-        public string Bmediaicon {
+        public string Bmediaicon
+        {
             get
             {
                 return _bmediaicon;

@@ -8,6 +8,13 @@ using Onliner_for_windows_10.Model;
 using HtmlAgilityPack;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Input;
+using Onliner_for_windows_10.UserControls;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.Foundation;
+using Windows.UI.Xaml.Documents;
+using System.Text.RegularExpressions;
+using MyToolkit.Multimedia;
 // Шаблон элемента пустой страницы задокументирован по адресу http://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace Onliner_for_windows_10.Views
@@ -40,21 +47,35 @@ namespace Onliner_for_windows_10.Views
             var contentNews = htmlDoc.DocumentNode.Descendants("p").ToList();
             foreach (var item in contentNews)
             {
-                if (item.InnerHtml.Contains("img"))
+                if (item.InnerHtml.Contains("<img>"))
                 {
                     NewsListData.Children.Add(PostImage(item.Descendants("img").FirstOrDefault().Attributes["src"].Value));
                 }
                 else if (item.InnerHtml.Contains("iframe"))
                 {
-                    string linkVideo = item.Descendants("iframe").FirstOrDefault().Attributes["src"].Value;
-                    NewsListData.Children.Add(VideoPost(linkVideo));
+                    if (item.InnerHtml.Contains("https://www.youtube.com/embed/"))
+                    {
+                        string linkVideo = item.Descendants("iframe").FirstOrDefault().Attributes["src"].Value;
+                        string path = linkVideo.Replace("https://www.youtube.com/embed/", "");
+                        var pathUri = await YouTube.GetVideoUriAsync(path, YouTubeQuality.Quality480P);
+                        NewsListData.Children.Add(VideoPost(pathUri));
+                    }
+                    else
+                    {
+                        WebView web = new WebView();
+                        web.Settings.IsJavaScriptEnabled = true;
+                        web.Width = ActualWidth - 10;
+                        web.Height = 320;
+                        web.NavigateToString(item.InnerHtml);
+                        NewsListData.Children.Add(web);
+                    }
                 }
                 else
                 {
                     NewsListData.Children.Add(PostItemTextBlock(item.InnerText));
                 }
             }
-            CommentsListView.ItemsSource = await fullPagePars.CommentsMainInfo();
+                 CommentsListView.ItemsSource = await fullPagePars.CommentsMainInfo();
         }
 
         private TextBlock PostItemTextBlock(string text)
@@ -70,17 +91,66 @@ namespace Onliner_for_windows_10.Views
         {
             image = new Image();
             image.Source = new BitmapImage(new Uri(uri));
+            image.Margin = new Thickness(5);
             return image;
         }
 
-        private WebView VideoPost(string linkVideo)
+        private MediaElement VideoPost(YouTubeUri linkVideo)
         {
-            web = new WebView();
-            web.Width = 300;
-            web.Height = 315;
-            web.Width = MainGrid.ColumnDefinitions[1].ActualWidth;
-            web.NavigateToString("<iframe src = " + linkVideo + " allowfullscreen = \"\" frameborder =\"0\" width = \"100%\" height = \"315\" ></iframe>");
-            return web;
+            MediaElement media = new MediaElement();
+            media.AutoPlay = false;
+            media.AreTransportControlsEnabled = true;
+            media.Margin = new Thickness(15);
+            media.Source = linkVideo.Uri;
+            return media;
+        }
+
+        private void FontSizeSetting_Click(object sender, RoutedEventArgs e)
+        {
+            TextBlockFontSize tf = new TextBlockFontSize
+            {
+                FontSize = (int)ContentTextBlock.FontSize
+            };
+
+            Binding binding = new Binding
+            {
+                Source = tf,
+                Path = new PropertyPath("FontSize"),
+                Mode = BindingMode.TwoWay
+            };
+            ContentTextBlock.SetBinding(TextBlock.FontSizeProperty, binding);
+
+            Popup popup = new Popup
+            {
+                Child = tf,
+                IsLightDismissEnabled = true
+            };
+
+            tf.Loaded += (dialogSender, dialogArgs) =>
+            {
+                // Получение позиции кнопки относительно экрана
+                Button btn = sender as Button;
+                Point pt = btn.TransformToVisual(null).TransformPoint(new Point(btn.ActualWidth / 2,
+                                                                                btn.ActualHeight / 2));
+
+                popup.HorizontalOffset = pt.X - tf.ActualWidth / 2;
+
+                popup.VerticalOffset = 100;
+            };
+            popup.IsOpen = true;
+        }
+
+        private void AppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            ListView list = new ListView();
+            list.Width = ActualWidth;
+            list.Height = ActualHeight;
+            list = CommentsListView;
+            Popup popup = new Popup();
+            popup.Child = list;
+            popup.HorizontalOffset = 0;
+            popup.VerticalOffset = 50;
+            popup.IsOpen = true;
         }
     }
 }

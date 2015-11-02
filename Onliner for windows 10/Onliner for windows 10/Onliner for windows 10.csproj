@@ -100,6 +100,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\TextTrimmingConverter.cs" />
     <Compile Include="Model\CategoryNews.cs" />
     <Compile Include="Converters\TextIcoNewsConverter.cs" />
@@ -117,10 +118,23 @@
     <Compile Include="MyCookie.cs" />
     <Compile Include="ParsingHtml\ParsingFullNewsPage.cs" />
     <Compile Include="ParsingHtml\ParsingHtml.cs" />
+    <Compile Include="ParsingHtml\ParsingNewsSection.cs" />
     <Compile Include="ProfilePage\ProfileData.cs" />
     <Compile Include="Converters\ImageUrlConverter.cs" />
-    <Compile Include="Views\NewsPage.xaml.cs">
-      <DependentUpon>NewsPage.xaml</DependentUpon>
+    <Compile Include="testpage.xaml.cs">
+      <DependentUpon>testpage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ImageLoader.xaml.cs">
+      <DependentUpon>ImageLoader.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\TextBlockFontSize.xaml.cs">
+      <DependentUpon>TextBlockFontSize.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\YouTubePlayerControl.xaml.cs">
+      <DependentUpon>YouTubePlayerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\NewsSectionPage.xaml.cs">
+      <DependentUpon>NewsSectionPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ProfilePage.xaml.cs">
       <DependentUpon>ProfilePage.xaml</DependentUpon>
@@ -165,11 +179,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="testpage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\NewsPage.xaml">
+    <Page Include="UserControls\ImageLoader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\TextBlockFontSize.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\YouTubePlayerControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\NewsSectionPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

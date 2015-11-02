@@ -11,17 +11,58 @@
     
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-        <StackPanel HorizontalAlignment="Center" Margin="0,50,0,0" VerticalAlignment="Center">
-            <TextBlock Text="Войти" FontSize="28"/>
-            <TextBox  Name="LoginTextBox" MinWidth="300"/>
-            <TextBlock Text="Пароль" FontSize="28" Margin="0,10,0,0"/>
-            <PasswordBox Name="PasswordBox"  MinWidth="300"/>
-            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                <CheckBox Name="SaveCheckBox" Content="запомнить"></CheckBox>
-                <Button Name="LaterLogIn" Content="Позже" Margin="10,0,10,0" Width="100" Click="LaterLogIn_Click"/>
-                <Button Name="LoginButton" Content="Войти" Margin="10,0,0,0" Width="100" Background="Yellow" Click="LoginButton_Click"/>
-            </StackPanel>
+         <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="VisualStateGroup">
+                <VisualState x:Name="VisualStateMobile">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="400" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="HelloStackPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="HelloStackPanel.(Grid.Row)" Value="0" />
+                        <Setter Target="HelloStackPanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="InputControlStackpanel.(Grid.Column)" Value="0" />
+                        <Setter Target="InputControlStackpanel.(Grid.Row)" Value="1" />
+                        <Setter Target="InputControlStackpanel.(Grid.RowSpan)" Value="2" />
+                        <Setter Target="InputControlStackpanel.(Grid.ColumnSpan)" Value="2" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualStateTablet">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="640" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Name="HelloStackPanel" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock Text="Здравствуйте!" FontSize="44" Foreground="BlueViolet" TextAlignment="Center"/>
+            <TextBlock Text="Добро пожаловать на Onliner.by" FontSize="28" TextAlignment="Center"/>
+        </StackPanel>
+        <StackPanel Name="InputControlStackpanel" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Margin="0,50,0,0" VerticalAlignment="Center">
+            <TextBlock Text="Войти" FontSize="28" Foreground="Gray"/>
+            <TextBox  Name="LoginTextBox" MinWidth="300" BorderThickness="1" BorderBrush="Gray"/>
+            <TextBlock Text="Пароль" FontSize="28" Margin="0,10,0,0" Foreground="Gray"/>
+            <PasswordBox Name="PasswordBox"  MinWidth="300" BorderThickness="1"  BorderBrush="Gray"/>
+            <Grid Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <CheckBox Name="SaveCheckBox" Content="запомнить" HorizontalAlignment="Center"></CheckBox>
+                <Button Name="LaterLogIn" Content="Позже" FontSize="18" Grid.Column="1" HorizontalAlignment="Stretch" Click="LaterLogIn_Click"/>
+            </Grid>
+            <Button Name="LoginButton" Content="Войти" HorizontalAlignment="Stretch" FontSize="18" Margin="0,10,0,0" Background="Yellow" Click="LoginButton_Click"/>
         </StackPanel>
     </Grid>
 </Page>

@@ -7,14 +7,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Onliner for windows 10", "O
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|ARM = Debug|ARM
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|ARM = Release|ARM
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{982A0616-4981-4BE6-A9E2-EF8739313A8E}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{982A0616-4981-4BE6-A9E2-EF8739313A8E}.Debug|ARM.ActiveCfg = Debug|ARM
 		{982A0616-4981-4BE6-A9E2-EF8739313A8E}.Debug|ARM.Build.0 = Debug|ARM
 		{982A0616-4981-4BE6-A9E2-EF8739313A8E}.Debug|ARM.Deploy.0 = Debug|ARM
@@ -24,6 +27,7 @@ Global
 		{982A0616-4981-4BE6-A9E2-EF8739313A8E}.Debug|x86.ActiveCfg = Debug|x86
 		{982A0616-4981-4BE6-A9E2-EF8739313A8E}.Debug|x86.Build.0 = Debug|x86
 		{982A0616-4981-4BE6-A9E2-EF8739313A8E}.Debug|x86.Deploy.0 = Debug|x86
+		{982A0616-4981-4BE6-A9E2-EF8739313A8E}.Release|Any CPU.ActiveCfg = Release|x86
 		{982A0616-4981-4BE6-A9E2-EF8739313A8E}.Release|ARM.ActiveCfg = Release|ARM
 		{982A0616-4981-4BE6-A9E2-EF8739313A8E}.Release|ARM.Build.0 = Release|ARM
 		{982A0616-4981-4BE6-A9E2-EF8739313A8E}.Release|ARM.Deploy.0 = Release|ARM

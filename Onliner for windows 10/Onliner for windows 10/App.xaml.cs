@@ -45,6 +45,13 @@ namespace Onliner_for_windows_10
         /// <param name="e">Сведения о запросе и обработке запуска.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            var applicationView = ApplicationView.GetForCurrentView();
+            var titleBar = applicationView.TitleBar;
+            titleBar.BackgroundColor = Colors.Orange;
+            titleBar.ForegroundColor = Colors.White;
+            titleBar.ButtonBackgroundColor = Colors.Orange;
+            titleBar.ButtonForegroundColor = Colors.Black;
+
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
 #if DEBUG
