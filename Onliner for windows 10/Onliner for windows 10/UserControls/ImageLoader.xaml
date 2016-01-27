@@ -5,10 +5,14 @@
     xmlns:local="using:Onliner_for_windows_10.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local2="using:Onliner_for_windows_10"
     mc:Ignorable="d"
     d:DesignHeight="200"
     d:DesignWidth="200"
     x:Name="LogoImage">
 
-    <Image Source="{StaticResource Image1}"/>
+    <UserControl.Resources>
+        <local2:ImageUrlConverters x:Key="TextTrimmingConverter" />
+    </UserControl.Resources>
+    <Image Source="{Binding Source, Converter={StaticResource TextTrimmingConverter}}"/>
 </UserControl>

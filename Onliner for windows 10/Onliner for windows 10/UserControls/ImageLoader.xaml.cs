@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Onliner_for_windows_10.UserControls
 {
-    public sealed partial class ImageLoader : UserControl
+    public sealed partial class ImageLoader : UserControl, INotifyPropertyChanged
     {
 
         public static DependencyProperty SourceProperty =
@@ -35,7 +35,20 @@ namespace Onliner_for_windows_10.UserControls
         public ImageSource Source
         {
             get { return (ImageSource)GetValue(SourceProperty); }
-            set { SetValue(SourceProperty, value); }
+            set { SetValue(SourceProperty, value);
+                this.RaisePropertyChanged("Source");
+            }
+            
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void RaisePropertyChanged(string property)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(property));
+            }
         }
 
         static void OnSourceChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)

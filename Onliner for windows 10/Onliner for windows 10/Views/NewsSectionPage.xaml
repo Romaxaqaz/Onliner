@@ -176,84 +176,46 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <!--Style for ico button page-->
-        <Style x:Key="NewsPageHeadeMenuRadioButtonStyle" TargetType="RadioButton">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
-            <Setter Property="Padding" Value="8,6,0,0"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
-            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
-            <Setter Property="MinWidth" Value="50"/>
-            <Setter Property="UseSystemFocusVisuals" Value="True"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="RadioButton">
-                        <Grid BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="2"/>
-                            </Grid.RowDefinitions>
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal"/>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill" Storyboard.TargetName="CheckGlyph">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseLowBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="CheckStates">
-                                    <VisualState x:Name="Checked">
-                                        <Storyboard>
-                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="CheckGlyph"/>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Unchecked"/>
-                                    <VisualState x:Name="Indeterminate"/>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw"  Grid.Row="0" HorizontalAlignment="Center" Margin="0" TextWrapping="Wrap" VerticalAlignment="Center">
-                                <TextBlock FontSize="20" Text="{TemplateBinding Content}" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </ContentPresenter>
-                            <Grid Grid.Row="1">
-                                <Rectangle x:Name="CheckGlyph" Fill="Yellow" Height="3" Opacity="0" UseLayoutRounding="False"/>
-                            </Grid>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
 
         <local:ImageUrlConverters x:Key="ImageUrlConverter" />
         <local:TextIcoNewsConverter x:Key="TextIcoNewsConverter"/>
         <local:TextTrimmingConverter x:Key="TextTrimmingConverter"/>
+       
         <DataTemplate x:Key="NewsThemeList">
-            <StackPanel x:Name="ActualWidthStack"  
+            <Grid x:Name="ActualWidthStack"  
         		Width="{Binding WidthStack}" 
-        		Margin="2" 
+        		Margin="1" 
         		Background="White" 
-        		BorderThickness="0" >
+        		BorderThickness="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="15"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="100"/>
+                    <RowDefinition Height="20"/>
+                </Grid.RowDefinitions>
+                <Grid.ChildrenTransitions>
+                    <TransitionCollection>
+                        <EdgeUIThemeTransition Edge="Bottom"/>
+                    </TransitionCollection>
+                </Grid.ChildrenTransitions>
                 <TextBlock x:Name="ThemeTextBlock" 
         			Text="{Binding Themes}" 
         			Foreground="Blue"
-        			TextWrapping="Wrap"
-        			FontSize="12"/>
+        			FontSize="12" Grid.Row="0" Style="{ThemeResource CaptionTextBlockStyle}"/>
                 <TextBlock x:Name="titleTextBlock"
-        			Text="{Binding Title, ConverterParameter=60, Converter={StaticResource TextTrimmingConverter}}" 
+        			Text="{Binding Title}" 
         			Foreground="Black"
-        			TextWrapping="WrapWholeWords"
-        			FontSize="14" MinHeight="50"/>
-                <Grid>
+                    TextWrapping="WrapWholeWords"
+                    TextTrimming="WordEllipsis"
+        			FontSize="15"
+                    ContinuumNavigationTransitionInfo.IsEntranceElement="True" Grid.Row="1" Style="{ThemeResource BodyTextBlockStyle}"/>
+                <Grid Grid.Row="2">
                     <ProgressRing Height="50" Width="50" Foreground="Blue" IsActive="True"/>
                    <Image Name="ImageListSectionNews" Opacity="100" Source="{Binding Image, Converter={StaticResource ImageUrlConverter}}"   Loaded="Image_Loaded"/>
                 </Grid>
-                <Grid HorizontalAlignment="Stretch" >
+                <Grid HorizontalAlignment="Stretch" Grid.Row="3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
@@ -320,18 +282,18 @@
 
                 </Grid>
                 <TextBlock x:Name="subtitleTextBlock" 
-        			Text="{Binding Description, ConverterParameter=200, Converter={StaticResource TextTrimmingConverter}}" 
+        			Text="{Binding Description}" 
         			Foreground="Gray"
         			TextWrapping="WrapWholeWords" 
-        			TextTrimming="CharacterEllipsis"
+        			TextTrimming="WordEllipsis"
         			Padding="5" 
         			FontSize="12"  
-        			TextAlignment="Justify" />
+        			TextAlignment="Justify" Grid.Row="4"/>
                 <TextBlock x:Name="descriptionTextBlock" 
         			Text="{Binding Footer}" 
-        			Foreground="Gray"
-        			TextWrapping="WrapWholeWords" FontSize="11"/>
-            </StackPanel>
+        			Foreground="Gray" Padding="2"
+        			TextWrapping="WrapWholeWords" FontSize="12" Grid.Row="5" Style="{ThemeResource BaseTextBlockStyle}"/>
+            </Grid>
         </DataTemplate>
         <DataTemplate x:Key="ListViewMobileTrigger">
             <StackPanel x:Name="ActualWidthStack"  
@@ -353,7 +315,7 @@
             <VisualStateGroup x:Name="VisualStateGroup">
                 <VisualState x:Name="VisualStateMobile">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="320"/>
+                        <AdaptiveTrigger MinWindowWidth="350"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="grid.(FrameworkElement.HorizontalAlignment)" Value="Stretch"/>
@@ -362,7 +324,7 @@
 
                 <VisualState x:Name="VisualStateTablet">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="640"/>
+                        <AdaptiveTrigger MinWindowWidth="800"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="grid.(FrameworkElement.HorizontalAlignment)" Value="Stretch"/>
@@ -389,18 +351,17 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <RadioButton Content="&#xE1E4;" Tag="0" Click="RadioButton_Click" Height="50" Grid.Column="0" FontSize="16" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle}"/>
-            <RadioButton Content="&#xE125;" Tag="1" Click="RadioButton_Click" Height="50" Grid.Column="1" FontSize="16" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle}"/>
-            <RadioButton Content="&#xEC47;" Tag="2" Click="RadioButton_Click" Height="50" Grid.Column="2" FontSize="16" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle}"/>
-            <RadioButton Content="&#xE825;" Tag="3" Click="RadioButton_Click" Height="50" Grid.Column="3" FontSize="16" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle}"/>
-            <RadioButton Content="&#xE2AF;" Tag="3" Click="RadioButton_Click" Height="50" Grid.Column="4" FontSize="16" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle}"/>
+            <RadioButton Name="tech" Content="&#xE1E4;" Tag="0" Click="RadioButton_Click" Height="50" Grid.Column="0" FontSize="16" HorizontalAlignment="Stretch" IsChecked="False" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle2}"/>
+            <RadioButton Name="people" Content="&#xE125;" Tag="1" Click="RadioButton_Click" Height="50" Grid.Column="1" FontSize="16" HorizontalAlignment="Stretch" IsChecked="False" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle2}"/>
+            <RadioButton Name="auto" Content="&#xEC47;" Tag="2" Click="RadioButton_Click" Height="50" Grid.Column="2" FontSize="16" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle2}"/>
+            <RadioButton Name="house" Content="&#xE825;" Tag="3" Click="RadioButton_Click" Height="50" Grid.Column="3" FontSize="16" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle2}"/>
+            <RadioButton Name="soc" Content="&#xE2AF;" Tag="4" Click="RadioButton_Click" Height="50" Grid.Column="4" FontSize="16" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle2}"/>   
         </Grid>
         <!--Flipview for static pivot-->
-        <FlipView Margin="0,50,0,0" 
-			x:Name="_flip" 
-			Style="{StaticResource NewsFlipViewStyle}"  >
+        <FlipView Margin="0,50,0,0"
+			x:Name="FlipNews" 
+			Style="{StaticResource NewsFlipViewStyle}" SelectionChanged="FlipNews_SelectionChanged"  >
             <FlipViewItem>
                 <GridView x:Name="TechGridView" 
 					ItemTemplate="{StaticResource NewsThemeList}"  
@@ -417,12 +378,8 @@
                             <EntranceThemeTransition IsStaggeringEnabled="True" 
 								FromVerticalOffset="300" 
 								FromHorizontalOffset="0"/>
-                            <AddDeleteThemeTransition />
-                            <NavigationThemeTransition/>
-                            <ContentThemeTransition/>
                         </TransitionCollection>
                     </GridView.ItemContainerTransitions>
-                    
                 </GridView>
             </FlipViewItem>
             <FlipViewItem>
@@ -485,7 +442,12 @@
         <AppBar VerticalAlignment="Bottom">
             <AppBarButton Content="change" Icon="AllApps" HorizontalAlignment="Right" Click="AppBarButton_Click"/>
         </AppBar>
-        <ProgressRing x:Name="MainPageProgressRing" Height="50" Width="50" Foreground="Blue" IsActive="True"/>
     </Grid>
 
+    <Page.Transitions>
+        <TransitionCollection>
+           <PaneThemeTransition Edge="Bottom"/>
+            <ContentThemeTransition />
+        </TransitionCollection>
+    </Page.Transitions>
 </Page>

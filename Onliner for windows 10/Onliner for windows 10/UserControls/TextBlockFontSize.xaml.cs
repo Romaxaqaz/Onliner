@@ -19,9 +19,8 @@ namespace Onliner_for_windows_10.UserControls
 {
     public sealed partial class TextBlockFontSize : UserControl
     {
-        private int fontSize = 12;
 
-        public static DependencyProperty FontSizeProperty { private set; get; }
+        public static new DependencyProperty FontSizeProperty { private set; get; }
 
         static TextBlockFontSize()
         {
@@ -35,7 +34,7 @@ namespace Onliner_for_windows_10.UserControls
         {
             this.InitializeComponent();
         }
-        public int FontSize
+        public new int FontSize
         {
             set { SetValue(FontSizeProperty, value); }
             get { return (int)GetValue(FontSizeProperty); }

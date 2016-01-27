@@ -6,26 +6,30 @@
     xmlns:UserControl="using:Onliner_for_windows_10.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converter="using:Onliner_for_windows_10.Converters"
     mc:Ignorable="d">
-
+    <Page.Resources>
+        <converter:UpdateLogoImage x:Key="UpdateImage"/>
+    </Page.Resources>
     <Grid Background="Gray">
         <!--Visual state-->
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
                 <VisualState x:Name="VisualState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="320"/>
+                        <AdaptiveTrigger MinWindowWidth="350"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="SplitView.(SplitView.DisplayMode)" Value="Overlay"></Setter>
+                        <Setter Target="BackButton.(UIElement.Visibility)" Value="Collapsed"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="VisualState1">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="620"/>
+                        <AdaptiveTrigger MinWindowWidth="800"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="SplitView.(SplitView.DisplayMode)" Value="CompactOverlay"></Setter>
+                        <Setter Target="SplitView.(SplitView.DisplayMode)" Value="CompactOverlay"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -35,48 +39,65 @@
                     VerticalAlignment="Top" 
                     Height="50" 
                     Grid.ColumnSpan="2">
-            <Grid>
+            <Grid Name="HeaderGridShellPage">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <StackPanel Name="NavigationStackpanel" Grid.Column="0" Orientation="Horizontal">
                     <Button Name="HamburgerButton" 
                         Content="&#xE700;"
                         Width="50" 
                         Height="50" 
                         FontSize="20"
-                        Grid.Column="0" 
+                        Grid.Column="0"
+                        FontWeight="Bold"
                         Click="HamburgerButton_Click" 
-                        Foreground="White" FontFamily="Segoe MDL2 Assets"
-                        Background="#FFC19500"
+                        Foreground="Black" FontFamily="Segoe MDL2 Assets"
+                        Background="Yellow" BorderThickness="0"
                         />
                     <Button Name="BackButton" 
                             Width="50" 
                             Height="50" 
                             Grid.Column="1" 
-                            Style="{StaticResource ButtonHeader}" 
-                            Tag="&#xE112;" 
+                            Content="&#xE112;" 
+                            FontFamily="Segoe MDL2 Assets"
+                            Background="Yellow" Foreground="Black"
                             Click="BackButton_Click"/>
-
-                    <TextBlock Text="Onliner" FontFamily="Comic Sans MS" FontSize="20" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    <TextBlock Text="{Binding NameActivePage}" Style="{ThemeResource BodyTextBlockStyle}" 
+                               FontFamily="Segoe UI Black" 
+                               FontWeight="Bold" 
+                               HorizontalAlignment="Center" 
+                               FontSize="16"
+                               Padding="0"
+                               VerticalAlignment="Center" Margin="5,0,0,0"/>
+                    <!--{Binding NameActivePage}-->
                 </StackPanel>
-                
-                <Button Width="50" 
-                        Height="50" 
-                        Grid.Column="4" 
-                        Style="{StaticResource ButtonHeader}" 
-                        Tag="&#xE715;"/>
-               
+                <StackPanel x:Name="MessageStackPanel" Orientation="Horizontal" Grid.Column="4">
+                    
+                    <Button Name="MessagePage" Width="50" Padding="0" Margin="0"
+                        Height="50"  Click="Message_Click" BorderThickness="0" Background="Yellow">
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="&#xE715;" FontSize="24" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" TextAlignment="Center" HorizontalAlignment="Center" Margin="1" Grid.Column="0"/>
+                            <TextBlock Text="{Binding UnreadeMessage}" FontSize="16" VerticalAlignment="Center" TextAlignment="Center" HorizontalAlignment="Center" Margin="1,0,0,2" Grid.Column="1" FontWeight="Bold"/>
+                            <!--"{Binding UnreadeMessage}"-->
+                        </Grid>
+                    </Button>
+                </StackPanel>
+
 
 
             </Grid>
         </StackPanel>
         <!-- Hamburger menu-->
         <SplitView x:Name="SplitView"  
-                   OpenPaneLength="150" 
+                   OpenPaneLength="250" 
                    CompactPaneLength="50"
                    DisplayMode="CompactOverlay" 
                    IsPaneOpen="False" 
@@ -100,35 +121,35 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <StackPanel x:Name="SplitViewPanePanel" Grid.Row="0">
-                        <StackPanel  Orientation="Horizontal">
-                            <Grid>
+                        <Button Name="ProfileButton" Background="Transparent" HorizontalAlignment="Stretch" Padding="0" Height="50" BorderThickness="0" Click="ProfileButton_Click">
+                            <Grid Width="250" Height="50">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition Width="auto"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="50"/>
-                                </Grid.RowDefinitions>
-                                <Image Width="30" 
-                                         Height="30" 
-                                         Grid.Column="0" 
-                                         Name="ImageAccaunt"
-                                       Source="{StaticResource Image1}"/>
-     
-                               
-                                <TextBlock FontSize="14" 
+  
+                                   <Ellipse Width="30" Height="30"  Grid.Column="0" Margin="10,0,0,0">
+                                        <Ellipse.Fill>
+                                            <ImageBrush ImageSource="{Binding AvatarUrl}" />
+                                        </Ellipse.Fill>
+                                    </Ellipse>
+                                <TextBlock FontSize="16" 
+                                           Text="{Binding Login}"
                                            FontFamily="Segoe UI"
                                            Height="25"
                                            Grid.Column="1" 
-                                           HorizontalAlignment="Center">
-                            	<Run FontSize="15" Text="Профиль"/>
+                                           HorizontalAlignment="Left"
+                                           Margin="12,0,0,0">
                                 </TextBlock>
                             </Grid>
-                        </StackPanel>
+                        </Button>
+                     
                         <RadioButton x:Name="NewsRadioButton" Click="NewsRadioButton_Click" Style="{StaticResource NavRadioButtonStyle}" Tag="&#xE136;" Content="Новости" GroupName="Navigation" Height="50"/>
                         <RadioButton x:Name="CatalogRadioButton" Click="CatalogRadioButton_Click" Style="{StaticResource NavRadioButtonStyle}" Tag="&#xE211;" Content="Каталог" GroupName="Navigation" Height="50"/>
                         <RadioButton x:Name="BaraholkaRadoButton" Click="BaraholkaRadoButton_Click" Style="{StaticResource NavRadioButtonStyle}" Tag="&#xEC25;" Content="Барахолка" GroupName="Navigation" Height="50"/>
                         <RadioButton x:Name="ForumRadiadoButton" Click="ForumRadiadoButton_Click" Style="{StaticResource NavRadioButtonStyle}" Tag="&#xE76E;" Content="Форум" GroupName="Navigation" Height="50"/>
+                        <RadioButton x:Name="MoneyRadiadoButton"  Style="{StaticResource NavRadioButtonStyle}" Tag="&#xE8EF;" Content="Курсы валют" GroupName="Navigation" Height="50" Click="MoneyButton_Click"/>
+                        <RadioButton x:Name="WeatherRadiadoButton" Style="{StaticResource NavRadioButtonStyle}" Tag="&#xE753;" Content="Погода" GroupName="Navigation" Height="50" Click="WeatherButton_Click"/>
                     </StackPanel>
                     <StackPanel  Grid.Row="2">
                         <RadioButton x:Name="SettingRadioButton" 

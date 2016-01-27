@@ -1,20 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Onliner_for_windows_10.ProfilePage
 {
-    public class ProfileData
+    public class ProfileData : INotifyPropertyChanged
     {
-        public string AccauntName { get; set; }
+        private string acName;
+
+        public string AccauntName { get { return acName; } set { acName = value; OnPropertyChanged("AccauntName"); } }
         public string Avatar { get; set; }
         public string Status { get; set; }
+        public string ProfileNumbers { get; set; }
+        public string Money { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            var eventHandler = this.PropertyChanged;
+            if (eventHandler != null)
+            {
+                eventHandler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
+
     public class ProfilePataList
     {
         public string Info { get; set; }
         public string Value { get; set; }
+    }
+
+    public class BirthDayDate
+    {
+        public string Day { get; set; }
+        public string Mounth { get; set; }
+        public string Year { get; set; }
     }
 }

@@ -1,156 +1,128 @@
-﻿using System;
-using System.Linq;
-using Windows.UI.Xaml;
+﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Onliner_for_windows_10.ParsingHtml;
 using Onliner_for_windows_10.Model;
-using HtmlAgilityPack;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Input;
-using Onliner_for_windows_10.UserControls;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.Foundation;
-using Windows.UI.Xaml.Documents;
-using System.Text.RegularExpressions;
-using MyToolkit.Multimedia;
-// Шаблон элемента пустой страницы задокументирован по адресу http://go.microsoft.com/fwlink/?LinkId=234238
+using Onliner_for_windows_10.Login;
+using System;
+using Windows.UI.Popups;
+using Windows.Phone.UI.Input;
 
 namespace Onliner_for_windows_10.Views
 {
-    /// <summary>
-    /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
-    /// </summary>
     public sealed partial class ViewNewsPage : Page
     {
         private ParsingFullNewsPage fullPagePars;
         private FullItemNews fullItem = new FullItemNews();
-        private HtmlDocument htmlDoc = new HtmlDocument();
-        private TextBlock textBlock = new TextBlock();
-        private WebView web = new WebView();
-        private Image image = new Image();
+        private Request request = new Request();
+        private string loaderPage = string.Empty;
+        private string NewsID = string.Empty;
 
         public ViewNewsPage()
         {
             this.InitializeComponent();
+            Loaded += ViewNewsPage_Loaded;
+            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
+            {
+                Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
+            }
         }
 
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
         {
-            string loadePage = e.Parameter.ToString();
-            fullPagePars = new ParsingFullNewsPage(loadePage);
+            e.Handled = true;
+            Frame.GoBack();
+        }
+
+        private async void ViewNewsPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            //set Main informatiom news
+            fullPagePars = new ParsingFullNewsPage(loaderPage);
             fullItem = await fullPagePars.NewsMainInfo();
             MainNewsData.DataContext = fullItem;
-            htmlDoc.LoadHtml(fullItem.PostItem);
-
-            var contentNews = htmlDoc.DocumentNode.Descendants("p").ToList();
-            foreach (var item in contentNews)
+            //
+            //fullitem content in <p>
+            //
+            var resUIElement = await fullPagePars.PostItemDate(loaderPage, fullItem);
+            foreach (var item in resUIElement)
             {
-                if (item.InnerHtml.Contains("<img>"))
-                {
-                    NewsListData.Children.Add(PostImage(item.Descendants("img").FirstOrDefault().Attributes["src"].Value));
-                }
-                else if (item.InnerHtml.Contains("iframe"))
-                {
-                    if (item.InnerHtml.Contains("https://www.youtube.com/embed/"))
-                    {
-                        string linkVideo = item.Descendants("iframe").FirstOrDefault().Attributes["src"].Value;
-                        string path = linkVideo.Replace("https://www.youtube.com/embed/", "");
-                        var pathUri = await YouTube.GetVideoUriAsync(path, YouTubeQuality.Quality480P);
-                        NewsListData.Children.Add(VideoPost(pathUri));
-                    }
-                    else
-                    {
-                        WebView web = new WebView();
-                        web.Settings.IsJavaScriptEnabled = true;
-                        web.Width = ActualWidth - 10;
-                        web.Height = 320;
-                        web.NavigateToString(item.InnerHtml);
-                        NewsListData.Children.Add(web);
-                    }
-                }
-                else
-                {
-                    NewsListData.Children.Add(PostItemTextBlock(item.InnerText));
-                }
+                NewsListData.Children.Add(item);
             }
-                 CommentsListView.ItemsSource = await fullPagePars.CommentsMainInfo();
+            //
+            //comments data
+            //
+            NewsID = fullItem.NewsID;
+            CommentsListView.ItemsSource = await fullPagePars.CommentsMainInfo();
         }
 
-        private TextBlock PostItemTextBlock(string text)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            textBlock = new TextBlock();
-            textBlock.Text = text;
-            textBlock.TextWrapping = TextWrapping.Wrap;
-            textBlock.Margin = new Thickness(0, 0, 0, 10);
-            return textBlock;
-        }
-
-        private Image PostImage(string uri)
-        {
-            image = new Image();
-            image.Source = new BitmapImage(new Uri(uri));
-            image.Margin = new Thickness(5);
-            return image;
-        }
-
-        private MediaElement VideoPost(YouTubeUri linkVideo)
-        {
-            MediaElement media = new MediaElement();
-            media.AutoPlay = false;
-            media.AreTransportControlsEnabled = true;
-            media.Margin = new Thickness(15);
-            media.Source = linkVideo.Uri;
-            return media;
+            //get page
+            loaderPage = e.Parameter.ToString();
         }
 
         private void FontSizeSetting_Click(object sender, RoutedEventArgs e)
         {
-            TextBlockFontSize tf = new TextBlockFontSize
-            {
-                FontSize = (int)ContentTextBlock.FontSize
-            };
+            //TextBlockFontSize tf = new TextBlockFontSize
+            //{
+            //    FontSize = (int)ContentTextBlock.FontSize
+            //};
 
-            Binding binding = new Binding
-            {
-                Source = tf,
-                Path = new PropertyPath("FontSize"),
-                Mode = BindingMode.TwoWay
-            };
-            ContentTextBlock.SetBinding(TextBlock.FontSizeProperty, binding);
+            //Binding binding = new Binding
+            //{
+            //    Source = tf,
+            //    Path = new PropertyPath("FontSize"),
+            //    Mode = BindingMode.TwoWay
+            //};
+            //ContentTextBlock.SetBinding(TextBlock.FontSizeProperty, binding);
 
-            Popup popup = new Popup
-            {
-                Child = tf,
-                IsLightDismissEnabled = true
-            };
+            //Popup popup = new Popup
+            //{
+            //    Child = tf,
+            //    IsLightDismissEnabled = true
+            //};
 
-            tf.Loaded += (dialogSender, dialogArgs) =>
-            {
-                // Получение позиции кнопки относительно экрана
-                Button btn = sender as Button;
-                Point pt = btn.TransformToVisual(null).TransformPoint(new Point(btn.ActualWidth / 2,
-                                                                                btn.ActualHeight / 2));
+            //tf.Loaded += (dialogSender, dialogArgs) =>
+            //{
+            //    // Получение позиции кнопки относительно экрана
+            //    Button btn = sender as Button;
+            //    Point pt = btn.TransformToVisual(null).TransformPoint(new Point(btn.ActualWidth / 2,
+            //                                                                    btn.ActualHeight / 2));
 
-                popup.HorizontalOffset = pt.X - tf.ActualWidth / 2;
+            //    popup.HorizontalOffset = pt.X - tf.ActualWidth / 2;
 
-                popup.VerticalOffset = 100;
-            };
-            popup.IsOpen = true;
+            //    popup.VerticalOffset = 100;
+            //};
+            //popup.IsOpen = true;
         }
 
         private void AppBarButton_Click(object sender, RoutedEventArgs e)
         {
-            ListView list = new ListView();
-            list.Width = ActualWidth;
-            list.Height = ActualHeight;
-            list = CommentsListView;
-            Popup popup = new Popup();
-            popup.Child = list;
-            popup.HorizontalOffset = 0;
-            popup.VerticalOffset = 50;
-            popup.IsOpen = true;
+            if (GridComments.Visibility != Visibility.Visible)
+            {
+                GridComments.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                GridComments.Visibility = Visibility.Collapsed;
+            }
+
+        }
+
+        private void AddCommentButton_Click(object sender, RoutedEventArgs e)
+        {
+            request.ResponceResult += Request_ResponceResult;
+            request.AddComments(NewsID, ContentCommentTextBox.Text);
+        }
+
+        private async void Request_ResponceResult(string ok)
+        {
+            if(ok=="ok")
+            {
+                MessageDialog messageExeption = new MessageDialog("Added");
+                await messageExeption.ShowAsync();
+            }
         }
     }
 }

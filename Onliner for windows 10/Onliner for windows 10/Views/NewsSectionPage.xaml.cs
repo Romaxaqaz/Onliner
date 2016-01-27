@@ -1,41 +1,36 @@
-﻿using HtmlAgilityPack;
-using Onliner_for_windows_10.Login;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+﻿using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using Onliner_for_windows_10.Model;
 using Onliner_for_windows_10.ParsingHtml;
-using Windows.UI.Xaml.Media.Imaging;
-
-// Шаблон элемента пустой страницы задокументирован по адресу http://go.microsoft.com/fwlink/?LinkId=234238
+using Onliner_for_windows_10.ProfilePage;
+using Windows.Phone.UI.Input;
 
 namespace Onliner_for_windows_10.Views
 {
     public sealed partial class NewsPage : Page
     {
         private ParsingNewsSection parsNewsSection;
-
+        CategoryNews _categoryNews = new CategoryNews();
         public NewsPage()
         {
             this.InitializeComponent();
             this.Loaded += MainOageLoaded;
+            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
+            {
+                Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
+            }
+        }
+
+        private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
+        {
+            e.Handled = true;
+            Frame.GoBack();
         }
 
         private void ShowNews(GridView _myGridView, string path)
         {
             parsNewsSection = new ParsingNewsSection(path);
-            MainPageProgressRing.IsActive = false;
             _myGridView.ItemsSource = parsNewsSection;
         }
 
@@ -45,28 +40,29 @@ namespace Onliner_for_windows_10.Views
             {
                 case 0:
                     ShowNews(TechGridView, "http://tech.onliner.by/");
-                    // CategoryNews.ItemsSource = _categoryNews.GetTechCategory();
+                    tech.IsChecked = true;
                     break;
                 case 1:
                     ShowNews(PeopleGridView, "http://people.onliner.by/");
-                    //CategoryNews.ItemsSource = _categoryNews.GetPeopleCategory();
+                    people.IsChecked = true;
                     break;
                 case 2:
                     ShowNews(AutoGridView, "http://auto.onliner.by/");
-                    // CategoryNews.ItemsSource = _categoryNews.GetAutoCategory();
+                    auto.IsChecked = true;
                     break;
                 case 3:
                     ShowNews(HouseGridView, "http://realt.onliner.by/");
-                    // CategoryNews.ItemsSource = _categoryNews.GetHouseCategory();
+                    house.IsChecked = true;
                     break;
                 case 4:
+                    soc.IsChecked = true;
                     break;
             }
         }
 
         private void MainOageLoaded(object sender, RoutedEventArgs e)
         {
-
+            Additionalinformation.Instance.NameActivePage = "Новости";
         }
 
         private void RadioButton_Click(object sender, RoutedEventArgs e)
@@ -75,7 +71,8 @@ namespace Onliner_for_windows_10.Views
             if (rad != null)
             {
                 int index = Convert.ToInt32(rad.Tag);
-                _flip.SelectedIndex = index;
+                FlipNews.SelectedIndex = index;
+                FlipNews.SelectionChanged -= FlipNews_SelectionChanged;
                 ChoiceDow(index);
             }
         }
@@ -127,6 +124,12 @@ namespace Onliner_for_windows_10.Views
         {
             Image img = sender as Image;
            ((ProgressRing)((Grid)img.Parent).Children[0]).IsActive = false;
+        }
+
+        private void FlipNews_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            FlipView flipView = sender as FlipView;
+            ChoiceDow(flipView.SelectedIndex);
         }
     }
 }

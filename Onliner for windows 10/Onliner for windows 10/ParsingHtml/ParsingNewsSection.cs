@@ -20,7 +20,6 @@ namespace Onliner_for_windows_10.ParsingHtml
 
         public ParsingNewsSection(string path)
         {
-            ParsingHtml parsHtml = new ParsingHtml();
             request.GetRequestOnliner(path);
             string resultGetRequest = request.ResultGetRequsetString;
             resultat.LoadHtml(resultGetRequest);
@@ -72,7 +71,7 @@ namespace Onliner_for_windows_10.ParsingHtml
             {
                 yield return item;
             }
-            
+
         }
     }
 }

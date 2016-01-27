@@ -12,7 +12,6 @@ namespace Onliner_for_windows_10.Model
     {
         public string Data { get;  set; }
 
-
         public string Image { get; set; }
 
         public string LikeCount { get; set; }

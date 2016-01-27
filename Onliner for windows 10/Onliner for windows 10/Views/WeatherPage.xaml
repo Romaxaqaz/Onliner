@@ -1,0 +1,235 @@
+﻿<Page
+    x:Class="Onliner_for_windows_10.Views.WeatherPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Onliner_for_windows_10.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:nowWeather="using:Onliner_for_windows_10.Model"
+    xmlns:converters="using:Onliner_for_windows_10"
+    mc:Ignorable="d">
+    <!--°-->
+    <Page.Resources>
+        <nowWeather:Now x:Key="NowWeather"/>
+        <converters:IndexImageTonameImageConverter x:Key="Convert"/>
+
+        <DataTemplate x:Key="TodayWeather">
+            <Grid Name="MorningTodayGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="80"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Name="TimeToDayTextBlock" Text="{Binding rusDateTime}" FontSize="18" FontWeight="Medium" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
+                    <TextBlock Name="TemperatureToDayTextBlock" FontSize="16" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Run Text="{Binding temperature}"/>
+                        <Run Text="°"/>
+                    </TextBlock>
+                </Grid>
+                <StackPanel Grid.Column="1" Grid.RowSpan="2" Width="80" Height="80">
+                    <Viewbox Name="TodayIcoWeather" Width="80" Height="80">
+                    <Path Fill="LightBlue" Data="{Binding falloutIcon, Converter={StaticResource Convert}}"/>
+                </Viewbox>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="WeeksWeather">
+            <Grid HorizontalAlignment="Stretch" Width="150">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding dateTextDayOfWeek}" FontSize="22" FontWeight="Bold" TextAlignment="Center" Margin="0,0,0,2" Grid.Row="0" Grid.ColumnSpan="2"/>
+                <TextBlock Text="{Binding dayOfMonth}" FontSize="18"  TextAlignment="Center" Margin="0,5,0,2" Grid.Row="1" Grid.ColumnSpan="2"/>
+
+                <Viewbox Stretch="Uniform" Width="70" Height="70" Grid.Row="2" Grid.ColumnSpan="2" Margin="2" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                    <Path Data="{StaticResource WeatherDaySVG}" Fill="Yellow" />
+                </Viewbox>
+
+                <Viewbox Stretch="Uniform" Width="20" Height="20" Grid.Row="3" Grid.Column="0" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Path Data="{StaticResource WeatherDaySVG}" Fill="Yellow" />
+                </Viewbox>
+                <TextBlock FontSize="22"  Grid.Row="3" TextAlignment="Center" Style="{ThemeResource SubtitleTextBlockStyle}" Margin="0,5,0,0" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Run Text="{Binding dayTemperature.min}"/>
+                    <Run Text="..."/>
+                    <Run Text="{Binding dayTemperature.max}"/>
+                </TextBlock>
+                <Line Grid.Row="3" Grid.ColumnSpan="2" X1="0" Y1="0" X2="{Binding ActualWidth}" Y2="0" Stroke="Gray" StrokeThickness="1" VerticalAlignment="Bottom"/>
+
+                <Viewbox Width="20" Height="20" Grid.Row="4" Grid.Column="0" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Path Data="{StaticResource WeatherNightSVG}" Fill="Gray" />
+                </Viewbox>
+                <TextBlock FontSize="18" Foreground="Gray"  Grid.Row="4" Grid.Column="1" TextAlignment="Center" Margin="0,5,0,0" Style="{ThemeResource   HeaderTextBlockStyle}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Run Text="{Binding nightTemperature.min}"/>
+                    <Run Text="..."/>
+                    <Run Text="{Binding nightTemperature.max}"/>
+                </TextBlock>
+                <Line Grid.Row="4" Grid.ColumnSpan="2" X1="0" Y1="0" X2="{Binding ActualWidth}" Y2="0" Stroke="Gray" StrokeThickness="1" VerticalAlignment="Bottom"/>
+
+                <Viewbox  Width="20" Height="20" Grid.Row="5" Grid.Column="0" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Path Data="{StaticResource Wind}" Fill="Black" />
+                </Viewbox>
+                <TextBlock FontSize="18" Grid.Row="5" Grid.Column="1" TextAlignment="Center" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Run Text="&#xEBE6;" FontFamily="Segoe MDL2 Assets" FontSize="12" Foreground="Gray"/>
+                    <Run Text="{Binding wind.direction.abbr.rus}" Foreground="Gray" />
+                    <Run Text="{Binding wind.speed[0]}"/>
+                </TextBlock>
+                <Line Grid.Row="5" Grid.ColumnSpan="2" X1="0" Y1="0" X2="{Binding ActualWidth}" Y2="0" Stroke="Gray" StrokeThickness="1" VerticalAlignment="Bottom"/>
+
+                <Viewbox Width="20" Height="20" Grid.Row="6" Grid.Column="0" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Path Data="{StaticResource Barometer}" Fill="Black" />
+                </Viewbox>
+                <TextBlock Text="{Binding pressureTitle}" FontSize="14" Grid.Row="6" Grid.Column="1"  TextAlignment="Center" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Line Grid.Row="6" Grid.ColumnSpan="2" X1="0" Y1="0" X2="{Binding ActualWidth}" Y2="0" Stroke="Gray" StrokeThickness="1" VerticalAlignment="Bottom"/>
+
+                <Viewbox Width="20" Height="20" Grid.Row="7" Grid.Column="0" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Path Data="{StaticResource Water}" Fill="Black" />
+                </Viewbox>
+                <TextBlock Text="{Binding humidityTitle}" FontSize="14" Grid.Row="7" TextAlignment="Center" Grid.Column="1"  Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Line Grid.Row="7" Grid.ColumnSpan="2" X1="0" Y1="0" X2="{Binding ActualWidth}" Y2="0" Stroke="Gray" StrokeThickness="1" VerticalAlignment="Bottom"/>
+                <StackPanel Grid.Column="3" Grid.RowSpan="8">
+                    <Line
+                        X1="2" Y1="5"
+                        X2="2" Y2="{Binding ActualHeight}"
+                        Stroke="Gray"
+                        StrokeThickness="1"/>
+                </StackPanel>
+            </Grid>
+
+
+
+
+        </DataTemplate>
+
+
+    </Page.Resources>
+    <ScrollViewer>
+        <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        
+            <!--MAIN WEATHER INFORMATION-->
+        <Grid Name="NowWeatherGrid" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Background="Yellow">
+            <StackPanel>
+                <TextBlock Name="WhereWeatherTown" FontSize="32" HorizontalAlignment="Center" Style="{ThemeResource HeaderTextBlockStyle}" Margin="0,5,0,0">
+                 <Run Text="Сейчас в "/>
+                   <Hyperlink Click="Hyperlink_Click"   >
+                       <Run Text="Минске"/>
+                   </Hyperlink>
+                </TextBlock>
+                    <Popup x:Name="TownWeather" IsOpen="False" IsLightDismissEnabled="True" HorizontalAlignment="Center">
+                        <Popup.ChildTransitions>
+                            <TransitionCollection>
+                                <PaneThemeTransition />
+                            </TransitionCollection>
+                        </Popup.ChildTransitions>
+                        <Grid Background="Orange">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="минск" Grid.Row="0" Grid.Column="0"/>
+                            <TextBlock Text="орша" Grid.Row="1" Grid.Column="0"/>
+                            <TextBlock Text="витебск" Grid.Row="2" Grid.Column="0"/>
+                            <TextBlock Text="могилев" Grid.Row="1" Grid.Column="1"/>
+                            <TextBlock Text="гомель" Grid.Row="2" Grid.Column="1"/>
+                            <TextBlock Text="барань" Grid.Row="1" Grid.Column="2"/>
+                            <TextBlock Text="брест" Grid.Row="2" Grid.Column="2"/>
+                        </Grid>
+                    </Popup>
+                <Grid HorizontalAlignment="Center" Margin="0,10,0,10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                 
+                        <Viewbox Name="MainIcoWeather" Width="150" Height="150" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0">
+                            <Path Fill="White" Data="{Binding falloutIcon, Converter={StaticResource Convert}}"/>
+                        </Viewbox>
+                        <TextBlock Name="MainTemperatureWeather" FontSize="85" FontWeight="Bold" Foreground="White" Grid.Row="0" Grid.Column="1" Style="{ThemeResource  BodyTextBlockStyle}">
+                           <Run Text="{Binding temperature}"/>°
+                        </TextBlock>
+                 
+                    <Grid Name="NowWeatherMoreGrid" HorizontalAlignment="Stretch" Grid.Row="1" Grid.ColumnSpan="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding phenomena}" FontSize="16" Grid.Row="0" Grid.ColumnSpan="3" TextAlignment="Center"/>
+                        <TextBlock Text="Ветер: " FontWeight="Bold" FontSize="16" Grid.Row="1" Grid.Column="0"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" FontSize="16" HorizontalAlignment="Stretch">
+                                <Run Text="{Binding wind.direction.title}"/>
+                                <Run Text="{Binding wind.speed[0]}"/>
+                                <Run Text="м/с"/>
+                        </TextBlock>
+                        <TextBlock Text="Давление: " FontWeight="Bold" FontSize="16" Grid.Row="2" Grid.Column="0"/>
+                        <TextBlock Text="{Binding pressureTitle}" FontSize="16" Grid.Row="2" Grid.Column="2"></TextBlock>
+                    </Grid>
+                </Grid>
+            </StackPanel>
+        </Grid>
+        <Line Stroke="Gray" StrokeThickness="1" X1="0" X2="{Binding ActualWidth}" Grid.Row="1" Grid.ColumnSpan="2" Margin="5"/>
+        <!--All Day temperature-->
+        <ScrollViewer Name="TodayWeatherScroll" Grid.Row="2" HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Visible" VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Disabled">
+            <ListView Name="TemperatureTodayListView" Grid.Row="2" ItemTemplate="{StaticResource TodayWeather}"
+                     HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsWrapGrid Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+            </ListView>
+        </ScrollViewer>
+        <Line Stroke="Gray" StrokeThickness="1" X1="0" X2="{Binding ActualWidth}" Grid.Row="3" Grid.ColumnSpan="2" Margin="5"/>
+        <!--Week WEATHER INFORMATION-->
+        <ScrollViewer Name="WeeksDayWeather" Grid.Row="4" HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Visible" VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Disabled">
+            <ListView Name="WeekWeather" ItemTemplate="{StaticResource WeeksWeather}"
+                      HorizontalAlignment="Center" VerticalAlignment="Center" >
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsWrapGrid Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+            </ListView>
+        </ScrollViewer>
+
+    </Grid>
+    </ScrollViewer>
+</Page>

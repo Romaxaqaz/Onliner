@@ -45,12 +45,16 @@ namespace Onliner_for_windows_10
         /// <param name="e">Сведения о запросе и обработке запуска.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+
             var applicationView = ApplicationView.GetForCurrentView();
-            var titleBar = applicationView.TitleBar;
-            titleBar.BackgroundColor = Colors.Orange;
-            titleBar.ForegroundColor = Colors.White;
-            titleBar.ButtonBackgroundColor = Colors.Orange;
-            titleBar.ButtonForegroundColor = Colors.Black;
+            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
+            {
+                var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+                statusBar.BackgroundColor = Windows.UI.Colors.Yellow;
+                statusBar.ForegroundColor = Windows.UI.Colors.Black;
+                statusBar.BackgroundOpacity = 1;
+            }
+
 
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
@@ -105,7 +109,7 @@ namespace Onliner_for_windows_10
                 }
                 else
                 {
-                    rootFrame.Navigate(typeof(ProfilePage.ProfilePage), e.Arguments);
+                    rootFrame.Navigate(typeof(Views.NewsPage), e.Arguments);
                 }
                 
             }

@@ -6,12 +6,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-
 namespace Onliner_for_windows_10.ParsingHtml
 {
     public class ParsingHtml
     {
-
         //Input parametr: <(1)div (2)class="(3)one"><(4)span></div>
         public string GetDataHtml(string tagName, string className, string elementTag)
         {
@@ -21,6 +19,7 @@ namespace Onliner_for_windows_10.ParsingHtml
                FirstOrDefault();
             return node.InnerHtml.ToString();
         }
+
         public string GetDataText(string tagName, string className, string elementTag)
         {
             HtmlDocument resultat = new HtmlDocument();

@@ -9,6 +9,8 @@ namespace Onliner_for_windows_10.Model
 {
     public class FullItemNews : IFullNewsItem
     {
+        public string NewsID { get; set; }
+
         public string Author { get; set; }
 
         public string Category { get; set; }

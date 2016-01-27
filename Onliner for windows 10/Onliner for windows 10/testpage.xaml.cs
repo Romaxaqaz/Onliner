@@ -52,42 +52,29 @@ namespace Onliner_for_windows_10
 
         private void player_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            if (!player.IsFullWindow)
-            {
-                player.IsFullWindow = true;
-            }
-            else
-            {
-                player.IsFullWindow = false;
-            }
+           
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var myimg = new BitmapImage(new Uri("ms-appx:///Image/123.jpg"));
-            Application.Current.Resources["Image1"] = myimg;
-            XXX.Source = null;
-            XXX.Source = myimg;
+            
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            PopUpTest.Width = ActualWidth;
-            PopUpTest.Height = ActualHeight;
-            PopUpTest.IsOpen = true;
+          
         }
 
         
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
-            PopUpTest.IsOpen = false;
+           
         }
 
         private void PopUpTest_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            PopUpTest.Width = e.NewSize.Width;
-            PopUpTest.Height = e.NewSize.Height;
+           
         }
     }
 }

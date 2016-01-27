@@ -18,6 +18,9 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>Onliner for windows 10_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxPackageDir>F:\universal app\</AppxPackageDir>
+    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
@@ -101,13 +104,23 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\ConvertToAjaxTime.cs" />
+    <Compile Include="Converters\For Messages\JavaScriptTimeToSharp.cs" />
+    <Compile Include="Converters\For Messages\UnreadVisibilityConverter.cs" />
+    <Compile Include="Converters\IndexImageTonameImageConverter.cs" />
     <Compile Include="Converters\TextTrimmingConverter.cs" />
+    <Compile Include="Converters\UpdateLogoImage.cs" />
+    <Compile Include="ImageCollection\SVGImage.cs" />
+    <Compile Include="Model\Additionalinformation.cs" />
+    <Compile Include="Model\BestrateRespose.cs" />
+    <Compile Include="Model\Catalog\CategoryListViewModel.cs" />
+    <Compile Include="Model\Catalog\ElectronicSection.cs" />
     <Compile Include="Model\CategoryNews.cs" />
     <Compile Include="Converters\TextIcoNewsConverter.cs" />
     <Compile Include="Abstract\INewsItems.cs" />
     <Compile Include="IsTypePresentStateTrigger.cs" />
     <Compile Include="Login\JsonParams.cs" />
-    <Compile Include="Login\Request.cs" />
+    <Compile Include="Login\HttpRequest.cs" />
     <Compile Include="Login\SerializeCookie.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -115,10 +128,27 @@
     <Compile Include="Model\CommentsItem.cs" />
     <Compile Include="Model\FullItemNews.cs" />
     <Compile Include="Model\ItemsNews.cs" />
-    <Compile Include="MyCookie.cs" />
-    <Compile Include="ParsingHtml\ParsingFullNewsPage.cs" />
+    <Compile Include="Model\MessageJson.cs" />
     <Compile Include="ParsingHtml\ParsingHtml.cs" />
+    <Compile Include="Tiles\DesignTimeData.cs" />
+    <Compile Include="Tiles\LiveTileBuilder.cs" />
+    <Compile Include="Tiles\TileData.cs" />
+    <Compile Include="Tiles\TileTemplates\SquareTile.xaml.cs">
+      <DependentUpon>SquareTile.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tiles\TileTemplates\WideTile.xaml.cs">
+      <DependentUpon>WideTile.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\MessegeSenderControl.xaml.cs">
+      <DependentUpon>MessegeSenderControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Message\MessagePage.xaml.cs">
+      <DependentUpon>MessagePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Model\WeatherJSon.cs" />
+    <Compile Include="ParsingHtml\ParsingFullNewsPage.cs" />
     <Compile Include="ParsingHtml\ParsingNewsSection.cs" />
+    <Compile Include="ProfilePage\EditProfileData.cs" />
     <Compile Include="ProfilePage\ProfileData.cs" />
     <Compile Include="Converters\ImageUrlConverter.cs" />
     <Compile Include="testpage.xaml.cs">
@@ -127,11 +157,17 @@
     <Compile Include="UserControls\ImageLoader.xaml.cs">
       <DependentUpon>ImageLoader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\TabHeader.xaml.cs">
+      <DependentUpon>TabHeader.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\TextBlockFontSize.xaml.cs">
       <DependentUpon>TextBlockFontSize.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\YouTubePlayerControl.xaml.cs">
       <DependentUpon>YouTubePlayerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CatalogPage.xaml.cs">
+      <DependentUpon>CatalogPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\NewsSectionPage.xaml.cs">
       <DependentUpon>NewsSectionPage.xaml</DependentUpon>
@@ -140,11 +176,17 @@
       <DependentUpon>ProfilePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\Profile\EditProfilePage.xaml.cs">
+      <DependentUpon>EditProfilePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Shell.xaml.cs">
       <DependentUpon>Shell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ViewNewsPage.xaml.cs">
       <DependentUpon>ViewNewsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WeatherPage.xaml.cs">
+      <DependentUpon>WeatherPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -154,16 +196,33 @@
     <None Include="Onliner for windows 10_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\BadgeLogo.scale-100.png" />
+    <Content Include="Assets\BadgeLogo.scale-125.png" />
+    <Content Include="Assets\BadgeLogo.scale-150.png" />
+    <Content Include="Assets\BadgeLogo.scale-200.png" />
+    <Content Include="Assets\BadgeLogo.scale-400.png" />
     <Content Include="Assets\LockScreenLogo.scale-100.png" />
-    <Content Include="Image\123.jpg" />
-    <Content Include="Image\6tag_160815-221534.jpg" />
+    <Content Include="Assets\WeatherImage\A6.png" />
+    <Content Include="ImageCollection\background.png" />
+    <Content Include="ImageCollection\logoApp.png" />
+    <Content Include="ImageCollection\MainImageLogo.png" />
+    <Content Include="Assets\SplashScreen.scale-100.png" />
+    <Content Include="Assets\Square150x150Logo.scale-100.png" />
+    <Content Include="Assets\Square310x310Logo.scale-100.png" />
+    <Content Include="Assets\StoreLogo.scale-100.png" />
+    <Content Include="Assets\StoreLogo.scale-125.png" />
+    <Content Include="Assets\StoreLogo.scale-150.png" />
+    <Content Include="Assets\StoreLogo.scale-200.png" />
+    <Content Include="Assets\StoreLogo.scale-400.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-100.png" />
+    <Content Include="ImageCollection\123.jpg" />
+    <Content Include="ImageCollection\6tag_160815-221534.jpg" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
     <Content Include="Assets\Square150x150Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
@@ -175,7 +234,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Test.xaml">
+    <Page Include="Tiles\TileTemplates\SquareTile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tiles\TileTemplates\WideTile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\MessegeSenderControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Message\MessagePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -191,11 +262,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\TabHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\TextBlockFontSize.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\YouTubePlayerControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CatalogPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -207,6 +286,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Profile\EditProfilePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Shell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -215,17 +298,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\WeatherPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Style\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="HtmlAgilityPack-PCL">
-      <HintPath>C:\Users\romax\Desktop\HtmlAgilityPack-PCL.dll</HintPath>
-    </Reference>
+    <SDKReference Include="WindowsMobile, Version=10.0.10586.0">
+      <Name>Windows Mobile Extensions for the UWP</Name>
+    </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
