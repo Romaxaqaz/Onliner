@@ -68,15 +68,23 @@ namespace Onliner_for_windows_10.Login
         /// </summary>
         public async void GetRequestOnliner(string url)
         {
-            Loadcookie("cookie");
-            HttpClientHandler handler = new HttpClientHandler();
-            if (CookieSession != null)
+            try
             {
-                handler.CookieContainer = CookieSession;
+                Loadcookie("cookie");
+                HttpClientHandler handler = new HttpClientHandler();
+                if (CookieSession != null)
+                {
+                    handler.CookieContainer = CookieSession;
+                }
+                HttpClient httpClient = new HttpClient(handler);
+                var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
+                ResultGetRequsetString = await response.Content.ReadAsStringAsync();
             }
-            HttpClient httpClient = new HttpClient(handler);
-            var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
-            ResultGetRequsetString = await response.Content.ReadAsStringAsync();
+            catch(WebException ex)
+            {
+                MessageDialog message = new MessageDialog(ex.ToString());
+                await message.ShowAsync();
+            }
         }
 
         /// <summary>
@@ -207,8 +215,6 @@ namespace Onliner_for_windows_10.Login
             postData.Append("birthdayView=" + birthdayView);
 
             PostRequestFormData(EditPreferencesProfileApi, "profile.onliner.by", "http://profile.onliner.by", postData.ToString());
-
-
         }
 
         /// <summary>
@@ -397,26 +403,34 @@ namespace Onliner_for_windows_10.Login
         /// </summary>
         public async void PostRequestFormData(string url, string host, string origin, string formdata)
         {
-            HttpClientHandler handler = new HttpClientHandler();
-            if (CookieSession != null)
+            try
             {
-                handler.CookieContainer = CookieSession;
-            }
-            HttpClient httpClient = new HttpClient(handler);
-            HttpRequestMessage postRequest = new HttpRequestMessage(HttpMethod.Post, url);
-            postRequest.Headers.Add("Accept", "application/json, text/javascript, */*; q=0.01");
-            postRequest.Headers.Add("Accept-Encoding", "gzip, deflate");
-            postRequest.Headers.Add("Accept-Language", "en-US,en;q=0.8,ru;q=0.6");
-            postRequest.Headers.Add("Host", host);
-            postRequest.Headers.Add("Origin", origin);
-            postRequest.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36");
+                HttpClientHandler handler = new HttpClientHandler();
+                if (CookieSession != null)
+                {
+                    handler.CookieContainer = CookieSession;
+                }
+                HttpClient httpClient = new HttpClient(handler);
+                HttpRequestMessage postRequest = new HttpRequestMessage(HttpMethod.Post, url);
+                postRequest.Headers.Add("Accept", "application/json, text/javascript, */*; q=0.01");
+                postRequest.Headers.Add("Accept-Encoding", "gzip, deflate");
+                postRequest.Headers.Add("Accept-Language", "en-US,en;q=0.8,ru;q=0.6");
+                postRequest.Headers.Add("Host", host);
+                postRequest.Headers.Add("Origin", origin);
+                postRequest.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36");
 
-            postRequest.Content = new System.Net.Http.StringContent(formdata, UnicodeEncoding.UTF8, "application/x-www-form-urlencoded");
-            response = httpClient.SendAsync(postRequest).Result;
-            if (response.StatusCode == HttpStatusCode.OK)
+                postRequest.Content = new System.Net.Http.StringContent(formdata, UnicodeEncoding.UTF8, "application/x-www-form-urlencoded");
+                response = httpClient.SendAsync(postRequest).Result;
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    MessageDialog sdasd = new MessageDialog("Save");
+                    await sdasd.ShowAsync();
+                }
+            }
+            catch (WebException ex)
             {
-                MessageDialog sdasd = new MessageDialog("Save");
-                await sdasd.ShowAsync();
+                MessageDialog message = new MessageDialog(ex.ToString());
+                await message.ShowAsync();
             }
         }
 

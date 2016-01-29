@@ -1,6 +1,8 @@
 ﻿using Onliner_for_windows_10.Login;
 using Onliner_for_windows_10.ProfilePage;
+using System;
 using System.Collections.Generic;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -22,23 +24,35 @@ namespace Onliner_for_windows_10.Views
             Loaded += WeatherPage_Loaded;
         }
 
-        private void WeatherPage_Loaded(object sender, RoutedEventArgs e)
+        private async void WeatherPage_Loaded(object sender, RoutedEventArgs e)
         {
+            //name page
             Additionalinformation.Instance.NameActivePage = "Погода";
-            var responsseObject = request.Weather();
-            NowWeatherGrid.DataContext = responsseObject.Result.now;
-            NowWeatherMoreGrid.DataContext = responsseObject.Result.now;
 
-            if (responsseObject.Result.today.morning != null)
+            try
             {
-                temperatureToday.Add(responsseObject.Result.today.morning);
-            }
-            temperatureToday.Add(responsseObject.Result.today.day);
-            temperatureToday.Add(responsseObject.Result.today.evening);
-            temperatureToday.Add(responsseObject.Result.today.night);
+                //get weather
+                var responsseObject = request.Weather();
 
-            TemperatureTodayListView.ItemsSource = temperatureToday;
-            WeekWeather.ItemsSource = responsseObject.Result.forecast;
+                NowWeatherGrid.DataContext = responsseObject.Result.now;
+                NowWeatherMoreGrid.DataContext = responsseObject.Result.now;
+
+                if (responsseObject.Result.today.morning != null)
+                {
+                    temperatureToday.Add(responsseObject.Result.today.morning);
+                }
+                temperatureToday.Add(responsseObject.Result.today.day);
+                temperatureToday.Add(responsseObject.Result.today.evening);
+                temperatureToday.Add(responsseObject.Result.today.night);
+
+                TemperatureTodayListView.ItemsSource = temperatureToday;
+                WeekWeather.ItemsSource = responsseObject.Result.forecast;
+            }
+            catch(FormatException ex)
+            {
+                MessageDialog message = new MessageDialog(ex.ToString());
+                await message.ShowAsync();
+            }
         }
 
         private void Hyperlink_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)

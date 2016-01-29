@@ -62,9 +62,17 @@ namespace Onliner_for_windows_10.Model.Message
             Additionalinformation.Instance.NameActivePage = "Личные сообщения";
         }
 
-        private void PivotMessage_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void PivotMessage_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            UpdateItemSourceListView(((Pivot)sender).SelectedIndex);
+            try
+            {
+                UpdateItemSourceListView(((Pivot)sender).SelectedIndex);
+            }
+            catch (FormatException ex)
+            {
+                MessageDialog message = new MessageDialog(ex.ToString());
+                await message.ShowAsync();
+            }
         }
 
         private async void UpdateItemSourceListView(int index)

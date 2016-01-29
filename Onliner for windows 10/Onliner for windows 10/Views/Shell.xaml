@@ -76,7 +76,6 @@
                     <!--{Binding NameActivePage}-->
                 </StackPanel>
                 <StackPanel x:Name="MessageStackPanel" Orientation="Horizontal" Grid.Column="4">
-                    
                     <Button Name="MessagePage" Width="50" Padding="0" Margin="0"
                         Height="50"  Click="Message_Click" BorderThickness="0" Background="Yellow">
                         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -90,11 +89,9 @@
                         </Grid>
                     </Button>
                 </StackPanel>
-
-
-
             </Grid>
         </StackPanel>
+        
         <!-- Hamburger menu-->
         <SplitView x:Name="SplitView"  
                    OpenPaneLength="250" 

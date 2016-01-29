@@ -10,7 +10,14 @@ namespace Onliner_for_windows_10.ParsingHtml
 {
     public class ParsingHtml
     {
-        //Input parametr: <(1)div (2)class="(3)one"><(4)span></div>
+        /// <summary>
+        /// Parsing html
+        /// </summary>
+        /// <example><(1)div (2)class="(3)one"><(4)span></div></example>
+        /// <param name="tagName"></param>
+        /// <param name="className"></param>
+        /// <param name="elementTag"></param>
+        /// <returns>html</returns>
         public string GetDataHtml(string tagName, string className, string elementTag)
         {
             HtmlDocument resultat = new HtmlDocument();
@@ -20,6 +27,14 @@ namespace Onliner_for_windows_10.ParsingHtml
             return node.InnerHtml.ToString();
         }
 
+        /// <summary>
+        /// Parsing html
+        /// </summary>
+        /// <example><(1)div (2)class="(3)one"><(4)span></div></example>
+        /// <param name="tagName"></param>
+        /// <param name="className"></param>
+        /// <param name="elementTag"></param>
+        /// <returns>text</returns>
         public string GetDataText(string tagName, string className, string elementTag)
         {
             HtmlDocument resultat = new HtmlDocument();
@@ -50,6 +65,5 @@ namespace Onliner_for_windows_10.ParsingHtml
             }
             return finalResult;
         }
-
     }
 }

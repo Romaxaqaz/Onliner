@@ -212,8 +212,7 @@
         			FontSize="15"
                     ContinuumNavigationTransitionInfo.IsEntranceElement="True" Grid.Row="1" Style="{ThemeResource BodyTextBlockStyle}"/>
                 <Grid Grid.Row="2">
-                    <ProgressRing Height="50" Width="50" Foreground="Blue" IsActive="True"/>
-                   <Image Name="ImageListSectionNews" Opacity="100" Source="{Binding Image, Converter={StaticResource ImageUrlConverter}}"   Loaded="Image_Loaded"/>
+                    <Image Name="ImageListSectionNews" Opacity="100" Source="{Binding Image, Converter={StaticResource ImageUrlConverter}}"/>
                 </Grid>
                 <Grid HorizontalAlignment="Stretch" Grid.Row="3">
                     <Grid.ColumnDefinitions>

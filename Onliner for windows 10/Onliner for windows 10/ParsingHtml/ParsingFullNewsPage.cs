@@ -31,6 +31,9 @@ namespace Onliner_for_windows_10.ParsingHtml
         private readonly string AttributeTagSRC = "src";
         #endregion
 
+        /// <summary>
+        /// <value> Background color listview item</value>
+        /// </summary>
         private readonly string BackGroundColorListItem = "#FFF7F7F7";
         private string urlPageNews = string.Empty;
         private string loadePage = string.Empty;
@@ -52,18 +55,22 @@ namespace Onliner_for_windows_10.ParsingHtml
             urlPageNews = page;
             loadePage = GetHtmlPage();
         }
+
+        /// <summary>
+        /// Get html page to string
+        /// </summary>
+        /// <returns>string page</returns>
         private string GetHtmlPage()
         {
-            //
-            //get request
-            //
             request.GetRequestOnliner(urlPageNews);
             string resultGetRequest = request.ResultGetRequsetString;
             return resultGetRequest;
         }
-        //
-        //Get collention news data
-        //
+       
+        /// <summary>
+        /// News information
+        /// </summary>
+        /// <returns>news item object</returns>
         public async Task<FullItemNews> NewsMainInfo()
         {
             FullItemNews fullNews = new FullItemNews();
@@ -85,6 +92,12 @@ namespace Onliner_for_windows_10.ParsingHtml
             return fullNews;
         }
 
+        /// <summary>
+        /// Content news
+        /// </summary>
+        /// <param name="loaderPage"></param>
+        /// <param name="fullItem"></param>
+        /// <returns></returns>
         public async Task<List<UIElement>> PostItemDate(string loaderPage, FullItemNews fullItem)
         {
 
@@ -122,10 +135,8 @@ namespace Onliner_for_windows_10.ParsingHtml
                 }
                 else
                 {
-
                     controlList.Add(PostItemTextBlock(item.InnerHtml));
-                }
-                
+                }     
             }
             if (contentNewsULtag != null)
             {
@@ -137,9 +148,10 @@ namespace Onliner_for_windows_10.ParsingHtml
             return controlList;
         }
 
-        //
-        //get comments collention
-        //
+        /// <summary>
+        /// Comments data
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<CommentsItem>> CommentsMainInfo()
         {
             CommentsItem commentsParams;
@@ -208,8 +220,4 @@ namespace Onliner_for_windows_10.ParsingHtml
             return media;
         }
     }
-
-
-
-
 }

@@ -48,28 +48,30 @@ namespace Onliner_for_windows_10.Views
                 this.SplitView.IsPaneOpen = false;
             }
         }
+
         private void NewsRadioButton_Click(object sender, RoutedEventArgs e)
         {
             this.SplitView.IsPaneOpen = false;
             FrameNavigateToPage(typeof(NewsPage));
         }
+
         private void CatalogRadioButton_Click(object sender, RoutedEventArgs e)
         {
 
             this.SplitView.IsPaneOpen = false;
             FrameNavigateToPage(typeof(CatalogPage));
         }
+
         private void BaraholkaRadoButton_Click(object sender, RoutedEventArgs e)
         {
-
-            this.SplitView.IsPaneOpen = false;
-            FrameNavigateToPage(typeof(WeatherPage));
+            //coming soon
         }
+
         private void ForumRadiadoButton_Click(object sender, RoutedEventArgs e)
         {
-            this.SplitView.IsPaneOpen = false;
-            FrameNavigateToPage(typeof(ViewNewsPage));
+            //coming soon
         }
+
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             var frame = this.DataContext as Frame;
@@ -78,28 +80,10 @@ namespace Onliner_for_windows_10.Views
                 frame.GoBack();
             }
         }
+
         private void SettingRadioButton_Click(object sender, RoutedEventArgs e)
         {
-            FrameNavigateToPage(typeof(MainPage));
-        }
-
-        private static readonly string[] carList = {
-                "Saturn", "Isuzu", "Toyota", "Nissan", "Ford", "Chevy", "Honda", "Hummer", "Tata", "Mahindra" };
-        private void mySearchBox_SuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
-        {
-            Windows.ApplicationModel.Search.SearchSuggestionCollection suggestionCollection = args.Request.SearchSuggestionCollection;
-            foreach (string suggestion in carList)
-            {
-                if (suggestion.StartsWith(args.QueryText, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    suggestionCollection.AppendQuerySuggestion(suggestion);
-                }
-            }
-        }
-
-        private void mySearchBox_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
-        {
-
+            //coming soon
         }
 
         private void Message_Click(object sender, RoutedEventArgs e)
@@ -117,16 +101,6 @@ namespace Onliner_for_windows_10.Views
         {
             this.SplitView.IsPaneOpen = false;
             FrameNavigateToPage(typeof(testpage));
-        }
-
-        private void Message_Click_1(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void MessagePage_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void ProfileButton_Click(object sender, RoutedEventArgs e)

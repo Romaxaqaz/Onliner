@@ -23,6 +23,7 @@ namespace Onliner_for_windows_10.Views
         {
             this.InitializeComponent();
             Loaded += ViewNewsPage_Loaded;
+            //back button mobile event
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
             {
                 Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
@@ -38,20 +39,27 @@ namespace Onliner_for_windows_10.Views
         private async void ViewNewsPage_Loaded(object sender, RoutedEventArgs e)
         {
             //set Main informatiom news
-            fullPagePars = new ParsingFullNewsPage(loaderPage);
-            fullItem = await fullPagePars.NewsMainInfo();
-            MainNewsData.DataContext = fullItem;
-            //
+            try
+            {
+                fullPagePars = new ParsingFullNewsPage(loaderPage);
+                fullItem = await fullPagePars.NewsMainInfo();
+                MainNewsData.DataContext = fullItem;
+            }
+            catch (FormatException ex)
+            {
+                MessageDialog message = new MessageDialog(ex.ToString());
+                await message.ShowAsync();
+            }
+
+
             //fullitem content in <p>
-            //
             var resUIElement = await fullPagePars.PostItemDate(loaderPage, fullItem);
             foreach (var item in resUIElement)
             {
                 NewsListData.Children.Add(item);
             }
-            //
+
             //comments data
-            //
             NewsID = fullItem.NewsID;
             CommentsListView.ItemsSource = await fullPagePars.CommentsMainInfo();
         }
@@ -62,41 +70,7 @@ namespace Onliner_for_windows_10.Views
             loaderPage = e.Parameter.ToString();
         }
 
-        private void FontSizeSetting_Click(object sender, RoutedEventArgs e)
-        {
-            //TextBlockFontSize tf = new TextBlockFontSize
-            //{
-            //    FontSize = (int)ContentTextBlock.FontSize
-            //};
-
-            //Binding binding = new Binding
-            //{
-            //    Source = tf,
-            //    Path = new PropertyPath("FontSize"),
-            //    Mode = BindingMode.TwoWay
-            //};
-            //ContentTextBlock.SetBinding(TextBlock.FontSizeProperty, binding);
-
-            //Popup popup = new Popup
-            //{
-            //    Child = tf,
-            //    IsLightDismissEnabled = true
-            //};
-
-            //tf.Loaded += (dialogSender, dialogArgs) =>
-            //{
-            //    // Получение позиции кнопки относительно экрана
-            //    Button btn = sender as Button;
-            //    Point pt = btn.TransformToVisual(null).TransformPoint(new Point(btn.ActualWidth / 2,
-            //                                                                    btn.ActualHeight / 2));
-
-            //    popup.HorizontalOffset = pt.X - tf.ActualWidth / 2;
-
-            //    popup.VerticalOffset = 100;
-            //};
-            //popup.IsOpen = true;
-        }
-
+        // visibility comments grid
         private void AppBarButton_Click(object sender, RoutedEventArgs e)
         {
             if (GridComments.Visibility != Visibility.Visible)
@@ -107,9 +81,9 @@ namespace Onliner_for_windows_10.Views
             {
                 GridComments.Visibility = Visibility.Collapsed;
             }
-
         }
 
+        // add comments button
         private void AddCommentButton_Click(object sender, RoutedEventArgs e)
         {
             request.ResponceResult += Request_ResponceResult;
@@ -120,7 +94,7 @@ namespace Onliner_for_windows_10.Views
         {
             if(ok=="ok")
             {
-                MessageDialog messageExeption = new MessageDialog("Added");
+                MessageDialog messageExeption = new MessageDialog("Add");
                 await messageExeption.ShowAsync();
             }
         }

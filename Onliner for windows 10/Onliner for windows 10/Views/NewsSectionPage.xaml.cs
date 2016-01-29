@@ -5,13 +5,15 @@ using Onliner_for_windows_10.Model;
 using Onliner_for_windows_10.ParsingHtml;
 using Onliner_for_windows_10.ProfilePage;
 using Windows.Phone.UI.Input;
+using Windows.UI.Popups;
 
 namespace Onliner_for_windows_10.Views
 {
     public sealed partial class NewsPage : Page
     {
         private ParsingNewsSection parsNewsSection;
-        CategoryNews _categoryNews = new CategoryNews();
+        private CategoryNews _categoryNews = new CategoryNews();
+
         public NewsPage()
         {
             this.InitializeComponent();
@@ -34,29 +36,37 @@ namespace Onliner_for_windows_10.Views
             _myGridView.ItemsSource = parsNewsSection;
         }
 
-        private void ChoiceDow(int index)
+        private async void ChoiceDow(int index)
         {
-            switch (index)
+            try
             {
-                case 0:
-                    ShowNews(TechGridView, "http://tech.onliner.by/");
-                    tech.IsChecked = true;
-                    break;
-                case 1:
-                    ShowNews(PeopleGridView, "http://people.onliner.by/");
-                    people.IsChecked = true;
-                    break;
-                case 2:
-                    ShowNews(AutoGridView, "http://auto.onliner.by/");
-                    auto.IsChecked = true;
-                    break;
-                case 3:
-                    ShowNews(HouseGridView, "http://realt.onliner.by/");
-                    house.IsChecked = true;
-                    break;
-                case 4:
-                    soc.IsChecked = true;
-                    break;
+                switch (index)
+                {
+                    case 0:
+                        ShowNews(TechGridView, "http://tech.onliner.by/");
+                        tech.IsChecked = true;
+                        break;
+                    case 1:
+                        ShowNews(PeopleGridView, "http://people.onliner.by/");
+                        people.IsChecked = true;
+                        break;
+                    case 2:
+                        ShowNews(AutoGridView, "http://auto.onliner.by/");
+                        auto.IsChecked = true;
+                        break;
+                    case 3:
+                        ShowNews(HouseGridView, "http://realt.onliner.by/");
+                        house.IsChecked = true;
+                        break;
+                    case 4:
+                        soc.IsChecked = true;
+                        break;
+                }
+            }
+            catch (FormatException ex)
+            {
+                MessageDialog message = new MessageDialog(ex.ToString());
+                await message.ShowAsync();
             }
         }
 
@@ -118,12 +128,6 @@ namespace Onliner_for_windows_10.Views
         {
             //change datatemplate
             TechGridView.ItemTemplate = (DataTemplate)this.Resources["ListViewMobileTrigger"];
-        }
-
-        private void Image_Loaded(object sender, RoutedEventArgs e)
-        {
-            Image img = sender as Image;
-           ((ProgressRing)((Grid)img.Parent).Children[0]).IsActive = false;
         }
 
         private void FlipNews_SelectionChanged(object sender, SelectionChangedEventArgs e)

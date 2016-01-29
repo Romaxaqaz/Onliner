@@ -11,6 +11,12 @@ namespace Onliner_for_windows_10.Login
 {
     public static class SerializeCookie
     {
+        /// <summary>
+        /// Serialize cookie after aothorization
+        /// </summary>
+        /// <param name="cookies"></param>
+        /// <param name="address"></param>
+        /// <param name="stream"></param>
         public static void Serialize(CookieCollection cookies, Uri address, Stream stream)
         {
             DataContractSerializer formatter = new DataContractSerializer(typeof(List<Cookie>));
@@ -25,6 +31,12 @@ namespace Onliner_for_windows_10.Login
             formatter.WriteObject(stream, cookieList);
         }
 
+        /// <summary>
+        /// Deserialize cookie after aothorization
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="uri"></param>
+        /// <returns></returns>
         public static CookieContainer Deserialize(Stream stream, Uri uri)
         {
             List<Cookie> cookies = new List<Cookie>();

@@ -18,6 +18,10 @@ namespace Onliner_for_windows_10.ParsingHtml
         private Request request = new Request();
         private ItemsNews _itemNews;
 
+        /// <summary>
+        /// parsing list news
+        /// </summary>
+        /// <param name="path">url page section news</param>
         public ParsingNewsSection(string path)
         {
             request.GetRequestOnliner(path);
@@ -65,6 +69,10 @@ namespace Onliner_for_windows_10.ParsingHtml
             }
         }
 
+        /// <summary>
+        /// list news item
+        /// </summary>
+        /// <returns>items</returns>
         public IEnumerator GetEnumerator()
         {
             foreach (var item in myItems)

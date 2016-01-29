@@ -134,18 +134,12 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
-
             <Grid Name="HelpRadioButton" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="50" Background="#FFEAEAEA">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <StackPanel Orientation="Horizontal" Grid.Column="2">
-                    <Button x:Name="FontSizeSetting"  Width="50" Height="50" Content="&#xE1C8;" FontSize="20" FontFamily="Segoe MDL2 Assets" Click="FontSizeSetting_Click"/>
-                    <Button Width="50" Height="50" Content="&#xE72D;" FontSize="20" FontFamily="Segoe MDL2 Assets"/>
-                    <Button Width="50" Height="50" Content="&#xE12B;" FontSize="20" FontFamily="Segoe MDL2 Assets" />
-                </StackPanel>
             </Grid>
 
             <Grid Margin="0,50,0,0" x:Name="MainGrid">
@@ -216,15 +210,14 @@
                     </Grid>
                 </Grid>
             </Grid>
-
         </Grid>
-        
         <AppBar Name="AppBarForMobile" VerticalAlignment="Bottom" Grid.Row="1">
             <Grid HorizontalAlignment="Right" d:IsHidden="True">
                 <AppBarButton Label="Комментарии" Icon="Comment" Click="AppBarButton_Click"/>
             </Grid>
         </AppBar>
     </Grid>
+    
     <Page.Transitions>
         <TransitionCollection>
             <PaneThemeTransition Edge="Bottom"/>

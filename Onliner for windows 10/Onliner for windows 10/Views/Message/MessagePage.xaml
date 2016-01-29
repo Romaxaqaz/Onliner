@@ -481,6 +481,10 @@
                         <Setter Target="ViewMessageContent.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="ViewMessageContent.(Visibility)" Value="Collapsed" />
                         <Setter Target="PopupMessageSender.(Grid.Column)" Value="0" />
+                        <Setter Target="PopupMessageSender.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="PopupMessageSender.(Grid.RowSpan)" Value="3" />
+                        <Setter Target="MessageSender.(Grid.ColumnSpan)" Value="1"/>
+                        <Setter Target="MessageSender.(Grid.RowSpan)" Value="1"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="OtherState">
@@ -490,6 +494,8 @@
                     <VisualState.Setters>
                         <Setter Target="ViewMessageContent.(Grid.Column)" Value="1" />
                         <Setter Target="PopupMessageSender.(Grid.Column)" Value="1" />
+                        <Setter Target="PopupMessageSender.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="PopupMessageSender.(Grid.RowSpan)" Value="2" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -736,9 +742,9 @@
                 </ScrollViewer>
             </AppBar>
         </Grid>
-        <Popup Name="PopupMessageSender" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" IsOpen="False" Width="{Binding ActualWidth}" Height="{Binding ActualHeight}">
-            <ScrollViewer>
-                <Grid>
+        <Popup Name="PopupMessageSender" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" IsOpen="True">
+            <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <Grid Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>

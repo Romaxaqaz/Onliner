@@ -16,13 +16,14 @@ using Onliner_for_windows_10.Tiles.TileTemplates;
 using Windows.UI.Xaml.Media;
 using Windows.UI;
 using Onliner_for_windows_10.Model.LocalSetteing;
+using Windows.UI.Popups;
 
 namespace Onliner_for_windows_10.ProfilePage
 {
     public sealed partial class ProfilePage : Page
     {
-        Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-        Windows.Storage.StorageFolder localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+        private Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+        private Windows.Storage.StorageFolder localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
 
         private readonly string NameButtonSendMessage = "Мои сообщения";
 
@@ -32,6 +33,7 @@ namespace Onliner_for_windows_10.ProfilePage
         private BirthDayDate bday = new BirthDayDate();
         private List<object> ParamsList = new List<object>();
         public string ProfileListData { get; set; }
+
         private string[] accauntNameParsParam = new string[4] { "h1", "class", "m-title", "(^([A-Za-z0-9-_]+))" };
         private string[] accauntImageParsParam = new string[4] { "div", "class", "uprofile-ph", "(?<=src=\").*?(?=\")" };
         private string[] accauntStatusParsParam = new string[4] { "p", "class", "uprofile-connect user-status", "" };
@@ -41,7 +43,7 @@ namespace Onliner_for_windows_10.ProfilePage
         public ProfilePage()
         {
             this.InitializeComponent();
-            Loaded += ProfilePage_Loaded1;
+            Loaded += ProfilePage_Loaded;
             ButtonsControlStackPanel.DataContext = Additionalinformation.Instance;
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
             {
@@ -55,27 +57,35 @@ namespace Onliner_for_windows_10.ProfilePage
             Frame.GoBack();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
-            string key = (string)e.Parameter;
-            if (key == null || key == "")
+            try
             {
-                Showh(string.Empty);
+                string key = (string)e.Parameter;
+                if (key == null || key == "")
+                {
+                    ShowProfileInfo(string.Empty);
+                }
+                else
+                {
+                    string prifileUrl = "https://profile.onliner.by/user/" + (string)e.Parameter;
+                    ShowProfileInfo(prifileUrl);
+                }
             }
-            else
+            catch (FormatException ex)
             {
-                string prifileUrl = "https://profile.onliner.by/user/" + (string)e.Parameter;
-                Showh(prifileUrl);
+                MessageDialog message = new MessageDialog(ex.ToString());
+                await message.ShowAsync();
             }
 
         }
 
-        private void ProfilePage_Loaded1(object sender, RoutedEventArgs e)
+        private void ProfilePage_Loaded(object sender, RoutedEventArgs e)
         {
             Additionalinformation.Instance.NameActivePage = "Профиль";
         }
 
-        public void Showh(string profileUrl)
+        public void ShowProfileInfo(string profileUrl)
         {
             bool changeInfo = false;
             if (profileUrl == string.Empty)
@@ -83,6 +93,7 @@ namespace Onliner_for_windows_10.ProfilePage
                 profileUrl = "https://profile.onliner.by";
                 changeInfo = true;
             }
+
             var parsHtml = new ParsingHtml.ParsingHtml();
             request.GetRequestOnliner(profileUrl);
             string resultGetRequest = request.ResultGetRequsetString;
@@ -109,6 +120,7 @@ namespace Onliner_for_windows_10.ProfilePage
                 AppBarForMobile.Visibility = Visibility.Visible;
                 SendMessageTextBox.Text = NameButtonSendMessage;
             }
+
             List<ProfilePataList> _profileDataList = new List<ProfilePataList>();
             stackPanelAccauntInfo.DataContext = profile;
             List<HtmlNode> titleList = resultat.DocumentNode.Descendants().Where
@@ -125,13 +137,6 @@ namespace Onliner_for_windows_10.ProfilePage
                 });
             }
             DataProfileList.ItemsSource = _profileDataList;
-        }
-
-        private void ellipse_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            LocalSettingParams.RemoveAllParams();
-            Frame.Navigate(typeof(MainPage));
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -183,7 +188,7 @@ namespace Onliner_for_windows_10.ProfilePage
             }
         }
 
-        private async void PinWindow_Click(object sender, RoutedEventArgs e)
+        private void PinWindow_Click(object sender, RoutedEventArgs e)
         {
             //SquareTileControl.DataContext = new TileData()
             //{
