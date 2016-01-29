@@ -48,7 +48,7 @@ namespace Onliner_for_windows_10.ParsingHtml
                Where(div => div.GetAttributeValue("class", string.Empty) == "b-mediaicon").
                FirstOrDefault().InnerText;
                 }
-                ///video
+                //video
                 if (item.Descendants("span").Where(div => div.GetAttributeValue("class", string.Empty) == "b-mediaicon gray").FirstOrDefault() != null)
                 {
                     _itemNews.Mediaicongray = item.Descendants("span").Where(div => div.GetAttributeValue("class", string.Empty) == "b-mediaicon gray").

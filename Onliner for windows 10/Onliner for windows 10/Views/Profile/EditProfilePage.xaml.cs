@@ -237,11 +237,8 @@ namespace Onliner_for_windows_10.Views.Profile
         {
             switch (((Pivot)sender).SelectedIndex)
             {
-
                 case 1:
-
                     break;
-
                 case 2:
                     ShowPreferencesParams();
                     break;

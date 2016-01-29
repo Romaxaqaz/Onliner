@@ -290,7 +290,7 @@
         			FontSize="12"  
         			TextAlignment="Justify" Grid.Row="4"/>
                 <TextBlock x:Name="descriptionTextBlock" 
-        			Text="{Binding Footer}" 
+        			Text="{Binding Footer}"  TextAlignment="Right"
         			Foreground="Gray" Padding="2"
         			TextWrapping="WrapWholeWords" FontSize="12" Grid.Row="5" Style="{ThemeResource BaseTextBlockStyle}"/>
             </Grid>

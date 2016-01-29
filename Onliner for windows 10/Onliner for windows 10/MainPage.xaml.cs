@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Onliner_for_windows_10.Model.LocalSetteing;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -52,7 +53,9 @@ namespace Onliner_for_windows_10
 
         private void LaterLogIn_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(ProfilePage.ProfilePage));
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            localSettings.Values[LocalSettingParams.Autorization] = "false";
+            Frame.Navigate(typeof(Views.NewsPage));
         }
     }
 }

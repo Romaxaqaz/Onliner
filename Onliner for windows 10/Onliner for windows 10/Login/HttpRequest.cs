@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Onliner_for_windows_10.Converters;
 using Onliner_for_windows_10.Model;
+using Onliner_for_windows_10.Model.LocalSetteing;
 using Onliner_for_windows_10.ProfilePage;
 using System;
 using System.Collections.Generic;
@@ -16,8 +17,13 @@ using Windows.UI.Popups;
 
 namespace Onliner_for_windows_10.Login
 {
+    /// <summary>
+    ///  Class Request
+    /// </summary>
     public class Request
     {
+        
+        #region Onliner url API
         private const string UserApiOnliner = "https://user.api.onliner.by/login";
         private const string CommentsApiTech = "http://tech.onliner.by/comments/add?";
         private const string CommentsApiPeople = "http://people.onliner.by/comments/add?";
@@ -27,7 +33,11 @@ namespace Onliner_for_windows_10.Login
         private const string EdipProfile = "https://profile.onliner.by/edit";
         private const string EditPreferencesProfileApi = "https://profile.onliner.by/preferences";
         private const string ChangePassProfile = "https://profile.onliner.by/changepass";
+        #endregion
 
+        /// <summary>
+        /// <value> Property for token profile</value>
+        /// </summary>
         private string EditProfileToken = string.Empty;
 
         private HttpClient httpClient = new HttpClient();
@@ -53,6 +63,9 @@ namespace Onliner_for_windows_10.Login
             Loadcookie("cookie");
         }
 
+        /// <summary>
+        ///  sample GET requset
+        /// </summary>
         public async void GetRequestOnliner(string url)
         {
             Loadcookie("cookie");
@@ -66,9 +79,13 @@ namespace Onliner_for_windows_10.Login
             ResultGetRequsetString = await response.Content.ReadAsStringAsync();
         }
 
+        /// <summary>
+        /// POST requset for authorization
+        /// </summary>
         public async Task<bool> PostRequestUserApi(string login, string password)
         {
             bool resultReques = false;
+            //get token for authorizton
             HttpRequestMessage req = new HttpRequestMessage(System.Net.Http.HttpMethod.Get, UserApiOnliner);
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             response = await httpClient.SendAsync(req);
@@ -76,6 +93,7 @@ namespace Onliner_for_windows_10.Login
             string bufferToken = Regex.Match(responseBodyAsText, @"(?=token)(.*)(?=')").Value;
             string token = bufferToken.Replace("token('", "");
 
+            //create json params
             var json = new JsonParams
             {
                 Token = token,
@@ -85,9 +103,9 @@ namespace Onliner_for_windows_10.Login
                 Recaptcha_challenge_field = string.Empty,
                 Recaptcha_response_field = string.Empty,
             };
-
             JsonRequest = JsonConvert.SerializeObject(json);
 
+            //send post request
             req = new HttpRequestMessage(System.Net.Http.HttpMethod.Post, UserApiOnliner);
             req.Headers.Add("Accept", "application/json, text/javascript, */*; q=0.01");
             req.Method = System.Net.Http.HttpMethod.Post;
@@ -113,7 +131,7 @@ namespace Onliner_for_windows_10.Login
             {
                 case 200:
                     resultReques = true;
-                    localSettings.Values["Autorization"] = "yes";
+                    localSettings.Values[LocalSettingParams.Autorization] = "true";
                     Savecookie("cookie", cookieContainer, pageUri);
                     break;
                 case 400:
@@ -123,6 +141,9 @@ namespace Onliner_for_windows_10.Login
             return resultReques;
         }
 
+        /// <summary>
+        /// POST request to add a comment
+        /// </summary>
         public async void AddComments(string newsID, string message)
         {
             if (newsID == string.Empty) { throw new Exception(); }
@@ -159,6 +180,9 @@ namespace Onliner_for_windows_10.Login
 
         }
 
+        /// <summary>
+        /// POST request for edit profile
+        /// </summary>
         public async void EditPreferencesProfile(string pmNotification, string hideOnlineStatus, string showEmail, string birthdayView)
         {
             if (EditProfileToken == string.Empty)
@@ -187,6 +211,9 @@ namespace Onliner_for_windows_10.Login
 
         }
 
+        /// <summary>
+        /// GET request to obtain the number of incoming messages
+        /// </summary>
         public async void MessageUnread()
         {
             if (CookieSession == null)
@@ -200,6 +227,11 @@ namespace Onliner_for_windows_10.Login
             Additionalinformation.Instance.UnreadeMessage = await response.Content.ReadAsStringAsync();
         }
 
+        /// <summary>
+        /// GET request for the exchange rate
+        /// <param name="currency">currency type: USD, EUR, RUB</param>
+        /// <param name="nbrb">type of bank: nbrb, buy, sold</param>
+        /// </summary>
         public async void Bestrate(string currency = "USD", string type = "nbrb")
         {
             string url = "http://www.onliner.by/sdapi/kurs/api/bestrate?currency=" + currency + "&type=" + type;
@@ -216,10 +248,14 @@ namespace Onliner_for_windows_10.Login
             Additionalinformation.Instance.Current = bestrateResponse.amount;
         }
 
-        public async Task<WeatherJSon> Weather()
+        /// <summary>
+        /// GET request for weather
+        /// <param name="townID">id town</param>
+        /// </summary>
+        public async Task<WeatherJSon> Weather(string townID= "26850")
         {
             Loadcookie("cookie");
-            string url = "http://www.onliner.by/sdapi/pogoda/api/forecast/26850";
+            string url = string.Format("http://www.onliner.by/sdapi/pogoda/api/forecast/{0}", townID);
             if (CookieSession == null)
             {
                 Loadcookie("cookie");
@@ -237,6 +273,11 @@ namespace Onliner_for_windows_10.Login
             return result;
         }
 
+        /// <summary>
+        /// GET request for a list of messages
+        /// <param name="f">type message: inbox = 0, outbox = -1, saveimage = 1</param>
+        /// <param name="p">1</param>
+        /// </summary>
         public async Task<MessageJson> Message(string f, string p)
         {
             Loadcookie("cookie");
@@ -257,6 +298,9 @@ namespace Onliner_for_windows_10.Login
             return result;
         }
 
+        /// <summary>
+        /// POST request for storing profile data
+        /// </summary>
         public async void SaveEditProfile(List<object> ParamsList, BirthDayDate bday)
         {
             if (EditProfileToken == string.Empty)
@@ -298,6 +342,9 @@ namespace Onliner_for_windows_10.Login
 
         }
 
+        /// <summary>
+        /// POST request for changing password
+        /// </summary>
         public async void Changepass(string oldPass, string repeatPass, string newPass)
         {
             if (EditProfileToken == string.Empty)
@@ -328,6 +375,9 @@ namespace Onliner_for_windows_10.Login
 
         }
 
+        /// <summary>
+        /// Get request for a token profile
+        /// </summary>
         private async Task<string> GetEditProfileToken()
         {
             HttpRequestMessage req = new HttpRequestMessage(System.Net.Http.HttpMethod.Get, EdipProfile);
@@ -338,6 +388,13 @@ namespace Onliner_for_windows_10.Login
             return token;
         }
 
+        /// <summary>
+        /// Sample POST request
+        /// <param name="url"></param>
+        /// <param name="host"></param>
+        /// <param name="origin"></param>
+        /// <param name="formdata">data for request</param>
+        /// </summary>
         public async void PostRequestFormData(string url, string host, string origin, string formdata)
         {
             HttpClientHandler handler = new HttpClientHandler();
@@ -363,6 +420,9 @@ namespace Onliner_for_windows_10.Login
             }
         }
 
+        /// <summary>
+        /// Save cookie after authorization
+        /// </summary>
         private async void Savecookie(string filename, CookieContainer rcookie, Uri uri)
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
@@ -374,6 +434,18 @@ namespace Onliner_for_windows_10.Login
             }
         }
 
+        /// <summary>
+        /// Remove cookie
+        /// </summary>
+        public async void Remoovecookie(string filename)
+        {
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            StorageFile sampleFile = await localFolder.CreateFileAsync("cookie", CreationCollisionOption.ReplaceExisting);
+        }
+
+        /// <summary>
+        /// Load cookie for requests
+        /// </summary>
         private async void Loadcookie(string filename)
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;

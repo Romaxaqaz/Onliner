@@ -1,4 +1,5 @@
-﻿using Onliner_for_windows_10.Views;
+﻿using Onliner_for_windows_10.Model.LocalSetteing;
+using Onliner_for_windows_10.Views;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -101,15 +102,15 @@ namespace Onliner_for_windows_10
                 // Если стек навигации не восстанавливается для перехода к первой странице,
                 // настройка новой страницы путем передачи необходимой информации в качестве параметра
                 // параметр
-                var value = localSettings.Values["Autorization"];
+                var value = localSettings.Values[LocalSettingParams.Autorization];
 
-                if (value == null)
+                if (Boolean.Parse(value.ToString()))
                 {
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    rootFrame.Navigate(typeof(Views.NewsPage), e.Arguments);
                 }
                 else
                 {
-                    rootFrame.Navigate(typeof(Views.NewsPage), e.Arguments);
+                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }
                 
             }

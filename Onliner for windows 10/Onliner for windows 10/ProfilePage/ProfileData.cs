@@ -33,7 +33,7 @@ namespace Onliner_for_windows_10.ProfilePage
 
     public class BirthDayDate
     {
-        public string Day { get; set; }
+        public string Day { get ; set; }
         public string Mounth { get; set; }
         public string Year { get; set; }
     }

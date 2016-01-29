@@ -416,7 +416,7 @@
 					FontSize="20" Style="{ThemeResource SubtitleTextBlockStyle}"
 					FontWeight="Bold" 
 					Margin="0,10,0,10"/>
-                        
+
                         <Ellipse  Width="120" Height="120" VerticalAlignment="Top" HorizontalAlignment="Center">
                             <Ellipse.Fill>
                                 <ImageBrush>
@@ -469,8 +469,7 @@
                     </Grid>
                     <FlipView Name="ProfileFlipview" Background="White" HorizontalAlignment="Center" Grid.Row="1" SelectionChanged="ProfileFlipview_SelectionChanged">
                         <FlipViewItem Margin="0" Background="White">
-                            <StackPanel x:Name="stackPanelAccauntInfo2" 
-			                            HorizontalAlignment="Stretch">
+                            <StackPanel x:Name="stackPanelAccauntInfo2">
                                 <StackPanel.DataContext>
                                     <local:ProfilePataList/>
                                 </StackPanel.DataContext>
@@ -491,12 +490,12 @@
                 </Grid>
                 <StackPanel/>
             </Grid>
-            
         </ScrollViewer>
         <AppBar Name="AppBarForMobile" VerticalAlignment="Bottom" Grid.Row="1" Visibility="Collapsed">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" d:IsHidden="True">
                 <AppBarButton Name="EditProfile" Label="Редактировать профиль" Icon="Setting" Click="EditProfile_Click"/>
                 <AppBarButton Name="PinWindow" Label="Закрепить" Icon="Pin" Click="PinWindow_Click"/>
+                <AppBarButton Name="ExitProfile" Label="Выход" Icon="Remove" Click="ExitProfile_Click"/>
             </StackPanel>
         </AppBar>
     </Grid>

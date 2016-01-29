@@ -15,6 +15,7 @@ using LiveTileUWP;
 using Onliner_for_windows_10.Tiles.TileTemplates;
 using Windows.UI.Xaml.Media;
 using Windows.UI;
+using Onliner_for_windows_10.Model.LocalSetteing;
 
 namespace Onliner_for_windows_10.ProfilePage
 {
@@ -86,16 +87,23 @@ namespace Onliner_for_windows_10.ProfilePage
             request.GetRequestOnliner(profileUrl);
             string resultGetRequest = request.ResultGetRequsetString;
             resultat.LoadHtml(resultGetRequest);
+
             string loginUser = parsHtml.ParsElementHtml(accauntNameParsParam, resultat);
             string avatarImage = parsHtml.ParsElementHtml(accauntImageParsParam, resultat);
 
             profile.AccauntName = loginUser;
             profile.Avatar = avatarImage;
             profile.Status = parsHtml.ParsElementHtml(accauntStatusParsParam, resultat);
+
+
             //profile.ProfileNumbers = parsHtml.ParsElementHtml(accauntNumbersParsParam, resultat);
             if (changeInfo)
             {
                 profile.Money = parsHtml.ParsElementHtml(accauntMoneyParsParam, resultat);
+                //save setting data
+                localSettings.Values[LocalSettingParams.AvatarUrl] = avatarImage;
+                localSettings.Values[LocalSettingParams.Login] = loginUser;
+
                 Additionalinformation.Instance.AvatarUrl = avatarImage;
                 Additionalinformation.Instance.Login = loginUser;
                 AppBarForMobile.Visibility = Visibility.Visible;
@@ -122,7 +130,8 @@ namespace Onliner_for_windows_10.ProfilePage
         private void ellipse_Tapped(object sender, TappedRoutedEventArgs e)
         {
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            localSettings.Values.Remove("Autorization");
+            LocalSettingParams.RemoveAllParams();
+            Frame.Navigate(typeof(MainPage));
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -193,6 +202,14 @@ namespace Onliner_for_windows_10.ProfilePage
 
             //};
             //await LiveTileBuilder.ConvertControlsToTiles(WideTileControl, SquareTileControl);
+        }
+
+        private void ExitProfile_Click(object sender, RoutedEventArgs e)
+        {
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            LocalSettingParams.RemoveAllParams();
+            request.Remoovecookie("");
+            Frame.Navigate(typeof(MainPage));
         }
     }
 }

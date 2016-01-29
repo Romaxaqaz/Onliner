@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Onliner_for_windows_10.Model.LocalSetteing;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -6,11 +7,14 @@ namespace Onliner_for_windows_10.ProfilePage
 {
     public class Additionalinformation : INotifyPropertyChanged
     {
-        private static readonly Additionalinformation instance = new Additionalinformation();
+        Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+
+        private static Additionalinformation instance = new Additionalinformation();
         private Additionalinformation() { }
 
         public static Additionalinformation Instance
         {
+            set { instance = value; }
             get { return instance; }
         }
 
@@ -61,7 +65,19 @@ namespace Onliner_for_windows_10.ProfilePage
 
         public string AvatarUrl
         {
-            get { return _avatarUrl; }
+            get
+            {
+                    var avatar = localSettings.Values[LocalSettingParams.AvatarUrl];
+                    if (avatar != null)
+                    {
+                        _avatarUrl = avatar.ToString();
+                    }
+                else
+                {
+                    return "/ImageCollection/default_avatar.png";
+                }
+                return _avatarUrl;
+            }
             set
             {
                 _avatarUrl = value;
@@ -71,7 +87,19 @@ namespace Onliner_for_windows_10.ProfilePage
 
         public string Login
         {
-            get { return _login; }
+            get
+            {
+                var profileName = localSettings.Values[LocalSettingParams.Login];
+                if (profileName != null)
+                {
+                    _login = profileName.ToString();
+                }
+                else
+                {
+                    return "Войти";
+                }
+                return _login;
+            }
             set
             {
                 _login = value;
