@@ -110,6 +110,7 @@
     <Compile Include="Converters\IndexImageTonameImageConverter.cs" />
     <Compile Include="Converters\TextTrimmingConverter.cs" />
     <Compile Include="Converters\UpdateLogoImage.cs" />
+    <Compile Include="Helper\WebViewHelper.cs" />
     <Compile Include="ImageCollection\SVGImage.cs" />
     <Compile Include="Model\Additionalinformation.cs" />
     <Compile Include="Model\BestrateRespose.cs" />
@@ -126,8 +127,10 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\CommentsItem.cs" />
+    <Compile Include="Model\DataTemplateSelector\ListViewItemSelector.cs" />
     <Compile Include="Model\FullItemNews.cs" />
     <Compile Include="Model\ItemsNews.cs" />
+    <Compile Include="Model\DataTemplateSelector\ListViewItemSelectorModel.cs" />
     <Compile Include="Model\LocalSetteing\LocalSettingParams.cs" />
     <Compile Include="Model\MessageJson.cs" />
     <Compile Include="ParsingHtml\ParsingHtml.cs" />

@@ -8,6 +8,8 @@ using Onliner_for_windows_10.Login;
 using System;
 using Windows.UI.Popups;
 using Windows.Phone.UI.Input;
+using Onliner_for_windows_10.Model.DataTemplateSelector;
+using System.Collections.Generic;
 
 namespace Onliner_for_windows_10.Views
 {
@@ -18,6 +20,8 @@ namespace Onliner_for_windows_10.Views
         private Request request = new Request();
         private string loaderPage = string.Empty;
         private string NewsID = string.Empty;
+
+        private List<ListViewItemSelectorModel> NewsListItem = new List<ListViewItemSelectorModel>();
 
         public ViewNewsPage()
         {
@@ -42,8 +46,8 @@ namespace Onliner_for_windows_10.Views
             try
             {
                 fullPagePars = new ParsingFullNewsPage(loaderPage);
-                fullItem = await fullPagePars.NewsMainInfo();
-                MainNewsData.DataContext = fullItem;
+                var fullItem = await fullPagePars.NewsMainInfo();
+                NewsListInfo.ItemsSource = fullItem;
             }
             catch (FormatException ex)
             {
@@ -51,17 +55,10 @@ namespace Onliner_for_windows_10.Views
                 await message.ShowAsync();
             }
 
-
-            //fullitem content in <p>
-            var resUIElement = await fullPagePars.PostItemDate(loaderPage, fullItem);
-            foreach (var item in resUIElement)
-            {
-                NewsListData.Children.Add(item);
-            }
-
             //comments data
             NewsID = fullItem.NewsID;
             CommentsListView.ItemsSource = await fullPagePars.CommentsMainInfo();
+            
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -97,6 +94,13 @@ namespace Onliner_for_windows_10.Views
                 MessageDialog messageExeption = new MessageDialog("Add");
                 await messageExeption.ShowAsync();
             }
+        }
+
+        private async void NewsListInfo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ListViewItemSelectorModel feedItem = e.AddedItems[0] as ListViewItemSelectorModel;
+            MessageDialog msg = new MessageDialog(feedItem.Type);
+            await msg.ShowAsync();
         }
     }
 }

@@ -742,7 +742,7 @@
                 </ScrollViewer>
             </AppBar>
         </Grid>
-        <Popup Name="PopupMessageSender" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" IsOpen="True">
+        <Popup Name="PopupMessageSender" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" IsOpen="False">
             <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Grid Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Grid.RowDefinitions>

@@ -103,10 +103,16 @@ namespace Onliner_for_windows_10
                 // настройка новой страницы путем передачи необходимой информации в качестве параметра
                 // параметр
                 var value = localSettings.Values[LocalSettingParams.Autorization];
-
-                if (Boolean.Parse(value.ToString()))
+                if (value != null)
                 {
-                    rootFrame.Navigate(typeof(Views.NewsPage), e.Arguments);
+                    if (Boolean.Parse(value.ToString()))
+                    {
+                        rootFrame.Navigate(typeof(Views.NewsPage), e.Arguments);
+                    }
+                    else
+                    {
+                        rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    }
                 }
                 else
                 {
