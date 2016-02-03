@@ -355,7 +355,7 @@
             <RadioButton Name="people" Content="&#xE125;" Tag="1" Click="RadioButton_Click" Height="50" Grid.Column="1" FontSize="16" HorizontalAlignment="Stretch" IsChecked="False" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle2}"/>
             <RadioButton Name="auto" Content="&#xEC47;" Tag="2" Click="RadioButton_Click" Height="50" Grid.Column="2" FontSize="16" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle2}"/>
             <RadioButton Name="house" Content="&#xE825;" Tag="3" Click="RadioButton_Click" Height="50" Grid.Column="3" FontSize="16" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle2}"/>
-            <RadioButton Name="soc" Content="&#xE2AF;" Tag="4" Click="RadioButton_Click" Height="50" Grid.Column="4" FontSize="16" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle2}"/>   
+            <RadioButton Name="soc" Content="&#xE2AF;" Tag="4" Click="RadioButton_Click" Height="50" Grid.Column="4" FontSize="16" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle2}"/>
         </Grid>
         <!--Flipview for static pivot-->
         <FlipView Margin="0,50,0,0"
@@ -442,11 +442,4 @@
             <AppBarButton Content="change" Icon="AllApps" HorizontalAlignment="Right" Click="AppBarButton_Click"/>
         </AppBar>
     </Grid>
-
-    <Page.Transitions>
-        <TransitionCollection>
-           <PaneThemeTransition Edge="Bottom"/>
-            <ContentThemeTransition />
-        </TransitionCollection>
-    </Page.Transitions>
 </Page>

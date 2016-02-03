@@ -44,7 +44,7 @@ namespace Onliner_for_windows_10.Model.Message
         public MessagePage()
         {
             this.InitializeComponent();
-            Loaded += MessagePage_Loaded;
+            this.Loaded += MessagePage_Loaded;
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
             {
                 Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
@@ -53,8 +53,12 @@ namespace Onliner_for_windows_10.Model.Message
 
         private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
         {
-           e.Handled = true;
-           Frame.GoBack();
+            Frame rootFrame = Window.Current.Content as Frame;
+            if (Frame.CanGoBack)
+            {
+                e.Handled = true;
+                Frame.GoBack();
+            }
         }
 
         private void MessagePage_Loaded(object sender, RoutedEventArgs e)
@@ -279,6 +283,7 @@ namespace Onliner_for_windows_10.Model.Message
                 {
                     request.PostRequestFormData(MessageMaskReadUrl, HostMessage, Origin, GeneratePostDataMessageId(item.id));
                     UpdateItemSourceListView(PivotMessage.SelectedIndex);
+                    request.MessageUnread();
                 }
                 ShowListViewItemContent(item);
             }

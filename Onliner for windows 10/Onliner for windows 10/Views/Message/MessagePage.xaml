@@ -458,10 +458,37 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Rectangle Width="5" Fill="GreenYellow" Grid.RowSpan="2" Margin="0,0,0,0" Visibility="{Binding unread, Converter={StaticResource TrueOrFalseUnread}}"/>
-                    <CheckBox Name="ChekcListItem" Tag="{Binding id}" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{StaticResource CheckBoxListStyle}" Margin="10,0,10,0" Checked="ChekcListItem_Checked" Unchecked="ChekcListItem_Unchecked"/>
-                    <HyperlinkButton Name="UserHyperlinkButton" Content="{Binding authorName}" Grid.Row="0" Grid.Column="2" FontSize="16" Margin="0,5,0,0" FontWeight="Bold" HorizontalAlignment="Left" Click="UserHyperlinkButton_Click"/>
-                    <TextBlock Text="{Binding time, Converter={StaticResource JavaScriptTime}}" Grid.Row="0" Grid.Column="3" Foreground="Gray" FontSize="14" HorizontalAlignment="Stretch" TextAlignment="Right" Margin="2"/>
+                    <Rectangle Width="5" 
+                               Fill="GreenYellow" 
+                               Grid.RowSpan="2" 
+                               Margin="0,0,0,0" 
+                               Visibility="{Binding unread, Converter={StaticResource TrueOrFalseUnread}}"/>
+                    <CheckBox Name="ChekcListItem" 
+                              Tag="{Binding id}" 
+                              Grid.Column="1" 
+                              Grid.RowSpan="2"
+                              VerticalAlignment="Center" 
+                              HorizontalAlignment="Center" 
+                              Style="{StaticResource CheckBoxListStyle}" 
+                              Margin="10,0,10,0" 
+                              Checked="ChekcListItem_Checked" 
+                              Unchecked="ChekcListItem_Unchecked"/>
+                    <HyperlinkButton Name="UserHyperlinkButton" 
+                                     Content="{Binding authorName}" 
+                                     Grid.Row="0" 
+                                     Grid.Column="2" 
+                                     FontSize="16" 
+                                     Margin="0,5,0,0" 
+                                     FontWeight="Bold" 
+                                     HorizontalAlignment="Left" 
+                                     Click="UserHyperlinkButton_Click"/>
+                    <TextBlock Text="{Binding time, Converter={StaticResource JavaScriptTime}}" 
+                               Grid.Row="0" 
+                               Grid.Column="3" 
+                               Foreground="Gray" 
+                               FontSize="14" 
+                               HorizontalAlignment="Stretch" 
+                               TextAlignment="Right" Margin="2"/>
                     <TextBlock Text="{Binding subject}" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="2,0,0,5" TextWrapping="Wrap" FontSize="16" HorizontalAlignment="Stretch" Style="{ThemeResource HeaderTextBlockStyle}"/>
                 </Grid>
             </Border>
@@ -700,14 +727,12 @@
                     </ListView>
                 </PivotItem>
             </Pivot>
-            <AppBar ClosedDisplayMode="Minimal" IsSticky="True" Grid.Row="1">
-                <StackPanel Orientation="Horizontal">
-                    <AppBarButton Name="NewMessage" Icon="Add" Label="Написать" Click="NewMessage_Click"/>
+            <CommandBar IsSticky="True" Grid.Row="1">
+                <AppBarButton Name="NewMessage" Icon="Add" Label="Написать" Click="NewMessage_Click"/>
                     <AppBarButton Name="MarkRead" Icon="Manage" Label="Прочитать" Click="MarkRead_Click"/>
                     <AppBarButton Name="SaveMarkMessage" Icon="Save" Label="Сохранить" Click="SaveMarkMessage_Click"/>
                     <AppBarButton Name="DeleteMarkMessage" Icon="Delete" Label="Удалить" Click="DeleteMarkMessage_Click"/>
-                </StackPanel>
-            </AppBar>
+            </CommandBar>
         </Grid>
         <Grid Grid.Column="1" Name="ViewMessageContent" Background="White">
             <Grid.RowDefinitions>
@@ -724,33 +749,56 @@
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="{Binding authorName}" FontSize="18" FontWeight="Bold" Margin="2"/>
-                <Image Name="LogoImage" Width="80" Height="80" Grid.Row="1" HorizontalAlignment="Left" Margin="2" />
-                <TextBlock Text="{Binding time}" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Margin="2"/>
-                <TextBlock Text="{Binding subject}" Grid.Row="1" Grid.Column="1" FontSize="24" Margin="2" TextWrapping="Wrap"/>
+                <TextBlock Text="{Binding authorName}" 
+                           FontSize="18" 
+                           FontWeight="Bold" 
+                           Margin="2"/>
+                <Image Name="LogoImage" 
+                       Width="80" 
+                       Height="80" 
+                       Grid.Row="1" 
+                       HorizontalAlignment="Left"
+                       Margin="2" />
+                <TextBlock Text="{Binding time}" 
+                           Grid.Row="0" 
+                           Grid.Column="1" 
+                           VerticalAlignment="
+                           Center" Margin="2"/>
+                <TextBlock Text="{Binding subject}" 
+                           Grid.Row="1" 
+                           Grid.Column="1" 
+                           FontSize="24" 
+                           Margin="2" 
+                           TextWrapping="Wrap"/>
             </Grid>
             <WebView Name="WebViewMessage" Grid.Row="1"/>
-            <AppBar Grid.Row="2" ClosedDisplayMode="Minimal">
-                <ScrollViewer HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Disabled" VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Disabled">
-                    <StackPanel Orientation="Horizontal">
-                        <AppBarButton Name="Answer" Icon="Message" Label="Ответить" Click="Answer_Click"/>
-                        <AppBarButton Name="AnswerQuote" Icon="ReShare" Label="Ответить" Click="AnswerQuote_Click"/>
+            <CommandBar Grid.Row="2">
+                <AppBarButton Name="AnswerQuote" Icon="ReShare" Label="Ответить" Click="AnswerQuote_Click"/>
                         <AppBarButton Name="Spam" Icon="ClosePane" Label="Пометить" Click="Spam_Click"/>
                         <AppBarButton Name="Save" Icon="Save" Label="Сохранить" Click="Save_Click"/>
                         <AppBarButton Name="Delete" Icon="Delete" Label="Удалить" Click="Delete_Click"/>
-                    </StackPanel>
-                </ScrollViewer>
-            </AppBar>
+            </CommandBar>
         </Grid>
-        <Popup Name="PopupMessageSender" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="0" IsOpen="False">
+        <Popup Name="PopupMessageSender" 
+               HorizontalAlignment="Stretch" 
+               VerticalAlignment="Stretch" 
+               Grid.Column="0" 
+               IsOpen="False">
             <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Grid Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <uc:MessegeSenderControl x:Name="MessageSender" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                <Button Name="SendMessageButton" Content="Отправить" Grid.Row="1" Margin="0,0,25,0" HorizontalAlignment="Right" Click="SendMessageButton_Click"/>
+                <uc:MessegeSenderControl x:Name="MessageSender" 
+                                         HorizontalAlignment="Stretch"
+                                         VerticalAlignment="Stretch"/>
+                <Button Name="SendMessageButton" 
+                        Content="Отправить"
+                        Grid.Row="1" 
+                        Margin="0,0,25,0" 
+                        HorizontalAlignment="Right" 
+                        Click="SendMessageButton_Click"/>
             </Grid>
             </ScrollViewer>
         </Popup>

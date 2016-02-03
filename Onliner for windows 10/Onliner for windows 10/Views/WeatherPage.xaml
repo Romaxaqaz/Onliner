@@ -130,9 +130,16 @@
         </Grid.RowDefinitions>
         
             <!--MAIN WEATHER INFORMATION-->
-        <Grid Name="NowWeatherGrid" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Background="Yellow">
+        <Grid Name="NowWeatherGrid" 
+              Grid.Row="0"
+              Grid.ColumnSpan="2" 
+              HorizontalAlignment="Stretch"
+              Background="Yellow">
             <StackPanel>
-                <TextBlock Name="WhereWeatherTown" FontSize="32" HorizontalAlignment="Center" Style="{ThemeResource HeaderTextBlockStyle}" Margin="0,5,0,0">
+                <TextBlock Name="WhereWeatherTown" 
+                           FontSize="32" 
+                           HorizontalAlignment="Center" 
+                           Style="{ThemeResource HeaderTextBlockStyle}" Margin="0,5,0,0">
                  <Run Text="Сейчас в "/>
                    <Hyperlink Click="Hyperlink_Click"   >
                        <Run Text="Минске"/>
@@ -174,10 +181,21 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                  
-                        <Viewbox Name="MainIcoWeather" Width="150" Height="150" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0">
+                        <Viewbox Name="MainIcoWeather"
+                                 Width="150"
+                                 Height="150"
+                                 VerticalAlignment="Top"
+                                 Grid.Row="0"
+                                 Grid.Column="0">
                             <Path Fill="White" Data="{Binding falloutIcon, Converter={StaticResource Convert}}"/>
                         </Viewbox>
-                        <TextBlock Name="MainTemperatureWeather" FontSize="85" FontWeight="Bold" Foreground="White" Grid.Row="0" Grid.Column="1" Style="{ThemeResource  BodyTextBlockStyle}">
+                        <TextBlock Name="MainTemperatureWeather"
+                                   FontSize="85" 
+                                   FontWeight="Bold"
+                                   Foreground="White" 
+                                   Grid.Row="0" 
+                                   Grid.Column="1"
+                                   Style="{ThemeResource  BodyTextBlockStyle}">
                            <Run Text="{Binding temperature}"/>°
                         </TextBlock>
                  
@@ -192,8 +210,15 @@
                             <ColumnDefinition Width="20"/>
                             <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding phenomena}" FontSize="16" Grid.Row="0" Grid.ColumnSpan="3" TextAlignment="Center"/>
-                        <TextBlock Text="Ветер: " FontWeight="Bold" FontSize="16" Grid.Row="1" Grid.Column="0"/>
+                        <TextBlock Text="{Binding phenomena}" 
+                                   FontSize="16"
+                                   Grid.Row="0" 
+                                   Grid.ColumnSpan="3"
+                                   TextAlignment="Center"/>
+                        <TextBlock Text="Ветер: "
+                                   FontWeight="Bold" 
+                                   FontSize="16" Grid.Row="1" 
+                                   Grid.Column="0"/>
                         <TextBlock Grid.Row="1" Grid.Column="2" FontSize="16" HorizontalAlignment="Stretch">
                                 <Run Text="{Binding wind.direction.title}"/>
                                 <Run Text="{Binding wind.speed[0]}"/>
@@ -219,17 +244,18 @@
         </ScrollViewer>
         <Line Stroke="Gray" StrokeThickness="1" X1="0" X2="{Binding ActualWidth}" Grid.Row="3" Grid.ColumnSpan="2" Margin="5"/>
         <!--Week WEATHER INFORMATION-->
-        <ScrollViewer Name="WeeksDayWeather" Grid.Row="4" HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Visible" VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Disabled">
-            <ListView Name="WeekWeather" ItemTemplate="{StaticResource WeeksWeather}"
+            <ScrollViewer Name="WeeksDayWeather" Grid.Row="4" HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Visible" VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Disabled">
+                <ListView Name="WeekWeather" ItemTemplate="{StaticResource WeeksWeather}"
                       HorizontalAlignment="Center" VerticalAlignment="Center" >
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ItemsWrapGrid Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-            </ListView>
-        </ScrollViewer>
-
-    </Grid>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                </ListView>
+                </ScrollViewer>
+            <ProgressRing Name="WeatherProgressRing" Width="100" Height="100" Foreground="Blue" VerticalAlignment="Center" HorizontalAlignment="Center"  IsActive="True" Grid.RowSpan="5"/>
+        </Grid>
+   
     </ScrollViewer>
 </Page>

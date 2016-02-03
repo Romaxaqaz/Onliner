@@ -17,7 +17,7 @@
             <VisualStateGroup x:Name="VisualStateGroup">
                 <VisualState x:Name="VisualState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="350"/>
+                        <AdaptiveTrigger MinWindowWidth="300"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="SplitView.(SplitView.DisplayMode)" Value="Overlay"></Setter>

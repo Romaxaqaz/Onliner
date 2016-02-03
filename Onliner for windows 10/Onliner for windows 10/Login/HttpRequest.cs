@@ -287,7 +287,7 @@ namespace Onliner_for_windows_10.Login
         public async Task<MessageJson> Message(string f, string p)
         {
             Loadcookie("cookie");
-            string url = "https://profile.onliner.by/messages/load/?f=" + f + "&p=" + p + "&token=" + ConvertToAjaxTime.ConvertToUnixTimestamp().ToString();
+            string url = $"https://profile.onliner.by/messages/load/?f={f}&p={p}&token=" + ConvertToAjaxTime.ConvertToUnixTimestamp().ToString();
             if (CookieSession == null)
             {
                 Loadcookie("cookie");

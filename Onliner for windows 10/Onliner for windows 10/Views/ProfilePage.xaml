@@ -467,7 +467,11 @@
                         <RadioButton Name="ProfileTabButton" Content="&#xE77B;" Tag="Учетная запись" Height="50" Grid.Column="0" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle}" Click="ProfileTabButton_Click"/>
                         <RadioButton Name="ProfileTabButtonOther" Content="&#xE71D;" Tag="Дополнительно" Height="50" Grid.Column="1" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle}" Click="ProfileTabButton_Click"/>
                     </Grid>
-                    <FlipView Name="ProfileFlipview" Background="White" HorizontalAlignment="Center" Grid.Row="1" SelectionChanged="ProfileFlipview_SelectionChanged">
+                    <FlipView Name="ProfileFlipview" 
+                              Background="White" 
+                              HorizontalAlignment="Center" 
+                              Grid.Row="1" 
+                              SelectionChanged="ProfileFlipview_SelectionChanged">
                         <FlipViewItem Margin="0" Background="White">
                             <StackPanel x:Name="stackPanelAccauntInfo2">
                                 <StackPanel.DataContext>
@@ -491,12 +495,10 @@
                 <StackPanel/>
             </Grid>
         </ScrollViewer>
-        <AppBar Name="AppBarForMobile" VerticalAlignment="Bottom" Grid.Row="1" Visibility="Collapsed">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" d:IsHidden="True">
-                <AppBarButton Name="EditProfile" Label="Редактировать профиль" Icon="Setting" Click="EditProfile_Click"/>
+        <CommandBar Name="AppBarForMobile" VerticalAlignment="Bottom" Grid.Row="1" Visibility="Collapsed">
+            <AppBarButton Name="EditProfile" Label="Редактировать профиль" Icon="Setting" Click="EditProfile_Click"/>
                 <AppBarButton Name="PinWindow" Label="Закрепить" Icon="Pin" Click="PinWindow_Click"/>
                 <AppBarButton Name="ExitProfile" Label="Выход" Icon="Remove" Click="ExitProfile_Click"/>
-            </StackPanel>
-        </AppBar>
+        </CommandBar>
     </Grid>
 </Page>

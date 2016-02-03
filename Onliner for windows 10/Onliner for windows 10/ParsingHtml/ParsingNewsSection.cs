@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Onliner_for_windows_10.ParsingHtml
@@ -40,8 +41,8 @@ namespace Onliner_for_windows_10.ParsingHtml
                 _itemNews.Title = item.Descendants("h3").FirstOrDefault().Descendants("a").FirstOrDefault().Descendants("span").FirstOrDefault().InnerText.Trim();
                 _itemNews.LinkNews = item.Descendants("h3").Where(div => div.GetAttributeValue("class", string.Empty) == "b-posts-1-item__title").FirstOrDefault().Descendants("a").FirstOrDefault().Attributes["href"].Value;
                 _itemNews.Image = item.Descendants("figure").FirstOrDefault().Descendants("a").FirstOrDefault().InnerHtml.Trim();
-                _itemNews.Description = item.Descendants("div").LastOrDefault().Descendants("p").LastOrDefault().InnerText.Trim();
-                _itemNews.Footer = item.Descendants("span").Where(div => div.GetAttributeValue("class", string.Empty) == "right-side").LastOrDefault().InnerText.Replace("\n", "").Trim();
+                _itemNews.Description = ScrubHtml(item.Descendants("div").LastOrDefault().Descendants("p").First().InnerText.Trim());
+                _itemNews.Footer = Regex.Replace(item.Descendants("span").Where(div => div.GetAttributeValue("class", string.Empty) == "right-side").LastOrDefault().InnerText.Replace("\n", "").Trim(), @"\s+" ," ");
 
                 //watch
                 if (item.Descendants("span").
@@ -80,6 +81,13 @@ namespace Onliner_for_windows_10.ParsingHtml
                 yield return item;
             }
 
+        }
+
+        private static string ScrubHtml(string value)
+        {
+            var step1 = Regex.Replace(value, @"<[^>]+>|&nbsp;|Дальше…", "").Trim();
+            var step2 = Regex.Replace(step1, @"\s{2,}", " ");
+            return step2;
         }
     }
 }

@@ -43,7 +43,7 @@ namespace Onliner_for_windows_10.ProfilePage
         public ProfilePage()
         {
             this.InitializeComponent();
-            Loaded += ProfilePage_Loaded;
+            this.Loaded += ProfilePage_Loaded;
             ButtonsControlStackPanel.DataContext = Additionalinformation.Instance;
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
             {
@@ -53,8 +53,12 @@ namespace Onliner_for_windows_10.ProfilePage
 
         private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
         {
-            e.Handled = true;
-            Frame.GoBack();
+            Frame rootFrame = Window.Current.Content as Frame;
+            if (Frame.CanGoBack)
+            {
+                e.Handled = true;
+                Frame.GoBack();
+            }
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)

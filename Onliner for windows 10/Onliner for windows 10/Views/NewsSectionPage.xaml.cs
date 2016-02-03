@@ -26,8 +26,12 @@ namespace Onliner_for_windows_10.Views
 
         private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
         {
-            e.Handled = true;
-            Frame.GoBack();
+            Frame rootFrame = Window.Current.Content as Frame;
+            if (Frame.CanGoBack)
+            {
+                e.Handled = true;
+                Frame.GoBack();
+            }
         }
 
         private void ShowNews(GridView _myGridView, string path)

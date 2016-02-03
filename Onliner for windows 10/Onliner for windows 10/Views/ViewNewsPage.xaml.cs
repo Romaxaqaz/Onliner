@@ -36,8 +36,19 @@ namespace Onliner_for_windows_10.Views
 
         private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
         {
-            e.Handled = true;
-            Frame.GoBack();
+            if (GridComments.Visibility == Visibility.Visible)
+            {
+                GridComments.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Frame rootFrame = Window.Current.Content as Frame;
+                if (Frame.CanGoBack)
+                {
+                    e.Handled = true;
+                    Frame.GoBack();
+                }
+            }
         }
 
         private async void ViewNewsPage_Loaded(object sender, RoutedEventArgs e)

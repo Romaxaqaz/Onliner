@@ -113,13 +113,28 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="{Binding CategoryNews}" FontSize="12" Style="{ThemeResource BodyTextBlockStyle}" TextAlignment="Left" VerticalAlignment="Center" Foreground="Blue"/>
-                <TextBlock Text="{Binding Time}" FontSize="12" Style="{ThemeResource BodyTextBlockStyle}" VerticalAlignment="Center" Foreground="Gray" Margin="5" TextAlignment="Right"/>
+                <TextBlock Text="{Binding CategoryNews}" 
+                           FontSize="12" 
+                           Style="{ThemeResource BodyTextBlockStyle}" 
+                           TextAlignment="Left" 
+                           VerticalAlignment="Center"
+                           Foreground="Blue"/>
+                <TextBlock Text="{Binding Time}"
+                           FontSize="12" 
+                           Style="{ThemeResource BodyTextBlockStyle}"
+                           VerticalAlignment="Center"
+                           Foreground="Gray"
+                           Margin="5"
+                           TextAlignment="Right"/>
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="TitleTemlate">
             <Grid HorizontalAlignment="Stretch">
-                <TextBlock Text="{Binding Value}" FontSize="18" Style="{ThemeResource SubtitleTextBlockStyle}" TextWrapping="Wrap" Margin="5"/>
+                <TextBlock Text="{Binding Value}"
+                           FontSize="18"
+                           Style="{ThemeResource SubtitleTextBlockStyle}"
+                           TextWrapping="Wrap"
+                           Margin="5"/>
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="PictureTemlate">
@@ -161,9 +176,8 @@
                         <AdaptiveTrigger MinWindowWidth="700"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="AppBarForMobile.(AppBar.Visibility)" Value="Collapsed"/>
+                        <Setter Target="CommentsCoomBarButton.(AppBarButton.Visibility)" Value="Collapsed"/>
                         <Setter Target="MainGrid.(Grid.Margin)" Value="0,50,0,0"/>
-                        <Setter Target="HelpRadioButton.(Grid.Visibility)" Value="Visible"/>
                         <Setter Target="MainNewsData.(Grid.Column)" Value="0"/>
 
                         <Setter Target="GridComments.(Grid.Visibility)" Value="Visible"/>
@@ -175,9 +189,8 @@
                         <AdaptiveTrigger MinWindowWidth="350"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="AppBarForMobile.(AppBar.Visibility)" Value="Visible"/>
+                        <Setter Target="CommentsCoomBarButton.(AppBarButton.Visibility)" Value="Visible"/>
                         <Setter Target="MainGrid.(Grid.Margin)" Value="0,0,0,0"/>
-                        <Setter Target="HelpRadioButton.(Grid.Visibility)" Value="Collapsed"/>
                         <Setter Target="MainNewsData.(Grid.ColumnSpan)" Value="2"/>
                         <!--CommentsGrid-->
                         <Setter Target="GridComments.(Grid.Visibility)" Value="Collapsed"/>
@@ -192,15 +205,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
-            <Grid Name="HelpRadioButton" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="50" Background="#FFEAEAEA">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-            </Grid>
-
-            <Grid Margin="0,50,0,0" x:Name="MainGrid">
+            <Grid x:Name="MainGrid">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*"/>
                     <ColumnDefinition Width="*"/>
@@ -209,9 +214,20 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Grid x:Name="MainNewsData" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2">
-                    <ListView Name="NewsListInfo" ItemTemplateSelector="{StaticResource ListViewItemSelector}" ItemsSource="{Binding NewsListItem}" SelectionChanged="NewsListInfo_SelectionChanged" ItemContainerStyle="{StaticResource ListViewItemNewsStyle}"/>
-
+                <Grid x:Name="MainNewsData"
+                      Grid.Row="0" 
+                      Grid.Column="0" 
+                      Grid.RowSpan="2">
+                    <ListView Name="NewsListInfo"
+                              ItemTemplateSelector="{StaticResource ListViewItemSelector}"
+                              ItemsSource="{Binding NewsListItem}"
+                              ItemContainerStyle="{StaticResource ListViewItemNewsStyle}"
+                              SelectionChanged="NewsListInfo_SelectionChanged"/>
+                    <CommandBar Name="CommandBarForMobile" VerticalAlignment="Bottom">
+                        <AppBarButton Name="CommentsCoomBarButton" Label="Комментарии" Icon="Comment" Click="AppBarButton_Click"/>
+                        <AppBarButton Label="Открыть в браузере" Icon="World"/>
+                        <AppBarButton Label="Сохранить статью" Icon="Save"/>
+                    </CommandBar>
                 </Grid>
                 <Grid x:Name="GridComments" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Background="White" Visibility="Visible">
                     <Grid.RowDefinitions>
@@ -232,22 +248,31 @@
                             </Style>
                         </ListView.ItemContainerStyle>
                     </ListView>
-                    <Grid HorizontalAlignment="Stretch" Background="#FFE6E6E6" Grid.Row="1" VerticalAlignment="Bottom">
+                    <Grid HorizontalAlignment="Stretch" Background="#FFE6E6E6" Height="48" Grid.Row="1" VerticalAlignment="Bottom">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBox Name="ContentCommentTextBox" VerticalAlignment="Bottom" Margin="2" HorizontalAlignment="Stretch" AcceptsReturn="True" Grid.Column="0" BorderThickness="0"/>
-                        <Button Name="AddCommentButton" Content="&#xE8F2;" FontSize="16" FontFamily="Segoe MDL2 Assets" Margin="4" Background="#FFE6E6E6" Grid.Column="1" HorizontalAlignment="Center" Click="AddCommentButton_Click"/>
+                        <TextBox Name="ContentCommentTextBox" 
+                                 VerticalAlignment="Center"
+                                 Margin="5"
+                                 HorizontalAlignment="Stretch"
+                                 AcceptsReturn="True"
+                                 Grid.Column="0"
+                                 BorderThickness="0"/>
+                        <Button Name="AddCommentButton"
+                                Content="&#xE8F2;" 
+                                FontSize="18" 
+                                FontFamily="Segoe MDL2 Assets" 
+                                Margin="4"
+                                Background="#FFE6E6E6" 
+                                Grid.Column="1" 
+                                HorizontalAlignment="Center"
+                                Click="AddCommentButton_Click"/>
                     </Grid>
                 </Grid>
             </Grid>
         </Grid>
-        <AppBar Name="AppBarForMobile" VerticalAlignment="Bottom" Grid.Row="1">
-            <Grid HorizontalAlignment="Right" d:IsHidden="True">
-                <AppBarButton Label="Комментарии" Icon="Comment" Click="AppBarButton_Click"/>
-            </Grid>
-        </AppBar>
     </Grid>
 
     <Page.Transitions>
