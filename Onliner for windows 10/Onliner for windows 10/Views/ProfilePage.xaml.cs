@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI;
 using Onliner_for_windows_10.Model.LocalSetteing;
 using Windows.UI.Popups;
+using System.Threading.Tasks;
 
 namespace Onliner_for_windows_10.ProfilePage
 {
@@ -63,16 +64,28 @@ namespace Onliner_for_windows_10.ProfilePage
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
+            string key = (string)e.Parameter;
+            Task taskProfileLoad = ProfileDataLoad(key);
+            await taskProfileLoad;
+
+        }
+
+        private void ProfilePage_Loaded(object sender, RoutedEventArgs e)
+        {
+            Additionalinformation.Instance.NameActivePage = "Профиль";
+        }
+
+        private async Task ProfileDataLoad(string param)
+        {
             try
             {
-                string key = (string)e.Parameter;
-                if (key == null || key == "")
+                if (param == null || param == "")
                 {
                     ShowProfileInfo(string.Empty);
                 }
                 else
                 {
-                    string prifileUrl = "https://profile.onliner.by/user/" + (string)e.Parameter;
+                    string prifileUrl = "https://profile.onliner.by/user/" + param;
                     ShowProfileInfo(prifileUrl);
                 }
             }
@@ -81,12 +94,6 @@ namespace Onliner_for_windows_10.ProfilePage
                 MessageDialog message = new MessageDialog(ex.ToString());
                 await message.ShowAsync();
             }
-
-        }
-
-        private void ProfilePage_Loaded(object sender, RoutedEventArgs e)
-        {
-            Additionalinformation.Instance.NameActivePage = "Профиль";
         }
 
         public void ShowProfileInfo(string profileUrl)
@@ -211,6 +218,7 @@ namespace Onliner_for_windows_10.ProfilePage
 
             //};
             //await LiveTileBuilder.ConvertControlsToTiles(WideTileControl, SquareTileControl);
+            Frame.Navigate(typeof(SearchUserPage));
         }
 
         private void ExitProfile_Click(object sender, RoutedEventArgs e)

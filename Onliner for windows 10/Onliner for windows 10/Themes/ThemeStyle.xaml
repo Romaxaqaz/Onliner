@@ -1,0 +1,40 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Onliner_for_windows_10.Themes">
+
+
+    <!--Background color default-->
+    <SolidColorBrush x:Key="BackGroundCustomColorBrush" Color="White"/>
+    <!--Background color news-->
+    <SolidColorBrush x:Key="BackGroundCustomNewsColorBrush" Color="LightCyan"/>
+    <!--Background color newsitem-->
+    <SolidColorBrush x:Key="BackGroundCustomNewsItemColorBrush" Color="White"/>
+    <!--Background header newsitem-->
+    <SolidColorBrush x:Key="BackGroundCustomNewsHeaderColorBrush" Color="White"/>
+    <!--Foreground default blue color-->
+    <SolidColorBrush x:Key="ForegroundCustomBlueBrush" Color="Blue"/>
+    <!--Foreground black color on white background-->
+    <SolidColorBrush x:Key="ForegroundCustomBlackBrush" Color="Black"/>
+    <!--Foreground black color on other background-->
+    <SolidColorBrush x:Key="ForegroundCustomOtherBlackBrush" Color="Black"/>
+    <!--Foreground white color on other background-->
+    <SolidColorBrush x:Key="ForegroundCustomWhiteBrush" Color="White"/>
+    <!--Foreground black text on black-->
+    <SolidColorBrush x:Key="ForegroundCustomTextOnBlackBlackBrush" Color="Black"/>
+    <!--Background main color default (Yellow)-->
+    <SolidColorBrush x:Key="BackGroundCustomYellowColorBrush" Color="Yellow"/>
+    <!--Background header-->
+    <SolidColorBrush x:Key="BackGroundCustomHeaderColorBrush" Color="Yellow"/>
+    <!--Background main element 'profile, weather'-->
+    <SolidColorBrush x:Key="BackGroundCustomMainElementColorBrush" Color="Yellow"/>
+
+    <!--Comments background -->
+    <SolidColorBrush x:Key="BackgroundCommentsColorBrush" Color="#FFF7F7F7"/>
+    
+    <!--Fill line -->
+    <SolidColorBrush x:Key="FillLineCustomColorBrush" Color="Gray"/>
+    <!--Fill ico -->
+    <SolidColorBrush x:Key="FillIcoCustomColorBrush" Color="LightBlue"/>
+
+</ResourceDictionary>

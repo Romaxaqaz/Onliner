@@ -133,7 +133,9 @@
     <Compile Include="Model\DataTemplateSelector\ListViewItemSelectorModel.cs" />
     <Compile Include="Model\LocalSetteing\LocalSettingParams.cs" />
     <Compile Include="Model\MessageJson.cs" />
+    <Compile Include="Model\ProfileModel\ProfileSearchModel.cs" />
     <Compile Include="ParsingHtml\ParsingHtml.cs" />
+    <Compile Include="ParsingHtml\ParsingSearchUserResult.cs" />
     <Compile Include="Tiles\DesignTimeData.cs" />
     <Compile Include="Tiles\LiveTileBuilder.cs" />
     <Compile Include="Tiles\TileData.cs" />
@@ -182,6 +184,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\Profile\EditProfilePage.xaml.cs">
       <DependentUpon>EditProfilePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Profile\SearchUserPage.xaml.cs">
+      <DependentUpon>SearchUserPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Setting\SettingPage.xaml.cs">
+      <DependentUpon>SettingPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Shell.xaml.cs">
       <DependentUpon>Shell.xaml</DependentUpon>
@@ -238,6 +246,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Themes\ThemeStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
     <Page Include="Tiles\TileTemplates\SquareTile.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -291,6 +304,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Profile\EditProfilePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Profile\SearchUserPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Setting\SettingPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -45,7 +45,7 @@ namespace Onliner_for_windows_10.Model
     public class Now
     {
         public string falloutIcon { get; set; }
-        public string phenomena { get; set; }
+        public string phenomena { get; set; } 
         public string pressureTitle { get; set; }
         public string temperature { get; set; }
         public Wind wind { get; set; }

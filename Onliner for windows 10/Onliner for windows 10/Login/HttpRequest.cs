@@ -254,6 +254,23 @@ namespace Onliner_for_windows_10.Login
             Additionalinformation.Instance.Current = bestrateResponse.amount;
         }
 
+        public async Task<string> GetRequest(string url, string qStringParam)
+        {
+            string paramName = "name=";
+            string urlPath = $"{url}{paramName}{qStringParam}";
+            if (CookieSession == null)
+            {
+                Loadcookie("cookie");
+            }
+            HttpClientHandler handler = new HttpClientHandler();
+            handler.CookieContainer = CookieSession;
+            HttpClient httpClient = new HttpClient(handler);
+            var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, urlPath)).Result;
+            var result = await response.Content.ReadAsStringAsync();
+            return result;
+
+        }
+
         /// <summary>
         /// GET request for weather
         /// <param name="townID">id town</param>

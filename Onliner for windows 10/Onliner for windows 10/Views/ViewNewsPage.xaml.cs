@@ -10,6 +10,8 @@ using Windows.UI.Popups;
 using Windows.Phone.UI.Input;
 using Onliner_for_windows_10.Model.DataTemplateSelector;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace Onliner_for_windows_10.Views
 {
@@ -53,12 +55,24 @@ namespace Onliner_for_windows_10.Views
 
         private async void ViewNewsPage_Loaded(object sender, RoutedEventArgs e)
         {
-            //set Main informatiom news
+            Task newsData = ShowNewsData();
+            await newsData;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            //get page
+            loaderPage = e.Parameter.ToString();
+        }
+
+        private async Task ShowNewsData()
+        {
             try
             {
                 fullPagePars = new ParsingFullNewsPage(loaderPage);
                 var fullItem = await fullPagePars.NewsMainInfo();
                 NewsListInfo.ItemsSource = fullItem;
+                CommentsListView.ItemsSource = await fullPagePars.CommentsMainInfo();
             }
             catch (FormatException ex)
             {
@@ -67,15 +81,8 @@ namespace Onliner_for_windows_10.Views
             }
 
             //comments data
-            NewsID = fullItem.NewsID;
-            CommentsListView.ItemsSource = await fullPagePars.CommentsMainInfo();
             
-        }
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            //get page
-            loaderPage = e.Parameter.ToString();
+            NewsProgressRing.IsActive = false;
         }
 
         // visibility comments grid

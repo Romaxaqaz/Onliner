@@ -5,11 +5,11 @@ namespace Onliner_for_windows_10.ProfilePage
 {
     public class ProfileData : INotifyPropertyChanged
     {
-        private string acName;
+        private string acName="user";
 
-        public string AccauntName { get { return acName; } set { acName = value; OnPropertyChanged("AccauntName"); } }
+        public string AccauntName { get { return acName; } set { acName = value; OnPropertyChanged("AccauntName"); } } 
         public string Avatar { get; set; }
-        public string Status { get; set; }
+        public string Status { get; set; } = "status";
         public string ProfileNumbers { get; set; }
         public string Money { get; set; }
 

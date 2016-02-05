@@ -1,0 +1,73 @@
+﻿<Page
+    x:Class="Onliner_for_windows_10.Views.Profile.SearchUserPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Onliner_for_windows_10.Views.Profile"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <DataTemplate x:Key="UsersListviewItem">
+            <Border BorderThickness="0,0,0,1" BorderBrush="Gray">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Ellipse Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Width="50" Height="50" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Ellipse.Fill>
+                            <ImageBrush>
+                                <ImageBrush.ImageSource>
+                                    <BitmapImage DecodePixelHeight="250" DecodePixelWidth="250" UriSource="{Binding UrlImage}" />
+                                </ImageBrush.ImageSource>
+                            </ImageBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <TextBlock Text="{Binding Name}" Foreground="Blue" FontSize="14" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    <TextBlock Text="{Binding Description}" Foreground="Gray" FontSize="12" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    <TextBlock Text="{Binding Status}" Grid.RowSpan="2" Grid.Column="2" Margin="5" VerticalAlignment="Center" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                    <TextBlock Text="{Binding CommentsCount}" Grid.RowSpan="2" Grid.Column="3" Margin="5" VerticalAlignment="Center" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </Page.Resources>
+    
+    <Grid Background="{ThemeResource BackGroundCustomColorBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <AutoSuggestBox Name="AutoSuggestBox" 
+                        Header="Пользователи"
+                        BorderBrush="Yellow"
+                        PlaceholderText="Введите никнейм пользователя.."
+                        MaxWidth="500"
+                        IsTapEnabled="True"
+                        Foreground="{ThemeResource ForegroundCustomBlackBrush}"
+                        KeyUp="AutoSuggestBox_KeyUp"/>
+        <TextBlock Name="PageCountTextBox"  Grid.Row="1" Visibility="Collapsed"/>
+        <ListView Name="ListviewUserResult"
+                  Grid.Row="2" 
+                  Margin="0,6,0,0"
+                  HorizontalAlignment="Stretch" 
+                  MaxWidth="500"
+                  ItemTemplate="{StaticResource UsersListviewItem}" 
+                  SelectionChanged="ListviewUserResult_SelectionChanged">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Margin" Value="0"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+           
+        </ListView>
+    </Grid>
+</Page>

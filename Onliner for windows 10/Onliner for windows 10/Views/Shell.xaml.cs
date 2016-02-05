@@ -83,7 +83,8 @@ namespace Onliner_for_windows_10.Views
 
         private void SettingRadioButton_Click(object sender, RoutedEventArgs e)
         {
-            //coming soon
+            this.SplitView.IsPaneOpen = false;
+            FrameNavigateToPage(typeof(Setting.SettingPage));
         }
 
         private void Message_Click(object sender, RoutedEventArgs e)

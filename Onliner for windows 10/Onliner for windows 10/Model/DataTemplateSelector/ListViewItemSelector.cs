@@ -19,6 +19,7 @@ namespace Onliner_for_windows_10.Model.DataTemplateSelector
         public DataTemplate OtherTemlate { get; set; }
         public DataTemplate WebTemlate { get; set; }
 
+
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
             var listItem = item as ListViewItemSelectorModel;

@@ -6,6 +6,7 @@ using Onliner_for_windows_10.ParsingHtml;
 using Onliner_for_windows_10.ProfilePage;
 using Windows.Phone.UI.Input;
 using Windows.UI.Popups;
+using System.Collections.Generic;
 
 namespace Onliner_for_windows_10.Views
 {
@@ -13,6 +14,7 @@ namespace Onliner_for_windows_10.Views
     {
         private ParsingNewsSection parsNewsSection;
         private CategoryNews _categoryNews = new CategoryNews();
+        public  List<ItemsNews> defItems = new List<ItemsNews>();
 
         public NewsPage()
         {

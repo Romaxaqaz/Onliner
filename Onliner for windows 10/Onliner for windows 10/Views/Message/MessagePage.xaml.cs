@@ -64,13 +64,15 @@ namespace Onliner_for_windows_10.Model.Message
         private void MessagePage_Loaded(object sender, RoutedEventArgs e)
         {
             Additionalinformation.Instance.NameActivePage = "Личные сообщения";
+
         }
 
         private async void PivotMessage_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            Task taskMessage = UpdateItemSourceListView(((Pivot)sender).SelectedIndex);
             try
             {
-                UpdateItemSourceListView(((Pivot)sender).SelectedIndex);
+                await taskMessage;
             }
             catch (FormatException ex)
             {
@@ -79,7 +81,7 @@ namespace Onliner_for_windows_10.Model.Message
             }
         }
 
-        private async void UpdateItemSourceListView(int index)
+        private async Task UpdateItemSourceListView(int index)
         {
             switch (index)
             {
@@ -238,42 +240,42 @@ namespace Onliner_for_windows_10.Model.Message
         private async void MarkRead_Click(object sender, RoutedEventArgs e)
         {
             request.PostRequestFormData(MessageMaskReadUrl, HostMessage, Origin, await GeneratePostDataMessageIdList());
-            UpdateItemSourceListView(PivotMessage.SelectedIndex);
+            await UpdateItemSourceListView(PivotMessage.SelectedIndex);
         }
 
         private async void SaveMarkMessage_Click(object sender, RoutedEventArgs e)
         {
             request.PostRequestFormData(SaveMessageUrl, HostMessage, Origin, await GeneratePostDataMessageIdList());
-            UpdateItemSourceListView(PivotMessage.SelectedIndex);
+            await UpdateItemSourceListView(PivotMessage.SelectedIndex);
         }
 
-        private void Spam_Click(object sender, RoutedEventArgs e)
+        private async void Spam_Click(object sender, RoutedEventArgs e)
         {
             request.PostRequestFormData(MarkSpamUrl, HostMessage, Origin, GeneratePostDataMessageId(messageListforRawText.id));
-            UpdateItemSourceListView(PivotMessage.SelectedIndex);
+            await UpdateItemSourceListView(PivotMessage.SelectedIndex);
         }
 
-        private void Save_Click(object sender, RoutedEventArgs e)
+        private async void Save_Click(object sender, RoutedEventArgs e)
         {
             request.PostRequestFormData(SaveMessageUrl, HostMessage, Origin, GeneratePostDataMessageId(messageListforRawText.id));
-            UpdateItemSourceListView(PivotMessage.SelectedIndex);
+            await UpdateItemSourceListView(PivotMessage.SelectedIndex);
         }
 
-        private void Delete_Click(object sender, RoutedEventArgs e)
+        private async void Delete_Click(object sender, RoutedEventArgs e)
         {
             request.PostRequestFormData(DeleteMessage, HostMessage, Origin, GeneratePostDataMessageId(messageListforRawText.id));
             WebViewMessage.NavigateToString(string.Empty);
-            UpdateItemSourceListView(PivotMessage.SelectedIndex);
+            await UpdateItemSourceListView(PivotMessage.SelectedIndex);
         }
 
         private async void DeleteMarkMessage_Click(object sender, RoutedEventArgs e)
         {
             request.PostRequestFormData(DeleteMessage, HostMessage, Origin, await GeneratePostDataMessageIdList());
             WebViewMessage.NavigateToString(string.Empty);
-            UpdateItemSourceListView(PivotMessage.SelectedIndex);
+            await UpdateItemSourceListView(PivotMessage.SelectedIndex);
         }
 
-        private void MessageTypeList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void MessageTypeList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count > 0)
             {
@@ -282,7 +284,7 @@ namespace Onliner_for_windows_10.Model.Message
                 if(item.unread=="1")
                 {
                     request.PostRequestFormData(MessageMaskReadUrl, HostMessage, Origin, GeneratePostDataMessageId(item.id));
-                    UpdateItemSourceListView(PivotMessage.SelectedIndex);
+                    await UpdateItemSourceListView(PivotMessage.SelectedIndex);
                     request.MessageUnread();
                 }
                 ShowListViewItemContent(item);

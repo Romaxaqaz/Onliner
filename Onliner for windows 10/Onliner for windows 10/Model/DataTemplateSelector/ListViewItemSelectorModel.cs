@@ -63,11 +63,17 @@ namespace Onliner_for_windows_10.Model.DataTemplateSelector
         {
         }
 
+
         public ListViewItemSelectorModel(string type, string category, string time)
         {
             this.Type = type;
             this.CategoryNews = category;
             this.Time = time;
+        }
+
+        public ListViewItemSelectorModel(string newsID)
+        {
+            this.NewsID = newsID;
         }
 
         public ListViewItemSelectorModel(string type, Uri uri)

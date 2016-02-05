@@ -11,7 +11,7 @@
     <Page.Resources>
         <converter:UpdateLogoImage x:Key="UpdateImage"/>
     </Page.Resources>
-    <Grid Background="Gray">
+    <Grid Background="{ThemeResource BackGroundCustomColorBrush}">
         <!--Visual state-->
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
@@ -35,7 +35,7 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <!-- Header button-->
-        <StackPanel Background="Yellow"
+        <StackPanel Background="{ThemeResource BackGroundCustomHeaderColorBrush}"
                     VerticalAlignment="Top" 
                     Height="50" 
                     Grid.ColumnSpan="2">
@@ -55,8 +55,8 @@
                         Grid.Column="0"
                         FontWeight="Bold"
                         Click="HamburgerButton_Click" 
-                        Foreground="Black" FontFamily="Segoe MDL2 Assets"
-                        Background="Yellow" BorderThickness="0"
+                        Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" FontFamily="Segoe MDL2 Assets"
+                        Background="{ThemeResource BackGroundCustomHeaderColorBrush}" BorderThickness="0"
                         />
                     <Button Name="BackButton" 
                             Width="50" 
@@ -64,27 +64,27 @@
                             Grid.Column="1" 
                             Content="&#xE112;" 
                             FontFamily="Segoe MDL2 Assets"
-                            Background="Yellow" Foreground="Black"
+                            Background="{ThemeResource BackGroundCustomHeaderColorBrush}" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
                             Click="BackButton_Click"/>
                     <TextBlock Text="{Binding NameActivePage}" Style="{ThemeResource BodyTextBlockStyle}" 
                                FontFamily="Segoe UI Black" 
                                FontWeight="Bold" 
                                HorizontalAlignment="Center" 
                                FontSize="16"
-                               Padding="0"
+                               Padding="0" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
                                VerticalAlignment="Center" Margin="5,0,0,0"/>
                     <!--{Binding NameActivePage}-->
                 </StackPanel>
                 <StackPanel x:Name="MessageStackPanel" Orientation="Horizontal" Grid.Column="4">
                     <Button Name="MessagePage" Width="50" Padding="0" Margin="0"
-                        Height="50"  Click="Message_Click" BorderThickness="0" Background="Yellow">
+                        Height="50"  Click="Message_Click" BorderThickness="0" Background="{ThemeResource BackGroundCustomHeaderColorBrush}">
                         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto"/>
                                 <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="&#xE715;" FontSize="24" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" TextAlignment="Center" HorizontalAlignment="Center" Margin="1" Grid.Column="0"/>
-                            <TextBlock Text="{Binding UnreadeMessage}" FontSize="16" VerticalAlignment="Center" TextAlignment="Center" HorizontalAlignment="Center" Margin="1,0,0,2" Grid.Column="1" FontWeight="Bold"/>
+                            <TextBlock Text="&#xE715;" FontSize="24" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" TextAlignment="Center" HorizontalAlignment="Center" Margin="1" Grid.Column="0" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                            <TextBlock Text="{Binding UnreadeMessage}" FontSize="16" VerticalAlignment="Center" TextAlignment="Center" HorizontalAlignment="Center" Margin="1,0,0,2" Grid.Column="1" FontWeight="Bold" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                             <!--"{Binding UnreadeMessage}"-->
                         </Grid>
                     </Button>
@@ -111,7 +111,7 @@
                 </VisualStateGroup>
             </VisualStateManager.VisualStateGroups>
             <SplitView.Pane>
-                <Grid Background="Yellow">
+                <Grid Background="{ThemeResource BackGroundCustomYellowColorBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
@@ -136,7 +136,7 @@
                                            Height="25"
                                            Grid.Column="1" 
                                            HorizontalAlignment="Left"
-                                           Margin="12,0,0,0">
+                                           Margin="12,0,0,0" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}">
                                 </TextBlock>
                             </Grid>
                         </Button>

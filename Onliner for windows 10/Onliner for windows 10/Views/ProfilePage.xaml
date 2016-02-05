@@ -9,6 +9,7 @@
     x:Class="Onliner_for_windows_10.ProfilePage.ProfilePage"
     xmlns:userControls="using:Onliner_for_windows_10.UserControls"
     xmlns:tile="using:Onliner_for_windows_10.Tiles.TileTemplates"
+    xmlns:model="using:Onliner_for_windows_10.ProfilePage"
     mc:Ignorable="d">
     <!-- Data for listview-->
     <Page.Resources>
@@ -33,6 +34,7 @@
         				Margin="1" 
         				FontSize="12" 
         				Grid.Column="2"
+                        Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
                         TextAlignment="Left" TextWrapping="Wrap"/>
             </Grid>
         </DataTemplate>
@@ -285,10 +287,8 @@
                                     </VisualState>
                                     <VisualState x:Name="PointerOver">
                                         <VisualState.Setters>
-                                            <Setter Target="ContentPresenter.(ContentPresenter.Background).(SolidColorBrush.Color)">
-                                                <Setter.Value>
-                                                    <Color>#FFEAEA0B</Color>
-                                                </Setter.Value>
+                                            <Setter Target="ContentPresenter.(ContentPresenter.Background).(SolidColorBrush.Color)" Value="{ThemeResource BackGroundCustomMainElementColorBrush}">
+                               
                                             </Setter>
                                         </VisualState.Setters>
                                         <Storyboard>
@@ -303,11 +303,7 @@
                                     </VisualState>
                                     <VisualState x:Name="Pressed">
                                         <VisualState.Setters>
-                                            <Setter Target="ContentPresenter.(ContentPresenter.Background).(SolidColorBrush.Color)">
-                                                <Setter.Value>
-                                                    <Color>Yellow</Color>
-                                                </Setter.Value>
-                                            </Setter>
+                                            <Setter Target="ContentPresenter.(ContentPresenter.Background).(SolidColorBrush.Color)" Value="{StaticResource BackGroundCustomMainElementColorBrush}"/>
                                         </VisualState.Setters>
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
@@ -351,7 +347,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource BackGroundCustomColorBrush}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
                 <VisualState x:Name="VisualStateMobile">
@@ -376,7 +372,6 @@
                         <Setter Target="PivotControlInformation.(Grid.ColumnSpan)" Value="2" />
                         <Setter Target="PivotControlInformation.(Grid.Column)" Value="1" />
                         <Setter Target="PivotControlInformation.(Grid.RowSpan)" Value="2" />
-                        <Setter Target="stackPanelAccauntInfo.(Panel.Background).(SolidColorBrush.Color)" Value="Yellow"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -396,8 +391,8 @@
                 <StackPanel x:Name="stackPanelAccauntInfo" 
 			Grid.Column="0" 
 			Grid.Row="0" 
-			HorizontalAlignment="Stretch" 
-			Background="Yellow">
+			HorizontalAlignment="Stretch"  d:DataContext="{d:DesignInstance Type=model:ProfileData}"
+			Background="{ThemeResource BackGroundCustomMainElementColorBrush}">
                     <StackPanel.ChildrenTransitions>
                         <TransitionCollection>
                             <EdgeUIThemeTransition Edge="Bottom"/>
@@ -412,7 +407,7 @@
                         <TextBlock x:Name="AccauntNameTextBlock" 
 					Text="{Binding AccauntName}" 
 					TextAlignment="Center" 
-					Foreground="Black" 
+					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
 					FontSize="20" Style="{ThemeResource SubtitleTextBlockStyle}"
 					FontWeight="Bold" 
 					Margin="0,10,0,10"/>
@@ -430,6 +425,7 @@
                         <TextBlock x:Name="StatusProfileTextBlock" 
 					Text="{Binding Status}" 
 					TextAlignment="Center" 
+                    Foreground="{ThemeResource ForegroundCustomBlackBrush}"
 					Margin="0,10,0,0"/>
                     </StackPanel>
                     <Grid  
@@ -446,15 +442,15 @@
                         </Grid.ChildrenTransitions>
                         <Button Name="SendMessageButton" Height="35" FontSize="16" HorizontalAlignment="Stretch" BorderThickness="0" Click="Button_Click" Style="{StaticResource SendMessageButtonStyle}">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="&#xE715;" FontFamily="Segoe MDL2 Assets" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                <TextBlock Name="SendMessageTextBox" Text="Написать сообщение" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0" FontFamily="Nirmala UI Semilight"/>
+                                <TextBlock Text="&#xE715;" FontFamily="Segoe MDL2 Assets" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{ThemeResource ForegroundCustomWhiteBrush}"/>
+                                <TextBlock Name="SendMessageTextBox" Text="Написать сообщение" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0" FontFamily="Nirmala UI Semilight" Foreground="{ThemeResource ForegroundCustomWhiteBrush}"/>
                             </StackPanel>
                         </Button>
 
                     </Grid>
                 </StackPanel>
                 <!-- Other data-->
-                <Grid Name="PivotControlInformation" Grid.ColumnSpan="2" Grid.Row="1">
+                <Grid Name="PivotControlInformation" Grid.ColumnSpan="2" Grid.Row="1" Background="{ThemeResource BackGroundCustomMainElementColorBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="*"/>
@@ -468,11 +464,11 @@
                         <RadioButton Name="ProfileTabButtonOther" Content="&#xE71D;" Tag="Дополнительно" Height="50" Grid.Column="1" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle}" Click="ProfileTabButton_Click"/>
                     </Grid>
                     <FlipView Name="ProfileFlipview" 
-                              Background="White" 
+                              Background="{ThemeResource BackGroundCustomColorBrush}" 
                               HorizontalAlignment="Center" 
                               Grid.Row="1" 
                               SelectionChanged="ProfileFlipview_SelectionChanged">
-                        <FlipViewItem Margin="0" Background="White">
+                        <FlipViewItem Margin="0">
                             <StackPanel x:Name="stackPanelAccauntInfo2">
                                 <StackPanel.DataContext>
                                     <local:ProfilePataList/>
@@ -488,17 +484,19 @@
                                 </ListView>
                             </StackPanel>
                         </FlipViewItem>
-                        <FlipViewItem Margin="0" Background="White">
+                        <FlipViewItem Margin="0">
                         </FlipViewItem>
                     </FlipView>
                 </Grid>
                 <StackPanel/>
             </Grid>
         </ScrollViewer>
-        <CommandBar Name="AppBarForMobile" VerticalAlignment="Bottom" Grid.Row="1" Visibility="Collapsed">
-            <AppBarButton Name="EditProfile" Label="Редактировать профиль" Icon="Setting" Click="EditProfile_Click"/>
-                <AppBarButton Name="PinWindow" Label="Закрепить" Icon="Pin" Click="PinWindow_Click"/>
-                <AppBarButton Name="ExitProfile" Label="Выход" Icon="Remove" Click="ExitProfile_Click"/>
+        <CommandBar Name="AppBarForMobile" VerticalAlignment="Bottom" Grid.Row="1" Visibility="Collapsed" 
+                    Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
+                    Background="{ThemeResource BackGroundCustomMainElementColorBrush}">
+            <AppBarButton Name="EditProfile" Label="Редактировать профиль" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Icon="Setting" Click="EditProfile_Click"/>
+            <AppBarButton Name="PinWindow" Label="Найти пользователя" Icon="OtherUser" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Click="PinWindow_Click"/>
+            <AppBarButton Name="ExitProfile" Label="Выход" Icon="Remove" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Click="ExitProfile_Click"/>
         </CommandBar>
     </Grid>
 </Page>

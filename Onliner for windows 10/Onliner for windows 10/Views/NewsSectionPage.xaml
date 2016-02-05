@@ -7,7 +7,10 @@
     xmlns:Model="using:Onliner_for_windows_10.Model"
     xmlns:UserControls="using:Onliner_for_windows_10.UserControls"
     x:Class="Onliner_for_windows_10.Views.NewsPage"
-    mc:Ignorable="d">
+    xmlns:viewModel="using:Onliner_for_windows_10.Views"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance viewModel:NewsPage , IsDesignTimeCreatable=True}"
+    >
     <Page.Resources>
 
         <Storyboard x:Key="storyboard">
@@ -180,12 +183,12 @@
         <local:ImageUrlConverters x:Key="ImageUrlConverter" />
         <local:TextIcoNewsConverter x:Key="TextIcoNewsConverter"/>
         <local:TextTrimmingConverter x:Key="TextTrimmingConverter"/>
-       
+
         <DataTemplate x:Key="NewsThemeList">
             <Grid x:Name="ActualWidthStack"  
         		Width="{Binding WidthStack}" 
         		Margin="1" 
-        		Background="White" 
+        		Background="{ThemeResource BackGroundCustomNewsItemColorBrush}" 
         		BorderThickness="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="15"/>
@@ -206,7 +209,7 @@
         			FontSize="12" Grid.Row="0" Style="{ThemeResource CaptionTextBlockStyle}"/>
                 <TextBlock x:Name="titleTextBlock"
         			Text="{Binding Title}" 
-        			Foreground="Black"
+        			Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
                     TextWrapping="WrapWholeWords"
                     TextTrimming="WordEllipsis"
         			FontSize="15"
@@ -229,9 +232,10 @@
         				HorizontalAlignment="Center">
                         <TextBlock FontSize="15" 
         					Text="&#xE890;" 
-        					FontFamily="Segoe MDL2 Assets"/>
+        					FontFamily="Segoe MDL2 Assets"
+                                   Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                         <TextBlock Text="{Binding Popularcount, Converter={StaticResource TextIcoNewsConverter}}" 
-        					Foreground="Black" 
+        					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
         					TextWrapping="Wrap" 
         					FontSize="10" 
         					Margin="3,0,0,0"/>
@@ -244,9 +248,9 @@
                         <TextBlock FontSize="15" 
         					Text="&#xE8F2;" 
         					FontFamily="Segoe MDL2 Assets" 
-        					Foreground="Black"/>
+        					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                         <TextBlock Text="{Binding CountViews}" 
-        					Foreground="Black" 
+        					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
         					TextWrapping="Wrap" 
         					FontSize="10" 
         					Margin="3,0,0,0"/>
@@ -258,9 +262,10 @@
         				HorizontalAlignment="Center">
                         <TextBlock FontSize="15" 
         					Text="&#xE114;" 
-        					FontFamily="Segoe MDL2 Assets"/>
+        					FontFamily="Segoe MDL2 Assets"
+                                   Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                         <TextBlock Text="{Binding Bmediaicon}" 
-        					Foreground="Black" 
+        					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
         					TextWrapping="Wrap" 
         					FontSize="10" 
         					Margin="3,0,0,0"/>
@@ -272,9 +277,10 @@
         				HorizontalAlignment="Center">
                         <TextBlock FontSize="15" 
         					Text="&#xE116;" 
-        					FontFamily="Segoe MDL2 Assets"/>
+        					FontFamily="Segoe MDL2 Assets"
+                                   Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                         <TextBlock Text="{Binding Mediaicongray}" 
-        					Foreground="Black" 
+        					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
         					TextWrapping="Wrap" 
         					FontSize="10" Margin="3,0,0,0"/>
                     </StackPanel>
@@ -282,7 +288,7 @@
                 </Grid>
                 <TextBlock x:Name="subtitleTextBlock" 
         			Text="{Binding Description}" 
-        			Foreground="Gray"
+        			Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
         			TextWrapping="WrapWholeWords" 
         			TextTrimming="WordEllipsis"
         			Padding="5" 
@@ -309,7 +315,7 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid Background="LightCyan">
+    <Grid Background="{ThemeResource BackGroundCustomNewsHeaderColorBrush}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
                 <VisualState x:Name="VisualStateMobile">
@@ -362,7 +368,7 @@
 			x:Name="FlipNews" 
 			Style="{StaticResource NewsFlipViewStyle}" SelectionChanged="FlipNews_SelectionChanged"  >
             <FlipViewItem>
-                <GridView x:Name="TechGridView" 
+                <GridView x:Name="TechGridView"
 					ItemTemplate="{StaticResource NewsThemeList}"  
 					SizeChanged="myGridView_SizeChanged" 
 					BorderThickness="0"
@@ -438,8 +444,12 @@
                 </GridView>
             </FlipViewItem>
         </FlipView>
-        <AppBar VerticalAlignment="Bottom">
-            <AppBarButton Content="change" Icon="AllApps" HorizontalAlignment="Right" Click="AppBarButton_Click"/>
+        <AppBar VerticalAlignment="Bottom"
+                Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
+                    Background="{ThemeResource BackGroundCustomMainElementColorBrush}">
+            <AppBarButton Content="change" Icon="AllApps" HorizontalAlignment="Right"
+                          Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
+                    Click="AppBarButton_Click"/>
         </AppBar>
     </Grid>
 </Page>

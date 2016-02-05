@@ -7,6 +7,8 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.Phone.UI.Input;
 using System.Threading.Tasks;
+using Onliner_for_windows_10.Model;
+using System.Collections.ObjectModel;
 
 // Шаблон элемента пустой страницы задокументирован по адресу http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -19,6 +21,7 @@ namespace Onliner_for_windows_10.Views
     {
         private Request request = new Request();
         private List<object> temperatureToday = new List<object>();
+        public List<Forecast> Items { get; private set; }
 
         public WeatherPage()
         {
@@ -44,6 +47,17 @@ namespace Onliner_for_windows_10.Views
         private async void WeatherPage_Loaded(object sender, RoutedEventArgs e)
         {
             Additionalinformation.Instance.NameActivePage = "Погода";
+            Task taskWeather = ShowWeather();
+            await taskWeather;
+        }
+
+        private void Hyperlink_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
+        {
+            TownWeather.IsOpen = true;
+        }
+
+        private async Task ShowWeather()
+        {
             try
             {
                 //get weather
@@ -63,6 +77,7 @@ namespace Onliner_for_windows_10.Views
                 TemperatureTodayListView.ItemsSource = temperatureToday;
                 WeekWeather.ItemsSource = responsseObject.forecast;
 
+                Items = responsseObject.forecast;
                 WeatherProgressRing.IsActive = false;
             }
             catch (FormatException ex)
@@ -70,11 +85,6 @@ namespace Onliner_for_windows_10.Views
                 MessageDialog message = new MessageDialog(ex.ToString());
                 await message.ShowAsync();
             }
-        }
-
-        private void Hyperlink_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
-        {
-            TownWeather.IsOpen = true;
         }
     }
 

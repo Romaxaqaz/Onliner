@@ -3,7 +3,4 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Onliner_for_windows_10">
 
-    <ResourceDictionary x:Key="MoneySVGICO">
-        <SolidColorBrush x:Key="Gray" Color="Gray"/>
-    </ResourceDictionary>
 </ResourceDictionary>
