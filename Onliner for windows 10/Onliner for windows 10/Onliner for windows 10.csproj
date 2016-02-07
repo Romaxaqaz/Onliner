@@ -145,6 +145,9 @@
     <Compile Include="Tiles\TileTemplates\WideTile.xaml.cs">
       <DependentUpon>WideTile.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\CommentsContentViewer.xaml.cs">
+      <DependentUpon>CommentsContentViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\MessegeSenderControl.xaml.cs">
       <DependentUpon>MessegeSenderControl.xaml</DependentUpon>
     </Compile>
@@ -256,6 +259,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Tiles\TileTemplates\WideTile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\CommentsContentViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
