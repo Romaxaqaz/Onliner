@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,7 @@ namespace Onliner_for_windows_10.Model
     public class WeatherJSon
     {
         public string city { get; set; }
-        public List<Forecast> forecast { get; set; }
+        public ObservableCollection<Forecast> forecast { get; set; }
         public Now now { get; set; }
         public Today today { get; set; }
         
