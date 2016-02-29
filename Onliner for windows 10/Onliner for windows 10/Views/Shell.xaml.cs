@@ -21,9 +21,10 @@ namespace Onliner_for_windows_10.Views
         public Shell()
         {
             this.InitializeComponent();
-            MessageStackPanel.DataContext = Additionalinformation.Instance;
-            SplitViewPanePanel.DataContext = Additionalinformation.Instance;
-            NavigationStackpanel.DataContext = Additionalinformation.Instance;
+            var fakeObject = Additionalinformation.Instance;
+            MessageStackPanel.DataContext = fakeObject;
+            SplitViewPanePanel.DataContext = fakeObject;
+            NavigationStackpanel.DataContext = fakeObject;
             Loaded += Shell_Loaded;
         }
 

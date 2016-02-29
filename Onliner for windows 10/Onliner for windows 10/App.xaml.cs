@@ -47,7 +47,8 @@ namespace Onliner_for_windows_10
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
 
-            var applicationView = ApplicationView.GetForCurrentView();
+           // var applicationView = ApplicationView.GetForCurrentView();
+           // applicationView.TitleBar.BackgroundColor =((SolidColorBrush)Resources["BackGroundCustomYellowColorBrush"]).Color;
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
             {
                 var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
@@ -89,13 +90,13 @@ namespace Onliner_for_windows_10
                 {
                     //TODO: Load state from previously suspended application
                 }
-            
 
-            shell.DataContext = rootFrame;
 
-            // Place the shell with frame as content in the current Window
-            Window.Current.Content = shell;
-        }
+                shell.DataContext = rootFrame;
+
+                // Place the shell with frame as content in the current Window
+                Window.Current.Content = shell;
+            }
 
             if (rootFrame.Content == null)
             {
@@ -118,7 +119,7 @@ namespace Onliner_for_windows_10
                 {
                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }
-                
+
             }
             // Обеспечение активности текущего окна
             Window.Current.Activate();

@@ -55,18 +55,6 @@ namespace Onliner_for_windows_10.Views
 
         private async void ViewNewsPage_Loaded(object sender, RoutedEventArgs e)
         {
-            Task newsData = ShowNewsData();
-            await newsData;
-        }
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            //get page
-            loaderPage = e.Parameter.ToString();
-        }
-
-        private async Task ShowNewsData()
-        {
             try
             {
                 fullPagePars = new ParsingFullNewsPage(loaderPage);
@@ -81,9 +69,16 @@ namespace Onliner_for_windows_10.Views
             }
 
             //comments data
-            
+
             NewsProgressRing.IsActive = false;
         }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            //get page
+            loaderPage = e.Parameter.ToString();
+        }
+
 
         // visibility comments grid
         private void AppBarButton_Click(object sender, RoutedEventArgs e)

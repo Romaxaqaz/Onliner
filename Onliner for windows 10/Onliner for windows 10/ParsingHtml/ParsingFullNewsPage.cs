@@ -56,18 +56,18 @@ namespace Onliner_for_windows_10.ParsingHtml
         public ParsingFullNewsPage(string page)
         {
             urlPageNews = page;
-            loadePage = GetHtmlPage();
+            loadePage =  GetHtmlPage();
+
         }
 
         /// <summary>
         /// Get html page to string
         /// </summary>
         /// <returns>string page</returns>
-        private string GetHtmlPage()
+        private  string GetHtmlPage()
         {
             request.GetRequestOnliner(urlPageNews);
-            string resultGetRequest = request.ResultGetRequsetString;
-            return resultGetRequest;
+            return request.ResultGetRequsetString;
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace Onliner_for_windows_10.ParsingHtml
                     commentsParams = new CommentsItem();
                     commentsParams.Nickname = item.Descendants(NameTagStrong).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "author").FirstOrDefault().InnerText;
                     commentsParams.Time = item.Descendants(NameTagSpan).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "date").FirstOrDefault().InnerText;
-                    commentsParams.Image = item.Descendants(NameTagFigure).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "author-image").FirstOrDefault().Descendants(NameTagImg).FirstOrDefault().Attributes[AttributeTagSRC].Value;
+                    commentsParams.Image = "https:" + item.Descendants(NameTagFigure).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "author-image").FirstOrDefault().Descendants(NameTagImg).FirstOrDefault().Attributes[AttributeTagSRC].Value;
                     commentsParams.Data = item.InnerHtml;
                     commentsParams.LikeCount = item.Descendants(NameTagSpan).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "_counter").LastOrDefault().InnerText;
                     if (step % 2 == 0)

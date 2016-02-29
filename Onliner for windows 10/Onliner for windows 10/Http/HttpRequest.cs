@@ -66,10 +66,8 @@ namespace Onliner_for_windows_10.Login
         /// <summary>
         ///  sample GET requset
         /// </summary>
-        public async void GetRequestOnliner(string url)
+        public async Task<string> GetRequestOnlinerAsync(string url)
         {
-            try
-            {
                 Loadcookie("cookie");
                 HttpClientHandler handler = new HttpClientHandler();
                 if (CookieSession != null)
@@ -79,13 +77,22 @@ namespace Onliner_for_windows_10.Login
                 HttpClient httpClient = new HttpClient(handler);
                 var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
                 ResultGetRequsetString = await response.Content.ReadAsStringAsync();
-            }
-            catch(WebException ex)
-            {
-                MessageDialog message = new MessageDialog(ex.ToString());
-                await message.ShowAsync();
-            }
+                return ResultGetRequsetString;
         }
+
+        public async void GetRequestOnliner(string url)
+        {
+            Loadcookie("cookie");
+            HttpClientHandler handler = new HttpClientHandler();
+            if (CookieSession != null)
+            {
+                handler.CookieContainer = CookieSession;
+            }
+            HttpClient httpClient = new HttpClient(handler);
+            var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
+            ResultGetRequsetString = await response.Content.ReadAsStringAsync();
+        }
+
 
         /// <summary>
         /// POST requset for authorization
@@ -277,22 +284,13 @@ namespace Onliner_for_windows_10.Login
         /// </summary>
         public async Task<WeatherJSon> Weather(string townID= "26850")
         {
-            Loadcookie("cookie");
-            string url = string.Format("http://www.onliner.by/sdapi/pogoda/api/forecast/{0}", townID);
-            if (CookieSession == null)
-            {
-                Loadcookie("cookie");
-            }
-            HttpClientHandler handler = new HttpClientHandler();
-            handler.CookieContainer = CookieSession;
-            HttpClient httpClient = new HttpClient(handler);
+            string url = $"http://www.onliner.by/sdapi/pogoda/api/forecast/{townID}";
+            HttpClient httpClient = new HttpClient();
             var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
             var resultJson = await response.Content.ReadAsStringAsync();
-
             var regex = new Regex(@"(\S(19|20)[0-9]{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\S\S)", RegexOptions.Compiled | RegexOptions.Multiline);
             var myString = regex.Replace(resultJson, "").Replace("\"forecast\":{", "\"forecast\":[").Replace("},\"now\":", "],\"now\":");
             var result = (WeatherJSon)JsonConvert.DeserializeObject<WeatherJSon>(myString);
-            Additionalinformation.Instance.Wheather = result.now.temperature;
             return result;
         }
 
