@@ -45,6 +45,7 @@ namespace Onliner_for_windows_10.Model.Message
         {
             this.InitializeComponent();
             this.Loaded += MessagePage_Loaded;
+            PivotMessage.SelectionChanged -= PivotMessage_SelectionChanged;
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
             {
                 Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
@@ -61,24 +62,21 @@ namespace Onliner_for_windows_10.Model.Message
             }
         }
 
-        private void MessagePage_Loaded(object sender, RoutedEventArgs e)
+        private async void MessagePage_Loaded(object sender, RoutedEventArgs e)
         {
             Additionalinformation.Instance.NameActivePage = "Личные сообщения";
+            PivotMessage.SelectionChanged += PivotMessage_SelectionChanged;
+            var inMessage = await request.Message("0", "1");
+            if (inMessage != null)
+            {
+                InMessageContentListview.ItemsSource = inMessage.messages;
+            }
 
         }
 
         private async void PivotMessage_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Task taskMessage = UpdateItemSourceListView(((Pivot)sender).SelectedIndex);
-            try
-            {
-                await taskMessage;
-            }
-            catch (FormatException ex)
-            {
-                MessageDialog message = new MessageDialog(ex.ToString());
-                await message.ShowAsync();
-            }
+           await UpdateItemSourceListView(((Pivot)sender).SelectedIndex);
         }
 
         private async Task UpdateItemSourceListView(int index)

@@ -69,7 +69,7 @@ namespace Onliner_for_windows_10
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
 
-            CommentsContentViewer.HtmlContent = httml;
+            
         }
 
         private Border ReturnBorderComplete(string s)
@@ -173,6 +173,11 @@ namespace Onliner_for_windows_10
         }
 
         private void PopUpTest_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click_4(object sender, RoutedEventArgs e)
         {
 
         }

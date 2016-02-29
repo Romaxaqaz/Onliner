@@ -8,16 +8,21 @@
     xmlns:UserControls="using:Onliner_for_windows_10.UserControls"
     x:Class="Onliner_for_windows_10.Views.NewsPage"
     xmlns:viewModel="using:Onliner_for_windows_10.Views"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:converter="using:Onliner_for_windows_10.Converters"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance viewModel:NewsPage , IsDesignTimeCreatable=True}"
     >
     <Page.Resources>
 
-        <Storyboard x:Key="storyboard">
-            <DoubleAnimation Storyboard.TargetName="ImageListSectionNews"
-                             Storyboard.TargetProperty="Opacity"
-                             EnableDependentAnimation="True"
-                             From="0" To="100" Duration="0:0:1" />
+        <converter:SelectionChangedConverter x:Key="SelectionChangedConverter" />
+        
+        <Storyboard x:Name="Storyboard1">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="image">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
         </Storyboard>
         <!-- Style for flipview-->
         <Style x:Key="NewsFlipViewStyle" TargetType="FlipView">
@@ -186,7 +191,6 @@
 
         <DataTemplate x:Key="NewsThemeList">
             <Grid x:Name="ActualWidthStack"  
-        		Width="{Binding WidthStack}" 
         		Margin="1" 
         		Background="{ThemeResource BackGroundCustomNewsItemColorBrush}" 
         		BorderThickness="0">
@@ -215,7 +219,8 @@
         			FontSize="15"
                     ContinuumNavigationTransitionInfo.IsEntranceElement="True" Grid.Row="1" Style="{ThemeResource BodyTextBlockStyle}"/>
                 <Grid Grid.Row="2">
-                    <Image Name="ImageListSectionNews" Opacity="100" Source="{Binding Image, Converter={StaticResource ImageUrlConverter}}"/>
+                    <Image Name="ImageListSectionNews" Opacity="100" Source="{Binding Image, Converter={StaticResource ImageUrlConverter}}">
+                    </Image>
                 </Grid>
                 <Grid HorizontalAlignment="Stretch" Grid.Row="3">
                     <Grid.ColumnDefinitions>
@@ -300,6 +305,67 @@
         			TextWrapping="WrapWholeWords" FontSize="12" Grid.Row="5" Style="{ThemeResource BaseTextBlockStyle}"/>
             </Grid>
         </DataTemplate>
+
+        <DataTemplate x:Key="OpinionsList">
+            <Grid Background="White" Margin="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="110"/>
+                    <RowDefinition Height="110"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="{Binding Header}" 
+                           TextWrapping="Wrap" 
+                           Foreground="Blue" 
+                           TextAlignment="Justify" 
+                           FontSize="16" 
+                           Padding="3"
+                           Margin="0,10,0,0"/>
+                <TextBlock Text="{Binding Body}" 
+                           TextWrapping="Wrap" 
+                           Grid.Row="1" 
+                           TextTrimming="WordEllipsis"
+                           Padding="3"
+                           Margin="0,10,0,0"
+                           />
+
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Margin="0,0,10,0">
+                        <Ellipse  Width="70" Height="70" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="5">
+                            <Ellipse.Fill>
+                                <ImageBrush>
+                                    <ImageBrush.ImageSource>
+                                        <BitmapImage DecodePixelHeight="250" DecodePixelWidth="250" UriSource="{Binding ImageUrl, Converter={StaticResource ImageUrlConverter}}" />
+                                    </ImageBrush.ImageSource>
+                                </ImageBrush>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="&#xE8BD;" Margin="5,5,0,0" FontSize="16" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{Binding CommentsCount}" FontSize="16" Grid.Column="1" TextAlignment="Center" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+
+                    <TextBlock Text="{Binding PersonAbout}"
+                               Grid.Column="1" 
+                               TextWrapping="Wrap" 
+                               Foreground="Gray" 
+                               Padding="3"
+                               Margin="0,0,10,0"
+                               Style="{ThemeResource BaseTextBlockStyle}"/>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+        
         <DataTemplate x:Key="ListViewMobileTrigger">
             <StackPanel x:Name="ActualWidthStack"  
         		Width="400" 
@@ -430,7 +496,14 @@
                 </GridView>
             </FlipViewItem>
             <FlipViewItem>
-                <GridView x:Name="SpeakGridView" ItemTemplate="{StaticResource NewsThemeList}"  SizeChanged="myGridView_SizeChanged">
+                <GridView x:Name="SpeakGridView" ItemsSource="{Binding IpinionsItems}" ItemTemplate="{StaticResource OpinionsList}"  SizeChanged="myGridView_SizeChanged">
+                    <interactivity:Interaction.Behaviors>
+                        <core:EventTriggerBehavior  EventName="SelectionChanged">
+                            <core:InvokeCommandAction Command="{Binding Path=ItemClickCommand}"
+                                                      InputConverter="{StaticResource SelectionChangedConverter}"
+                                                      InputConverterParameter="{Binding ElementName=SpeakGridView}"/>
+                        </core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
                     <GridView.ItemContainerTransitions>
                         <TransitionCollection>
                             <EntranceThemeTransition IsStaggeringEnabled="True" 

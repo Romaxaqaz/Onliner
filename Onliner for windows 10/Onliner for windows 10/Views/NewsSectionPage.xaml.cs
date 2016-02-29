@@ -7,6 +7,7 @@ using Onliner_for_windows_10.ProfilePage;
 using Windows.Phone.UI.Input;
 using Windows.UI.Popups;
 using System.Collections.Generic;
+using Onliner_for_windows_10.View_Model;
 
 namespace Onliner_for_windows_10.Views
 {
@@ -16,10 +17,14 @@ namespace Onliner_for_windows_10.Views
         private CategoryNews _categoryNews = new CategoryNews();
         public  List<ItemsNews> defItems = new List<ItemsNews>();
 
+        OpinionsViewModel Opviewmodel;
+
         public NewsPage()
         {
             this.InitializeComponent();
             this.Loaded += MainOageLoaded;
+            this.Opviewmodel = new OpinionsViewModel();
+            this.DataContext = Opviewmodel;
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
             {
                 Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;

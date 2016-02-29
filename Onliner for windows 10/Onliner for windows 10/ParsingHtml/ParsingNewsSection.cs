@@ -18,16 +18,19 @@ namespace Onliner_for_windows_10.ParsingHtml
         private CategoryNews _categoryNews = new CategoryNews();
         private Request request = new Request();
         private ItemsNews _itemNews;
+        private string ResultHtmlPage = string.Empty;
 
         /// <summary>
         /// parsing list news
         /// </summary>
         /// <param name="path">url page section news</param>
-        public ParsingNewsSection(string path)
+        public  ParsingNewsSection(string path)
         {
             request.GetRequestOnliner(path);
-            string resultGetRequest = request.ResultGetRequsetString;
-            resultat.LoadHtml(resultGetRequest);
+            ResultHtmlPage = request.ResultGetRequsetString;
+
+
+            resultat.LoadHtml(ResultHtmlPage);
 
             List<HtmlNode> titleList = resultat.DocumentNode.Descendants().Where
             (x => (x.Name == "article" && x.Attributes["class"] != null && x.Attributes["class"].Value.Contains("b-posts-1-item b-content-posts-1-item news_for_copy"))).ToList();
@@ -42,7 +45,7 @@ namespace Onliner_for_windows_10.ParsingHtml
                 _itemNews.LinkNews = item.Descendants("h3").Where(div => div.GetAttributeValue("class", string.Empty) == "b-posts-1-item__title").FirstOrDefault().Descendants("a").FirstOrDefault().Attributes["href"].Value;
                 _itemNews.Image = item.Descendants("figure").FirstOrDefault().Descendants("a").FirstOrDefault().InnerHtml.Trim();
                 _itemNews.Description = ScrubHtml(item.Descendants("div").LastOrDefault().Descendants("p").First().InnerText.Trim());
-                _itemNews.Footer = Regex.Replace(item.Descendants("span").Where(div => div.GetAttributeValue("class", string.Empty) == "right-side").LastOrDefault().InnerText.Replace("\n", "").Trim(), @"\s+" ," ");
+                _itemNews.Footer = Regex.Replace(item.Descendants("span").Where(div => div.GetAttributeValue("class", string.Empty) == "right-side").LastOrDefault().InnerText.Replace("\n", "").Trim(), @"\s+", " ");
 
                 //watch
                 if (item.Descendants("span").

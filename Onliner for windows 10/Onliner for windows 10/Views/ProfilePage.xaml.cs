@@ -96,7 +96,7 @@ namespace Onliner_for_windows_10.ProfilePage
             }
         }
 
-        public void ShowProfileInfo(string profileUrl)
+        public async void ShowProfileInfo(string profileUrl)
         {
             bool changeInfo = false;
             if (profileUrl == string.Empty)
@@ -106,8 +106,7 @@ namespace Onliner_for_windows_10.ProfilePage
             }
 
             var parsHtml = new ParsingHtml.ParsingHtml();
-            request.GetRequestOnliner(profileUrl);
-            string resultGetRequest = request.ResultGetRequsetString;
+            string resultGetRequest = await request.GetRequestOnlinerAsync(profileUrl);
             resultat.LoadHtml(resultGetRequest);
 
             string loginUser = parsHtml.ParsElementHtml(accauntNameParsParam, resultat);

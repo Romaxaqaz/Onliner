@@ -11,8 +11,8 @@
     <AssemblyName>Onliner for windows 10</AssemblyName>
     <DefaultLanguage>ru-RU</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
     <FileAlignment>512</FileAlignment>
@@ -96,6 +96,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Files\Weather\townWeather.txt" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -108,8 +109,10 @@
     <Compile Include="Converters\For Messages\JavaScriptTimeToSharp.cs" />
     <Compile Include="Converters\For Messages\UnreadVisibilityConverter.cs" />
     <Compile Include="Converters\IndexImageTonameImageConverter.cs" />
+    <Compile Include="Converters\SelectionChanged\SelectionChangedConverter.cs" />
     <Compile Include="Converters\TextTrimmingConverter.cs" />
     <Compile Include="Converters\UpdateLogoImage.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Helper\WebViewHelper.cs" />
     <Compile Include="ImageCollection\SVGImage.cs" />
     <Compile Include="Model\Additionalinformation.cs" />
@@ -133,9 +136,15 @@
     <Compile Include="Model\DataTemplateSelector\ListViewItemSelectorModel.cs" />
     <Compile Include="Model\LocalSetteing\LocalSettingParams.cs" />
     <Compile Include="Model\MessageJson.cs" />
+    <Compile Include="Model\OpinionsModel\OpinionModel.cs" />
     <Compile Include="Model\ProfileModel\ProfileSearchModel.cs" />
     <Compile Include="ParsingHtml\ParsingHtml.cs" />
     <Compile Include="ParsingHtml\ParsingSearchUserResult.cs" />
+    <Compile Include="Presentation\Command.cs" />
+    <Compile Include="Presentation\MenuItem.cs" />
+    <Compile Include="Presentation\NotifyPropertyChanged.cs" />
+    <Compile Include="Presentation\ObjectToMenuItemConverter.cs" />
+    <Compile Include="Presentation\ShellViewModel.cs" />
     <Compile Include="Tiles\DesignTimeData.cs" />
     <Compile Include="Tiles\LiveTileBuilder.cs" />
     <Compile Include="Tiles\TileData.cs" />
@@ -148,9 +157,21 @@
     <Compile Include="UserControls\CommentsContentViewer.xaml.cs">
       <DependentUpon>CommentsContentViewer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\Continuity\Enums.cs" />
+    <Compile Include="UserControls\Continuity\Extensions\AnimationExtensions.cs" />
+    <Compile Include="UserControls\Continuity\Extensions\EasingExtensions.cs" />
+    <Compile Include="UserControls\Continuity\Extensions\ImagingExtensions.cs" />
+    <Compile Include="UserControls\Continuity\Extensions\UtilExtensions.cs" />
+    <Compile Include="UserControls\Continuity\Tab\Tab.cs" />
+    <Compile Include="UserControls\Continuity\Tab\TabHeaderItem.cs" />
+    <Compile Include="UserControls\Continuity\Tab\TabItem.cs" />
+    <Compile Include="UserControls\Continuity\Tab\TabSelectionChangedEventArgs.cs" />
+    <Compile Include="UserControls\Continuity\Tab\TabSelectionChangedEventHandler.cs" />
     <Compile Include="UserControls\MessegeSenderControl.xaml.cs">
       <DependentUpon>MessegeSenderControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\SwipeableSplitView.cs" />
+    <Compile Include="View-Model\OpinionsViewModel.cs" />
     <Compile Include="View-Model\WeatherViewModel.cs" />
     <Compile Include="Views\Message\MessagePage.xaml.cs">
       <DependentUpon>MessagePage.xaml</DependentUpon>
@@ -273,6 +294,11 @@
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\ListViewThemeStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
     <Page Include="Themes\ThemeStyle.xaml">
       <SubType>Designer</SubType>
