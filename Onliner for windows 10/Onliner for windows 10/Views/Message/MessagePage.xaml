@@ -2,16 +2,24 @@
     x:Class="Onliner_for_windows_10.Model.Message.MessagePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core" 
     xmlns:local="using:Onliner_for_windows_10.Model.Message"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uc="using:Onliner_for_windows_10.UserControls"
     xmlns:converter="using:Onliner_for_windows_10.Converters.For_Messages"
+    xmlns:converters="using:Onliner_for_windows_10.Converters"
+    xmlns:helper="using:Onliner_for_windows_10.Helper"
     mc:Ignorable="d">
 
     <Page.Resources>
+        <!-- Region Converters -->
         <converter:UnreadVisibilityConverter x:Key="TrueOrFalseUnread"/>
         <converter:JavaScriptTimeToSharp x:Key="JavaScriptTime"/>
+        <converters:BooleanToVisibilityConverter x:Key="BoolToVisible"/>
+        <!--EndRegion-->
+        
         <!-- Region Style -->
         <Style x:Key="PivotStyleDynamicHeader" TargetType="Pivot">
             <Setter Property="Margin" Value="0"/>
@@ -443,58 +451,8 @@
             </Setter>
         </Style>
         <!-- EndRegion -->
-        
-        <!-- Region DataTemplate -->
-        <DataTemplate x:Key="MessageDataTemplate">
-            <Border BorderThickness="0,0,0,1" BorderBrush="Gray">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="5"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Rectangle Width="5" 
-                               Fill="GreenYellow" 
-                               Grid.RowSpan="2" 
-                               Margin="0,0,0,0" 
-                               Visibility="{Binding unread, Converter={StaticResource TrueOrFalseUnread}}"/>
-                    <CheckBox Name="ChekcListItem" 
-                              Tag="{Binding id}" 
-                              Grid.Column="1" 
-                              Grid.RowSpan="2"
-                              VerticalAlignment="Center" 
-                              HorizontalAlignment="Center" 
-                              Style="{StaticResource CheckBoxListStyle}" 
-                              Margin="10,0,10,0" 
-                              Checked="ChekcListItem_Checked" 
-                              Unchecked="ChekcListItem_Unchecked"/>
-                    <HyperlinkButton Name="UserHyperlinkButton" 
-                                     Content="{Binding authorName}" 
-                                     Grid.Row="0" 
-                                     Grid.Column="2" 
-                                     FontSize="16" 
-                                     Margin="0,5,0,0" 
-                                     FontWeight="Bold" 
-                                     HorizontalAlignment="Left" 
-                                     Click="UserHyperlinkButton_Click"/>
-                    <TextBlock Text="{Binding time, Converter={StaticResource JavaScriptTime}}" 
-                               Grid.Row="0" 
-                               Grid.Column="3" 
-                               Foreground="Gray" 
-                               FontSize="14" 
-                               HorizontalAlignment="Stretch" 
-                               TextAlignment="Right" Margin="2"/>
-                    <TextBlock Text="{Binding subject}" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="2,0,0,5" TextWrapping="Wrap" FontSize="16" HorizontalAlignment="Stretch" Style="{ThemeResource HeaderTextBlockStyle}"/>
-                </Grid>
-            </Border>
-        </DataTemplate>
-        <!-- EndRegion -->
     </Page.Resources>
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
@@ -536,7 +494,12 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
-            <Pivot Name="PivotMessage" SelectionChanged="PivotMessage_SelectionChanged">
+            <Pivot x:Name="PivotMessage" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="SelectionChanged">
+                        <Core:InvokeCommandAction Command="{Binding PivotSelectionChange}" CommandParameter="{Binding ElementName=PivotMessage, Path=SelectedIndex}"/>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
                 <Pivot.Resources>
                     <Style TargetType="PivotHeaderItem">
                         <Setter Property="FontSize" Value="{ThemeResource PivotHeaderItemFontSize}" />
@@ -686,8 +649,13 @@
                     <PivotItem.Header>
                         <uc:TabHeader Label="Входящие" Glyph="&#xE715;"/>
                     </PivotItem.Header>
-                    <ListView Name="InMessageContentListview" ItemTemplate="{StaticResource MessageDataTemplate}"
-                      SelectionChanged="MessageTypeList_SelectionChanged" Margin="0" HorizontalContentAlignment="Stretch">
+                    <ListView Name="InMessageContentListview" ItemsSource="{Binding IncomingMessage}"
+                     Margin="0" HorizontalContentAlignment="Stretch">
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                <Core:InvokeCommandAction Command="{Binding ListMessageSelectionChange}" CommandParameter="{Binding ElementName=InMessageContentListview, Path=SelectedItem}"/>
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -696,13 +664,75 @@
                                 <Setter Property="IsSelected" Value="true"/>
                             </Style>
                         </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderThickness="0,0,0,1" BorderBrush="Gray">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto"/>
+                                            <RowDefinition Height="auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5"/>
+                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Rectangle Width="5" 
+                               Fill="GreenYellow" 
+                               Grid.RowSpan="2" 
+                               Margin="0,0,0,0" 
+                               Visibility="{Binding unread, Converter={StaticResource TrueOrFalseUnread}}"/>
+                                        <CheckBox Name="ChekcListItem" 
+                              Tag="{Binding id}" 
+                              Grid.Column="1" 
+                              Grid.RowSpan="2"
+                              VerticalAlignment="Center" 
+                              HorizontalAlignment="Center" 
+                              Style="{StaticResource CheckBoxListStyle}" 
+                              Margin="10,0,10,0">
+                                            <Interactivity:Interaction.Behaviors>
+                                                <Core:EventTriggerBehavior EventName="Checked">
+                                                    <Core:InvokeCommandAction Command="{Binding Path=DataContext.CheckListItemChecked, ElementName=InMessageContentListview}" CommandParameter="{Binding ElementName=ChekcListItem, Path=Tag}"/>
+                                                </Core:EventTriggerBehavior>
+                                                <Core:EventTriggerBehavior EventName="Unchecked">
+                                                    <Core:InvokeCommandAction Command="{Binding Path=DataContext.CheckListItemUnChecked, ElementName=InMessageContentListview}" CommandParameter="{Binding ElementName=ChekcListItem, Path=Tag}"/>
+                                                </Core:EventTriggerBehavior>
+                                            </Interactivity:Interaction.Behaviors>
+                                        </CheckBox>
+                                        <HyperlinkButton Name="UserHyperlinkButton" 
+                                     Content="{Binding authorName}" 
+                                     Grid.Row="0" 
+                                     Grid.Column="2" 
+                                     FontSize="16" 
+                                     Margin="0,5,0,0" 
+                                     FontWeight="Bold" 
+                                     HorizontalAlignment="Left" 
+                                     Click="UserHyperlinkButton_Click"/>
+                                        <TextBlock Text="{Binding time, Converter={StaticResource JavaScriptTime}}" 
+                               Grid.Row="0" 
+                               Grid.Column="3" 
+                               Foreground="Gray" 
+                               FontSize="14" 
+                               HorizontalAlignment="Stretch" 
+                               TextAlignment="Right" Margin="2"/>
+                                        <TextBlock Text="{Binding subject}" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="2,0,0,5" TextWrapping="Wrap" FontSize="16" HorizontalAlignment="Stretch" Style="{ThemeResource HeaderTextBlockStyle}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
                     </ListView>
                 </PivotItem>
                 <PivotItem Margin="0">
                     <PivotItem.Header>
                         <uc:TabHeader Label="Отправленные" Glyph="&#xE8CA;"/>
                     </PivotItem.Header>
-                    <ListView Name="OutMessageContentListview" ItemTemplate="{StaticResource MessageDataTemplate}" Margin="0" SelectionChanged="MessageTypeList_SelectionChanged">
+                    <ListView Name="OutMessageContentListview" ItemsSource="{Binding OutgoingMessage}" Margin="0">
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                <Core:InvokeCommandAction Command="{Binding ListMessageSelectionChange}" CommandParameter="{Binding ElementName=OutMessageContentListview, Path=SelectedItem}"/>
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -710,13 +740,75 @@
                                 <Setter Property="Margin" Value="0"/>
                             </Style>
                         </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderThickness="0,0,0,1" BorderBrush="Gray">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto"/>
+                                            <RowDefinition Height="auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5"/>
+                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Rectangle Width="5" 
+                               Fill="GreenYellow" 
+                               Grid.RowSpan="2" 
+                               Margin="0,0,0,0" 
+                               Visibility="{Binding unread, Converter={StaticResource TrueOrFalseUnread}}"/>
+                                        <CheckBox Name="ChekcListItem" 
+                              Tag="{Binding id}" 
+                              Grid.Column="1" 
+                              Grid.RowSpan="2"
+                              VerticalAlignment="Center" 
+                              HorizontalAlignment="Center" 
+                              Style="{StaticResource CheckBoxListStyle}" 
+                              Margin="10,0,10,0">
+                                            <Interactivity:Interaction.Behaviors>
+                                                <Core:EventTriggerBehavior EventName="Checked">
+                                                    <Core:InvokeCommandAction Command="{Binding Path=DataContext.CheckListItemChecked, ElementName=OutMessageContentListview}" CommandParameter="{Binding ElementName=ChekcListItem, Path=Tag}"/>
+                                                </Core:EventTriggerBehavior>
+                                                <Core:EventTriggerBehavior EventName="Unchecked">
+                                                    <Core:InvokeCommandAction Command="{Binding Path=DataContext.CheckListItemUnChecked, ElementName=OutMessageContentListview}" CommandParameter="{Binding ElementName=ChekcListItem, Path=Tag}"/>
+                                                </Core:EventTriggerBehavior>
+                                            </Interactivity:Interaction.Behaviors>
+                                        </CheckBox>
+                                        <HyperlinkButton Name="UserHyperlinkButton" 
+                                     Content="{Binding authorName}" 
+                                     Grid.Row="0" 
+                                     Grid.Column="2" 
+                                     FontSize="16" 
+                                     Margin="0,5,0,0" 
+                                     FontWeight="Bold" 
+                                     HorizontalAlignment="Left" 
+                                     Click="UserHyperlinkButton_Click"/>
+                                        <TextBlock Text="{Binding time, Converter={StaticResource JavaScriptTime}}" 
+                               Grid.Row="0" 
+                               Grid.Column="3" 
+                               Foreground="Gray" 
+                               FontSize="14" 
+                               HorizontalAlignment="Stretch" 
+                               TextAlignment="Right" Margin="2"/>
+                                        <TextBlock Text="{Binding subject}" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="2,0,0,5" TextWrapping="Wrap" FontSize="16" HorizontalAlignment="Stretch" Style="{ThemeResource HeaderTextBlockStyle}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
                     </ListView>
                 </PivotItem>
                 <PivotItem Margin="0">
                     <PivotItem.Header>
                         <uc:TabHeader Label="Сохраненные" Glyph="&#xE89C;"/>
                     </PivotItem.Header>
-                    <ListView  Name="SaveMessageContentListview" ItemTemplate="{StaticResource MessageDataTemplate}" Margin="0" SelectionChanged="MessageTypeList_SelectionChanged">
+                    <ListView  Name="SaveMessageContentListview" ItemsSource="{Binding SavedMessage}" Margin="0">
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                <Core:InvokeCommandAction Command="{Binding ListMessageSelectionChange}" CommandParameter="{Binding ElementName=SaveMessageContentListview, Path=SelectedItem}"/>
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -724,17 +816,74 @@
                                 <Setter Property="Margin" Value="0"/>
                             </Style>
                         </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderThickness="0,0,0,1" BorderBrush="Gray">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto"/>
+                                            <RowDefinition Height="auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="5"/>
+                                            <ColumnDefinition Width="auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Rectangle Width="5" 
+                               Fill="GreenYellow" 
+                               Grid.RowSpan="2" 
+                               Margin="0,0,0,0" 
+                               Visibility="{Binding unread, Converter={StaticResource TrueOrFalseUnread}}"/>
+                                        <CheckBox Name="ChekcListItem" 
+                              Tag="{Binding id}" 
+                              Grid.Column="1" 
+                              Grid.RowSpan="2"
+                              VerticalAlignment="Center" 
+                              HorizontalAlignment="Center" 
+                              Style="{StaticResource CheckBoxListStyle}" 
+                              Margin="10,0,10,0">
+                                            <Interactivity:Interaction.Behaviors>
+                                                <Core:EventTriggerBehavior EventName="Checked">
+                                                    <Core:InvokeCommandAction Command="{Binding Path=DataContext.CheckListItemChecked, ElementName=SaveMessageContentListview}" CommandParameter="{Binding ElementName=ChekcListItem, Path=Tag}"/>
+                                                </Core:EventTriggerBehavior>
+                                                <Core:EventTriggerBehavior EventName="Unchecked">
+                                                    <Core:InvokeCommandAction Command="{Binding Path=DataContext.CheckListItemUnChecked, ElementName=SaveMessageContentListview}" CommandParameter="{Binding ElementName=ChekcListItem, Path=Tag}"/>
+                                                </Core:EventTriggerBehavior>
+                                            </Interactivity:Interaction.Behaviors>
+                                        </CheckBox>
+                                        <HyperlinkButton Name="UserHyperlinkButton" 
+                                     Content="{Binding authorName}" 
+                                     Grid.Row="0" 
+                                     Grid.Column="2" 
+                                     FontSize="16" 
+                                     Margin="0,5,0,0" 
+                                     FontWeight="Bold" 
+                                     HorizontalAlignment="Left" 
+                                     Click="UserHyperlinkButton_Click"/>
+                                        <TextBlock Text="{Binding time, Converter={StaticResource JavaScriptTime}}" 
+                               Grid.Row="0" 
+                               Grid.Column="3" 
+                               Foreground="Gray" 
+                               FontSize="14" 
+                               HorizontalAlignment="Stretch" 
+                               TextAlignment="Right" Margin="2"/>
+                                        <TextBlock Text="{Binding subject}" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Margin="2,0,0,5" TextWrapping="Wrap" FontSize="16" HorizontalAlignment="Stretch" Style="{ThemeResource HeaderTextBlockStyle}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
                     </ListView>
                 </PivotItem>
             </Pivot>
             <CommandBar IsSticky="True" Grid.Row="1">
-                <AppBarButton Name="NewMessage" Icon="Add" Label="Написать" Click="NewMessage_Click"/>
-                    <AppBarButton Name="MarkRead" Icon="Manage" Label="Прочитать" Click="MarkRead_Click"/>
-                    <AppBarButton Name="SaveMarkMessage" Icon="Save" Label="Сохранить" Click="SaveMarkMessage_Click"/>
-                    <AppBarButton Name="DeleteMarkMessage" Icon="Delete" Label="Удалить" Click="DeleteMarkMessage_Click"/>
+                <AppBarButton Name="NewMessage" Icon="Add" Label="Написать" Command="{Binding NewMessageCreate}"/>
+                <AppBarButton Name="MarkRead" Icon="Manage" Label="Прочитать" Command="{Binding MarkReadMessageCommand}"/>
+                <AppBarButton Name="SaveMarkMessage" Icon="Save" Label="Сохранить" Command="{Binding SaveMarkMessageCommand}"/>
+                <AppBarButton Name="DeleteMarkMessage" Icon="Delete" Label="Удалить" Command="{Binding DeleteMarkMessageCommand}"/>
             </CommandBar>
         </Grid>
-        <Grid Grid.Column="1" Name="ViewMessageContent" Background="White">
+        <Grid Grid.Column="1" Name="ViewMessageContent" Background="White" Visibility="{Binding ViewContentMessage, Converter={StaticResource BoolToVisible}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
@@ -771,26 +920,29 @@
                            Margin="2" 
                            TextWrapping="Wrap"/>
             </Grid>
-            <WebView Name="WebViewMessage" Grid.Row="1"/>
+            <WebView Name="WebViewMessage" helper:WebViewHelper.Html="{Binding HtmlMessageContent}" Grid.Row="1" />
             <CommandBar Grid.Row="2">
-                <AppBarButton Name="AnswerQuote" Icon="ReShare" Label="Ответить" Click="AnswerQuote_Click"/>
-                        <AppBarButton Name="Spam" Icon="ClosePane" Label="Пометить" Click="Spam_Click"/>
-                        <AppBarButton Name="Save" Icon="Save" Label="Сохранить" Click="Save_Click"/>
-                        <AppBarButton Name="Delete" Icon="Delete" Label="Удалить" Click="Delete_Click"/>
+                <AppBarButton Name="AnswerQuote" Icon="ReShare" Label="Ответить" Command="{Binding AnswerSendMessageCommand}"/>
+                <AppBarButton Name="Spam" Icon="ClosePane" Label="Пометить" Command="{Binding SpamMarkMessageCommand}" Visibility="{Binding SaveButtonVisible, Converter={StaticResource BoolToVisible}}"/>
+                <AppBarButton Name="Save" Icon="Save" Label="Сохранить" Command="{Binding SaveMessageCommand}"/>
+                <AppBarButton Name="Delete" Icon="Delete" Label="Удалить" Command="{Binding DeleteMessageCommand}"/>
             </CommandBar>
         </Grid>
         <Popup Name="PopupMessageSender" 
                HorizontalAlignment="Stretch" 
                VerticalAlignment="Stretch" 
                Grid.Column="0" 
-               IsOpen="False">
+               IsOpen="{Binding PopUpSender}">
             <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Grid Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <uc:MessegeSenderControl x:Name="MessageSender" 
+                    <uc:MessegeSenderControl x:Name="MessageSender"  
+                                             Username="{Binding UserNameRecipient, Mode=TwoWay}"
+                                             MessageHeader="{Binding MessageHeader}"
+                                             MessageText="{Binding MessageHeader}"
                                          HorizontalAlignment="Stretch"
                                          VerticalAlignment="Stretch"/>
                 <Button Name="SendMessageButton" 
@@ -798,7 +950,7 @@
                         Grid.Row="1" 
                         Margin="0,0,25,0" 
                         HorizontalAlignment="Right" 
-                        Click="SendMessageButton_Click"/>
+                        Command="{Binding SendMessageCommand}"/>
             </Grid>
             </ScrollViewer>
         </Popup>

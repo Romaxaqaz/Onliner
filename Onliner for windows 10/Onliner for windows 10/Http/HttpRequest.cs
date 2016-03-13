@@ -159,7 +159,7 @@ namespace Onliner_for_windows_10.Login
         /// <summary>
         /// POST request to add a comment
         /// </summary>
-        public async void AddComments(string newsID, string message)
+        public async Task AddComments(string newsID, string message)
         {
             if (newsID == string.Empty) { throw new Exception(); }
             if (message == string.Empty) { throw new Exception(); }
@@ -286,7 +286,7 @@ namespace Onliner_for_windows_10.Login
         {
             string url = $"http://www.onliner.by/sdapi/pogoda/api/forecast/{townID}";
             HttpClient httpClient = new HttpClient();
-            var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
+            var response =  httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
             var resultJson = await response.Content.ReadAsStringAsync();
             var regex = new Regex(@"(\S(19|20)[0-9]{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\S\S)", RegexOptions.Compiled | RegexOptions.Multiline);
             var myString = regex.Replace(resultJson, "").Replace("\"forecast\":{", "\"forecast\":[").Replace("},\"now\":", "],\"now\":");
@@ -416,7 +416,7 @@ namespace Onliner_for_windows_10.Login
         /// <param name="origin"></param>
         /// <param name="formdata">data for request</param>
         /// </summary>
-        public async void PostRequestFormData(string url, string host, string origin, string formdata)
+        public async Task PostRequestFormData(string url, string host, string origin, string formdata)
         {
             try
             {

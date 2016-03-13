@@ -27,14 +27,8 @@ namespace Onliner_for_windows_10.View_Model
 
         public ObservableCollection<OpinionModel> IpinionsItems
         {
-            get
-            {
-                return _opinionsItems;
-            }
-            set
-            {
-                _opinionsItems = value;
-            }
+            get { return _opinionsItems; }
+            set { _opinionsItems = value; }
         }
 
         public RelayCommand<IList<object>> ItemClickCommand

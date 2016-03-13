@@ -10,7 +10,7 @@ namespace Onliner_for_windows_10.Model
     {
         public Pagination pagination { get; set; }
         public string total { get; set; }
-        public List<MessageList> messages { get; set; }
+        public IEnumerable<MessageList> messages { get; set; }
     }
 
     public class Pagination

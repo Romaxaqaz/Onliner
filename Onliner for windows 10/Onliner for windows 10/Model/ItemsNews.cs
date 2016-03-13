@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SQLite.Net.Attributes;
+using System;
 
 namespace Onliner_for_windows_10.Model
 {
@@ -149,6 +146,8 @@ namespace Onliner_for_windows_10.Model
             }
         }
 
+        [PrimaryKey]
         public string LinkNews { get; set; }
+
     }
 }
