@@ -38,6 +38,7 @@ namespace Onliner_for_windows_10.ParsingHtml
         private readonly string BackGroundColorListItem = "#FFF7F7F7";
         private string urlPageNews = string.Empty;
         private string loadePage = string.Empty;
+        private string newsID = string.Empty;
 
         private Request request = new Request();
         private HtmlDocument htmlDoc = new HtmlDocument();
@@ -52,12 +53,12 @@ namespace Onliner_for_windows_10.ParsingHtml
         public int CountPTag { get { return countNews; } }
 
         public string LoadePage { get { return loadePage; } }
+        public string NewsID { get { return newsID; } }
 
         public ParsingFullNewsPage(string page)
         {
             urlPageNews = page;
             loadePage =  GetHtmlPage();
-
         }
 
         /// <summary>
@@ -79,7 +80,7 @@ namespace Onliner_for_windows_10.ParsingHtml
             FullItemNews fullNews = new FullItemNews();
             htmlDoc.LoadHtml(loadePage);
             
-                string _newsId = htmlDoc.DocumentNode.Descendants(NameTagSpan).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "news_view_count").FirstOrDefault().Attributes["news_id"].Value;
+                newsID = htmlDoc.DocumentNode.Descendants(NameTagSpan).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "news_view_count").FirstOrDefault().Attributes["news_id"].Value;
                 string _category = htmlDoc.DocumentNode.Descendants(NameTagDiv).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-post-tags-1").LastOrDefault().Descendants(NameTagStrong).LastOrDefault().Descendants(NameTagA).LastOrDefault().InnerText;
                 string _time = htmlDoc.DocumentNode.Descendants(NameTagDiv).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-post-tags-1").LastOrDefault().Descendants("time").FirstOrDefault().InnerText;
                 string _title = htmlDoc.DocumentNode.Descendants("h3").Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-posts-1-item__title").LastOrDefault().Descendants(NameTagA).FirstOrDefault().InnerText;

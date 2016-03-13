@@ -23,6 +23,7 @@ namespace Onliner_for_windows_10.UserControls
         public MessegeSenderControl()
         {
             this.InitializeComponent();
+            this.DataContext = this;
         }
 
         public string Username

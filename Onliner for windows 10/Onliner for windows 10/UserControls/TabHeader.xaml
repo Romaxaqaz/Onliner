@@ -9,6 +9,38 @@
     d:DesignHeight="300"
 d:DesignWidth="400">
 
+    <Grid x:Name="MainGrid" Width="100" Height="50" Background="White">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="FullNewsVisualStateGroup">
+                <VisualState x:Name="DeskTopVisualState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="700"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="LabelText.(Grid.Visibility)" Value="Visible"/>
+                        <Setter Target="MainGrid.(Grid.Width)" Value="200"/>
+                        <Setter Target="Icon.(Grid.Column)" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <FontIcon x:Name="Icon"
+                      HorizontalAlignment="Center"
+                      Glyph="{Binding Glyph}"
+                      Margin="1"
+                      FontSize="20" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+        <TextBlock x:Name="LabelText" Grid.Column="1"
+                       Text="{Binding Label}"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       HorizontalAlignment="Center"
+                   FontSize="14" TextAlignment="Center"
+                   VerticalAlignment="Center" Visibility="Collapsed"/>
+    </Grid>
+    <!--
     <Grid Width="100" Height="50">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -26,4 +58,5 @@ d:DesignWidth="400">
                    FontSize="14" TextAlignment="Center"
                    VerticalAlignment="Center"/>
     </Grid>
+    -->
 </UserControl>

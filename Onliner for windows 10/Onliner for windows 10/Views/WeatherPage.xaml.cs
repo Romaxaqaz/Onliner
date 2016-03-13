@@ -13,26 +13,17 @@ namespace Onliner_for_windows_10.Views
     /// </summary>
     public sealed partial class WeatherPage : Page
     {
+        private WeatherViewModel viewModel = new WeatherViewModel();
 
         public WeatherPage()
         {
             this.InitializeComponent();
-            Loaded += WeatherPage_Loaded;  
-        }
-
-        private async void WeatherPage_Loaded(object sender, RoutedEventArgs e)
-        {
-            Additionalinformation.Instance.NameActivePage = "Погода";
-            var viewModel = new WeatherViewModel();
-            await viewModel.GeteWatherViewModel();
             this.DataContext = viewModel;
-
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
             {
                 Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
             }
         }
-
         private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;

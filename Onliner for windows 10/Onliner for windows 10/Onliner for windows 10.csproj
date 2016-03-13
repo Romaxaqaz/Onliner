@@ -28,7 +28,7 @@
     <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
-    <PlatformTarget>ARM</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
@@ -51,7 +51,7 @@
     <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
@@ -104,6 +104,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\BindableBase.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\ConvertToAjaxTime.cs" />
     <Compile Include="Converters\For Messages\JavaScriptTimeToSharp.cs" />
@@ -145,6 +146,7 @@
     <Compile Include="Presentation\NotifyPropertyChanged.cs" />
     <Compile Include="Presentation\ObjectToMenuItemConverter.cs" />
     <Compile Include="Presentation\ShellViewModel.cs" />
+    <Compile Include="SQLiteDataBase\SQLiteDB.cs" />
     <Compile Include="Tiles\DesignTimeData.cs" />
     <Compile Include="Tiles\LiveTileBuilder.cs" />
     <Compile Include="Tiles\TileData.cs" />
@@ -157,21 +159,14 @@
     <Compile Include="UserControls\CommentsContentViewer.xaml.cs">
       <DependentUpon>CommentsContentViewer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\Continuity\Enums.cs" />
-    <Compile Include="UserControls\Continuity\Extensions\AnimationExtensions.cs" />
-    <Compile Include="UserControls\Continuity\Extensions\EasingExtensions.cs" />
-    <Compile Include="UserControls\Continuity\Extensions\ImagingExtensions.cs" />
-    <Compile Include="UserControls\Continuity\Extensions\UtilExtensions.cs" />
-    <Compile Include="UserControls\Continuity\Tab\Tab.cs" />
-    <Compile Include="UserControls\Continuity\Tab\TabHeaderItem.cs" />
-    <Compile Include="UserControls\Continuity\Tab\TabItem.cs" />
-    <Compile Include="UserControls\Continuity\Tab\TabSelectionChangedEventArgs.cs" />
-    <Compile Include="UserControls\Continuity\Tab\TabSelectionChangedEventHandler.cs" />
     <Compile Include="UserControls\MessegeSenderControl.xaml.cs">
       <DependentUpon>MessegeSenderControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\SwipeableSplitView.cs" />
+    <Compile Include="View-Model\MessagePageViewModel.cs" />
+    <Compile Include="View-Model\NewsSectionPageViewModel.cs" />
     <Compile Include="View-Model\OpinionsViewModel.cs" />
+    <Compile Include="View-Model\ViewNewsPageViewModel.cs" />
     <Compile Include="View-Model\WeatherViewModel.cs" />
     <Compile Include="Views\Message\MessagePage.xaml.cs">
       <DependentUpon>MessagePage.xaml</DependentUpon>
@@ -182,7 +177,7 @@
     <Compile Include="ProfilePage\EditProfileData.cs" />
     <Compile Include="ProfilePage\ProfileData.cs" />
     <Compile Include="Converters\ImageUrlConverter.cs" />
-    <Compile Include="testpage.xaml.cs">
+    <Compile Include="Views\testpage.xaml.cs">
       <DependentUpon>testpage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\ImageLoader.xaml.cs">
@@ -202,6 +197,9 @@
     </Compile>
     <Compile Include="Views\NewsSectionPage.xaml.cs">
       <DependentUpon>NewsSectionPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\News\FavoriteNewsView.xaml.cs">
+      <DependentUpon>FavoriteNewsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ProfilePage.xaml.cs">
       <DependentUpon>ProfilePage.xaml</DependentUpon>
@@ -295,7 +293,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Themes\ContolsStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Themes\DataTemplateStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
     <Page Include="Themes\ListViewThemeStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Themes\StringResource.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -325,7 +338,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="testpage.xaml">
+    <Page Include="Views\testpage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -354,6 +367,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\NewsSectionPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\News\FavoriteNewsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -391,6 +408,15 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <SDKReference Include="Microsoft.VCLibs, Version=14.0">
+      <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
+    </SDKReference>
+    <SDKReference Include="Microsoft.VCLibs.120, Version=14.0">
+      <Name>Microsoft Visual C++ 2013 Runtime Package for Windows Universal</Name>
+    </SDKReference>
+    <SDKReference Include="SQLite.UWP.2015, Version=3.11.0">
+      <Name>SQLite for Universal Windows Platform</Name>
+    </SDKReference>
     <SDKReference Include="WindowsMobile, Version=10.0.10586.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>

@@ -1,26 +1,20 @@
 ﻿using MyToolkit.Command;
-using MyToolkit.Mvvm;
 using Newtonsoft.Json;
 using Onliner_for_windows_10.Login;
 using Onliner_for_windows_10.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using Windows.Storage;
+using Template10.Mvvm;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace Onliner_for_windows_10.View_Model
 {
-    public class WeatherViewModel : INotifyPropertyChanged
+    public class WeatherViewModel : ViewModelBase
     {
         private bool _currentProgress = true;
         private Request request = new Request();
@@ -42,11 +36,7 @@ namespace Onliner_for_windows_10.View_Model
         public ObservableCollection<Forecast> ForecastItems
         {
             get { return forecastItems; }
-            set
-            {
-                forecastItems = value;
-                OnPropertyChanged("ForecastItems");
-            }
+            set { Set(ref forecastItems, value); }
         }
 
         /// <summary>
@@ -55,11 +45,7 @@ namespace Onliner_for_windows_10.View_Model
         public ObservableCollection<object> WeatherTodayItems
         {
             get { return weatherTodayItems; }
-            set
-            {
-                weatherTodayItems = value;
-                OnPropertyChanged("WeatherTodayItems");
-            }
+            set { Set(ref weatherTodayItems, value); }
         }
 
         /// <summary>
@@ -68,25 +54,21 @@ namespace Onliner_for_windows_10.View_Model
         public Now Now
         {
             get { return now; }
-            set
-            {
-                now = value;
-                OnPropertyChanged("Now");
-            }
+            set { Set(ref now, value); }
         }
 
         public WeatherViewModel()
         {
             TownList = FillTownList();
             forecastItems = new ObservableCollection<Forecast>();
-            ChngeTown = new RelayCommand<object>((obj) => GetTownID(obj));
+            ChngeTown = new RelayCommand<object>(async (obj) => await GetTownID(obj));
         }
 
         /// <summary>
         /// Get town ID out combobox
         /// </summary>
         /// <param name="obj">Combobox</param>
-        private async void GetTownID(object obj)
+        private async Task GetTownID(object obj)
         {
             ComboBox combo = obj as ComboBox;
             TownWeatherID town = combo.SelectedItem as TownWeatherID;
@@ -112,7 +94,7 @@ namespace Onliner_for_windows_10.View_Model
         /// Get weather data
         /// </summary>
         /// <param name="townID">ID town</param>
-        public async Task GeteWatherViewModel(string townID = "26850")
+        private async Task GeteWatherViewModel(string townID = "26850")
         {
             try
             {
@@ -120,7 +102,6 @@ namespace Onliner_for_windows_10.View_Model
 
                 var _temperatureToday = new ObservableCollection<object>();
                 var responsseObject = await request.Weather(townID);
-
                 if (responsseObject.today.morning != null)
                 {
                     _temperatureToday.Add(responsseObject.today.morning);
@@ -148,21 +129,13 @@ namespace Onliner_for_windows_10.View_Model
         public bool CurrentProgress
         {
             get { return _currentProgress; }
-            set
-            {
-                _currentProgress = value;
-                OnPropertyChanged("CurrentProgress");
-            }
+            set { Set(ref _currentProgress, value); }
         }
-        public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)
         {
-            var eventHandler = this.PropertyChanged;
-            if (eventHandler != null)
-            {
-                eventHandler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            await GeteWatherViewModel();
+            await Task.CompletedTask;
         }
 
     }
