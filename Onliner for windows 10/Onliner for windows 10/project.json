@@ -8,7 +8,9 @@
     "MyToolkit.Extended": "2.5.11",
     "Newtonsoft.Json": "8.0.2",
     "SQLite.Net-PCL": "3.1.1",
-    "Template10": "1.1.8"
+    "Template10": "1.1.8",
+    "WinRTXamlToolkit.Controls.DataVisualization.UWP": "2.0.0",
+    "WriteableBitmapEx": "1.5.0"
   },
   "frameworks": {
     "uap10.0": {}

@@ -15,6 +15,8 @@ using Template10.Common;
 using Template10.Mvvm;
 using Template10.Services.NavigationService;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
+using static Onliner_for_windows_10.SQLiteDataBase.SQLiteDB;
 
 namespace Onliner_for_windows_10.View_Model
 {
@@ -40,9 +42,9 @@ namespace Onliner_for_windows_10.View_Model
 
         #region commands
         public RelayCommand<object> PivotOrFlipViewSelectionChange { get; private set; }
-        public RelayCommand<object> HeaderRadioButtonCommand { get; private set; }
         public RelayCommand<object> OpenFullNewsCommandNav { get; private set; }
         public RelayCommand FavoritePageCommand { get; private set; }
+        public RelayCommand TestCommand { get; private set; }
         #endregion
 
         #region List news
@@ -100,7 +102,7 @@ namespace Onliner_for_windows_10.View_Model
             }
         }
 
-        private bool progressRing;
+        private bool progressRing = false;
         public bool ProgressRing
         {
             get
@@ -116,73 +118,89 @@ namespace Onliner_for_windows_10.View_Model
 
         public NewsSectionPageViewModel()
         {
-            //load data DB
-            TechNewsList = SQLiteDB.GetAllNews();
-            PivotOrFlipViewSelectionChange = new RelayCommand<object>(async (obj) => await ChangeNewsSection(obj));
-            HeaderRadioButtonCommand = new RelayCommand<object>(async (obj) => await RadioButtonChoiseSection(obj));
+            PivotOrFlipViewSelectionChange = new RelayCommand<object>((obj) => ChangeNewsSection(obj));
             OpenFullNewsCommandNav = new RelayCommand<object>((obj) => DetailsPage(obj));
             FavoritePageCommand = new RelayCommand(() => FavoritePage());
+            TestCommand = new RelayCommand(() => TestMethod());
         }
 
-        private async Task RadioButtonChoiseSection(object obj)
+        private void TestMethod()
         {
-            var rad = obj as RadioButton;
-            if (rad != null)
+            NavigationService.Navigate(typeof(ViewNewsPage), "https://people.onliner.by/2016/03/15/parom");
+        }
+
+        private async void ChangeNewsSection(object obj)
+        {
+            try
             {
-                int index = Convert.ToInt32(rad.Tag);
-                SelectedIndex = index;
-                await LoadNews(index);
+                ProgressRing = true;
+                SelectedIndex = (int)obj;
+                await LoadNews();
+            }
+            catch(NullReferenceException)
+            {
+                await LoadNews();
             }
         }
 
-        private async Task ChangeNewsSection(object obj)
+        public async Task LoadNews()
         {
-            var flip = obj as FlipView;
-            await LoadNews(flip.SelectedIndex);
-        }
-
-        public async Task LoadNews(int index)
-        {
-            ProgressRing = true;
-            switch (index)
+            switch (SelectedIndex)
             {
                 case 0:
-                    var li = await SQLiteDB.CreateDatabase(parsNewsSection.NewsItemList(TechUrlNews));
-                    AddNewItemList(TechNewsList, li);
+                    TechNewsList = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_TECH);
+                    TechNewsList = await GetNewsCollection(TechNewsList, TechUrlNews, SQLiteDB.DB_PATH_TECH, SectionNewsDB.Tech);
                     break;
                 case 1:
-                    PeopleNewsList = parsNewsSection.NewsItemList(PeoplehUrlNews);
+                    PeopleNewsList = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_PEOPLE);
+                    PeopleNewsList = await GetNewsCollection(PeopleNewsList, PeoplehUrlNews, SQLiteDB.DB_PATH_PEOPLE, SectionNewsDB.People);
                     break;
                 case 2:
-                    AutoNewsList = parsNewsSection.NewsItemList(AutohUrlNews);
+                    AutoNewsList = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_AUTO);
+                    AutoNewsList = await GetNewsCollection(AutoNewsList, AutohUrlNews, SQLiteDB.DB_PATH_AUTO, SectionNewsDB.Auto);
                     break;
                 case 3:
-                    HouseNewsList = parsNewsSection.NewsItemList(RealtUrlNews);
+                    HouseNewsList = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_HOUSE);
+                    HouseNewsList =  await GetNewsCollection(HouseNewsList, RealtUrlNews, SQLiteDB.DB_PATH_HOUSE, SectionNewsDB.House);
                     break;
                 case 4:
                     OpinionsNewsList = parsNewsSection.OpinionList(OpinionUrlNews);
                     break;
             }
             ProgressRing = false;
+            await Task.CompletedTask;
+        }
+
+        private async Task<ObservableCollection<ItemsNews>> GetNewsCollection(IEnumerable<ItemsNews> collection, string urlNews, string sqlDBPath, SectionNewsDB sectionDB)
+        {      
+            var newListNews = await parsNewsSection.NewsItemList(urlNews, sectionDB);
+            return await UpdateAndRetuntCollection(newListNews, sectionDB);
         }
 
         private void DetailsPage(object obj)
         {
-            ItemsNews feedItem = obj as ItemsNews;
-            NavigationService.Navigate(typeof(ViewNewsPage), feedItem.LinkNews);
-        }
-
-        private void FavoritePage()
-        {
-            NavigationService.Navigate(typeof(Views.News.FavoriteNewsView));
-        }
-
-        private void AddNewItemList(ObservableCollection<ItemsNews> list, ObservableCollection<ItemsNews> newList)
-        {
-            foreach (var item in newList)
+            try
             {
-                list.Insert(0, item);
+                ItemsNews feedItem = obj as ItemsNews;
+                NavigationService.Navigate(typeof(ViewNewsPage), feedItem.LinkNews);
             }
+            catch (NullReferenceException) { }
+
+        }
+
+        private void FavoritePage() =>
+            NavigationService.Navigate(typeof(Views.News.FavoriteNewsView));
+
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)
+        {
+            ProgressRing = true;
+            TechNewsList = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_TECH);
+            if (TechNewsList == null)
+            {
+                TechNewsList = await UpdateAndRetuntCollection(await parsNewsSection.NewsItemList(TechUrlNews, SectionNewsDB.Tech), SectionNewsDB.Tech);
+            }
+            ProgressRing = false;
+            await Task.CompletedTask;
         }
     }
 }

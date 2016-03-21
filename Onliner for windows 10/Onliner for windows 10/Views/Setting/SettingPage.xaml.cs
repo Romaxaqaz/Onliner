@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-
+using static Onliner_for_windows_10.SQLiteDataBase.SQLiteDB;
 // Шаблон элемента пустой страницы задокументирован по адресу http://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace Onliner_for_windows_10.Views.Setting
@@ -54,6 +54,54 @@ namespace Onliner_for_windows_10.Views.Setting
 
 
             
+        }
+
+        private void Cash_Click(object sender, RoutedEventArgs e)
+        {
+            Size.Text = BytesToString(GetSizeByteDB());
+        }
+
+        private string BytesToString(long byteCount)
+        {
+            string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" }; //Longs run out around EB
+            if (byteCount == 0)
+                return "0" + suf[0];
+            long bytes = Math.Abs(byteCount);
+            int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
+            double num = Math.Round(bytes / Math.Pow(1024, place), 1);
+            return (Math.Sign(byteCount) * num).ToString() + suf[place];
+        }
+
+        private double BytesToDouble(long byteCount)
+        {
+            string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" }; //Longs run out around EB;
+            long bytes = Math.Abs(byteCount);
+            int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
+            double num = Math.Round(bytes / Math.Pow(1024, place), 1);
+            return (Math.Sign(byteCount) * num);
+        }
+
+        private void SettingPivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Pivot pivot = sender as Pivot;
+            switch(pivot.SelectedIndex)
+            {
+                case 0:
+                    break;
+                case 1:
+                    int max = 50;
+                    int maxangle = 359;
+                    int nowAngle = (maxangle * (int)BytesToDouble(GetSizeByteDB())) / max;
+                    RingSlice.EndAngle = nowAngle;
+                    Size.Text = BytesToString(GetSizeByteDB());
+                    break;
+            }
+        }
+
+        private void ClearDB_Click(object sender, RoutedEventArgs e)
+        {
+            RemoveDataBase();
+            Size.Text = BytesToString(GetSizeByteDB());
         }
     }
 }

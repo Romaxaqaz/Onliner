@@ -8,7 +8,7 @@ namespace Onliner_for_windows_10.Model
         private string _countViews = string.Empty;
         private string _themes = string.Empty;
         private string _title = string.Empty;
-        private string _image = string.Empty;
+        private byte[] _image = null;
         private string _span = string.Empty;
         private string _description = string.Empty;
         private string _footer = string.Empty;
@@ -68,7 +68,7 @@ namespace Onliner_for_windows_10.Model
             }
         }
 
-        public string Image
+        public byte[] Image
         {
             get
             {

@@ -5,11 +5,9 @@
     xmlns:local="using:Onliner_for_windows_10.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    d:DesignHeight="300"
-d:DesignWidth="400">
+    mc:Ignorable="d">
 
-    <Grid x:Name="MainGrid" Width="100" Height="50" Background="White">
+    <Grid x:Name="MainGrid" Background="Transparent">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="FullNewsVisualStateGroup">
                 <VisualState x:Name="DeskTopVisualState">
@@ -18,27 +16,21 @@ d:DesignWidth="400">
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="LabelText.(Grid.Visibility)" Value="Visible"/>
-                        <Setter Target="MainGrid.(Grid.Width)" Value="200"/>
-                        <Setter Target="Icon.(Grid.Column)" Value="0"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
         <FontIcon x:Name="Icon"
-                      HorizontalAlignment="Center"
-                      Glyph="{Binding Glyph}"
-                      Margin="1"
-                      FontSize="20" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+                      Glyph="{Binding Glyph}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         <TextBlock x:Name="LabelText" Grid.Column="1"
                        Text="{Binding Label}"
-                       Style="{StaticResource CaptionTextBlockStyle}"
                        HorizontalAlignment="Center"
                    FontSize="14" TextAlignment="Center"
-                   VerticalAlignment="Center" Visibility="Collapsed"/>
+                   VerticalAlignment="Center" Visibility="Collapsed" Margin="5,0,0,0"/>
     </Grid>
     <!--
     <Grid Width="100" Height="50">

@@ -5,12 +5,13 @@
     xmlns:local="using:Onliner_for_windows_10"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    xmlns:Behaviors="using:Template10.Behaviors"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:controls="using:Template10.Controls"
+    mc:Ignorable="d" x:Name="ThisPage">
 
-
-
-
-    <Grid Background="{ThemeResource BackGroundCustomColorBrush}">
+    <Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
                 <VisualState x:Name="VisualStateMobile">
@@ -19,27 +20,39 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="HelloStackPanel.(Grid.Column)" Value="0" />
-                        <Setter Target="HelloStackPanel.(Grid.Row)" Value="0" />
                         <Setter Target="HelloStackPanel.(Grid.ColumnSpan)" Value="2" />
-                        <Setter Target="HelloStackPanel.(Grid.RowSpan)" Value="2" />
-                        <Setter Target="InputControlStackpanel.(Grid.Column)" Value="0" />
-                        <Setter Target="InputControlStackpanel.(Grid.Row)" Value="1" />
-                        <Setter Target="InputControlStackpanel.(Grid.RowSpan)" Value="2" />
-                        <Setter Target="InputControlStackpanel.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="InputControlStackpanel.(Grid.Column)" Value="0"/>
+                        <Setter Target="InputControlStackpanel.(Grid.ColumnSpan)" Value="2"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="VisualStateTablet">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="640" />
+                        <AdaptiveTrigger MinWindowWidth="800" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="InputControlStackpanel.(StackPanel.Width)" Value="600"/>
+                        <Setter Target="HelloStackPanel.(Grid.Column)" Value="0" />
+                        <Setter Target="HelloStackPanel.(Grid.RowSpan)" Value="2" />
+                        <Setter Target="InputControlStackpanel.(StackPanel.Width)" Value="500"/>
+                        <Setter Target="InputControlStackpanel.(Grid.Column)" Value="1"/>
+                        <Setter Target="InputControlStackpanel.(Grid.Row)" Value="0"/>
+                        <Setter Target="InputControlStackpanel.(Grid.RowSpan)" Value="2"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <controls:PageHeader BackButtonVisibility="Collapsed"
+                             Frame="{x:Bind Frame}"
+                             Content="Авторизация"
+                             Background="{ThemeResource BackGroundCustomHeaderColorBrush}"
+                             Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}">
+        </controls:PageHeader>
+
+        <Grid Background="{ThemeResource BackGroundCustomColorBrush}" Grid.Row="1">
+            <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -47,33 +60,82 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <StackPanel Name="HelloStackPanel" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBlock Text="Здравствуйте!" FontSize="44" Foreground="{ThemeResource ForegroundCustomBlueBrush}" TextAlignment="Center"/>
-            <TextBlock Text="Добро пожаловать на Onliner.by" FontSize="28" TextAlignment="Center" TextWrapping="Wrap" Foreground="{ThemeResource ForegroundCustomBlackBrush}"/>
+        <StackPanel x:Name="HelloStackPanel" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="Здравствуйте!" 
+                       FontSize="44" 
+                       FontWeight="Medium" 
+                       TextAlignment="Center"
+                       Foreground="{ThemeResource ForegroundCustomBlueBrush}" 
+                       Style="{ThemeResource HeaderTextBlockStyle}"/>
+            <TextBlock Text="Добро пожаловать на Onliner.by" 
+                       FontSize="26" 
+                       TextAlignment="Center" 
+                       TextWrapping="Wrap" 
+                       Foreground="{ThemeResource ForegroundCustomBlackBrush}"/>
         </StackPanel>
-        <StackPanel Name="InputControlStackpanel" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Bottom">
-            <TextBlock x:Name="textBlock" Text="Войти" FontSize="24" Foreground="Gray"/>
-            <TextBox  Name="LoginTextBox" MinWidth="300" BorderThickness="1" BorderBrush="Gray" Margin="0,0,0,10"/>
-            <TextBlock Text="Пароль" FontSize="24" Margin="4,0,0,0" Foreground="Gray"/>
-            <PasswordBox Name="PasswordBox"  BorderThickness="1"  BorderBrush="Gray" Margin="0,0,0,20"/>
+        <StackPanel x:Name="InputControlStackpanel" 
+                    Grid.Row="1" 
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Center">
+            <TextBox  Name="LoginTextBox" 
+                      Text="{Binding Login, Mode=TwoWay}" 
+                      MinWidth="300" 
+                      BorderThickness="1"
+                      BorderBrush="Gray"
+                      Margin="10,0,10,10">
+                <TextBox.Header>
+                    <StackPanel>
+                        <TextBlock Text="Введите логин" Foreground="{ThemeResource ForegroundCustomBlackBrush}"/>
+                    </StackPanel>
+                </TextBox.Header>
+            </TextBox>
+            <PasswordBox Name="PasswordBox" 
+                         Password="{Binding Password, Mode=TwoWay}"  
+                         BorderThickness="1"  
+                         BorderBrush="Gray" 
+                         Margin="10,0,10,10">
+                <PasswordBox.Header>
+                    <StackPanel>
+                        <TextBlock Text="Введите пароль" Foreground="{ThemeResource ForegroundCustomBlackBrush}"/>
+                    </StackPanel>
+                </PasswordBox.Header>
+            </PasswordBox>
             <Button Name="LaterLogIn" 
                     Content="Позже" 
                     FontSize="18" 
-                    Height="50" 
+                    Height="30" 
+                    Padding="0"
                     Grid.Column="1" 
                     HorizontalAlignment="Stretch" 
                     Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
-                    Click="LaterLogIn_Click" Margin="0,5,0,0"/>
+                    IsEnabled="{Binding ControlEnable}"
+                    Margin="10,5,10,0"
+                    Command="{Binding AuthorizationLaterCommand}"/>
             <Button Name="LoginButton" 
                     Content="Войти" 
                     HorizontalAlignment="Stretch"
                     FontSize="18"
-                    Height="50"
-                    Margin="0,10,0,0"
+                    Height="30"
+                    Padding="0"
+                    Margin="10"
+                    IsEnabled="{Binding ControlEnable}"
                     Background="{ThemeResource BackGroundCustomYellowColorBrush}" 
                     Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
-                    Click="LoginButton_Click"/>
+                    Command="{Binding AuthorizationCommand}"/>
+            <HyperlinkButton Content="регистрация" 
+                             HorizontalAlignment="Center" 
+                             FontSize="12"
+                             Padding="0" 
+                             Command="{Binding RegistrationCommand}"/>
         </StackPanel>
+        <ProgressRing Width="50" Height="50" 
+                      HorizontalAlignment="Center" 
+                      VerticalAlignment="Center" 
+                      Foreground="Blue"
+                      Grid.ColumnSpan="2" 
+                      Grid.RowSpan="2"
+                      IsActive="{Binding ProgressRing}"/>
+    </Grid>
     </Grid>
     <Page.Transitions>
         <TransitionCollection>

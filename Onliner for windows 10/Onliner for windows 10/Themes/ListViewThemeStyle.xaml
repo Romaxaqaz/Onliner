@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Onliner_for_windows_10.UserControls">
 
     <Style TargetType="ListViewItem" x:Key="ListViewItemDisableTilt">
         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
@@ -377,4 +378,80 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:HeaderTab">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:HeaderTab">
+                    <Grid>
+                        <TextBlock Text="{TemplateBinding Content}"
+                                   Margin="{TemplateBinding Padding}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" FontFamily="Segoe MDL2 Assets"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style x:Key="HeaderTabListViewItemContainerStyle"
+               TargetType="ListViewItem">
+        <Setter Property="Background"
+                    Value="Transparent" />
+        <Setter Property="Foreground"
+                    Value="White" />
+        <Setter Property="HorizontalContentAlignment"
+                    Value="Center" />
+        <Setter Property="VerticalContentAlignment"
+                    Value="Top" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListViewItem">
+                    <Grid x:Name="PART_LayoutRoot"
+                              HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                              VerticalAlignment="{TemplateBinding VerticalAlignment}">
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SelectionStates">
+                                <VisualState x:Name="Selected">
+                                    <VisualState.Setters>
+                                        <Setter Target="PivotIndicator.(UIElement.Opacity)" Value="1"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="SelectedUnfocused"/>
+
+                                <VisualState x:Name="Unfocused">
+                                    <VisualState.Setters>
+                                        <Setter Target="PivotIndicator.(UIElement.Opacity)" Value="0"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Grid x:Name="PART_BackgroundGrid">
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid x:Name="PART_AnimationGrid"
+                                      Background="Gray"
+                                      VerticalAlignment="Bottom"  Grid.Row="0"/>
+                            <ContentControl x:Name="PART_Content" Opacity="80"
+                                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                Content="{TemplateBinding Content}"
+                                                Background="{TemplateBinding Background}"
+                                                Foreground="{TemplateBinding Foreground}"
+                                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                VerticalAlignment="Center"
+                                                BorderBrush="{TemplateBinding BorderBrush}" Grid.Row="0"/>
+                            <Rectangle x:Name="PivotIndicator" Height="3" Grid.Row="1" Fill="Yellow" Opacity="0"/>
+                        </Grid>
+
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
