@@ -148,9 +148,16 @@ namespace Onliner_for_windows_10.View_Model
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)
         {
-            LinkNews = (suspensionState.ContainsKey(nameof(LinkNews))) ? suspensionState[nameof(LinkNews)]?.ToString() : parameter?.ToString();
-            await LoadNewsData(LinkNews);
-            ProgressRing = false;
+            LinkNews = parameter?.ToString();
+            if (request.HasInternet())
+            {
+                await LoadNewsData(LinkNews);
+                ProgressRing = false;
+            }
+            else
+            {
+                request.Message("Упс, вы не подключены к интернету :(");
+            }
             await Task.CompletedTask;
         }
     }

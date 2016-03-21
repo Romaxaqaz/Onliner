@@ -21,6 +21,12 @@ using Windows.UI;
 using Onliner_for_windows_10.Login;
 using HtmlAgilityPack;
 using MyToolkit.Controls;
+using System.Net.Http;
+using Windows.Storage;
+using Windows.Storage.Streams;
+using System.Threading.Tasks;
+using Windows.Graphics.Imaging;
+using Onliner_for_windows_10.ParsingHtml;
 // Шаблон элемента пустой страницы задокументирован по адресу http://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace Onliner_for_windows_10
@@ -30,6 +36,11 @@ namespace Onliner_for_windows_10
     /// </summary>
     public sealed partial class testpage : Page
     {
+        private ParsingNewsSection parsNewsSection = new ParsingNewsSection();
+
+        private string imageURL = "https://content.onliner.by/news/2016/03/default/a0040ecfbf7f5662c8c916a34cd4ff61.jpeg";
+        private readonly string PeoplehUrlNews = "http://people.onliner.by/";
+        private readonly string TechUrlNews = "http://tech.onliner.by/";
 
         public class CommentsContent
         {
@@ -57,6 +68,38 @@ namespace Onliner_for_windows_10
         public testpage()
         {
             this.InitializeComponent();
+            Loaded += Testpage_Loaded;
+        }
+
+        private async void Testpage_Loaded(object sender, RoutedEventArgs e)
+        {
+           //var PeopleNewsList = await parsNewsSection.NewsItemList(PeoplehUrlNews);
+            //var PeopleNewsList2 = await parsNewsSection.NewsItemList(TechUrlNews);
+        }
+
+
+        public async  Task<byte[]> GetBytesFromStream(IRandomAccessStream randomStream)
+        {
+            var reader = new DataReader(randomStream.GetInputStreamAt(0));
+            var bytes = new byte[randomStream.Size];
+            await reader.LoadAsync((uint)randomStream.Size);
+            reader.ReadBytes(bytes);
+            return bytes;
+        }
+
+        public static async Task<BitmapImage> GetImageFromStream(IRandomAccessStream stream)
+        {
+            BitmapImage bmp = new BitmapImage();
+            await bmp.SetSourceAsync(stream);
+            return bmp;
+        } 
+
+        internal static async Task<InMemoryRandomAccessStream> ConvertTo(byte[] arr)
+        {
+            InMemoryRandomAccessStream randomAccessStream = new InMemoryRandomAccessStream();
+            await randomAccessStream.WriteAsync(arr.AsBuffer());
+            randomAccessStream.Seek(0);
+            return randomAccessStream;
         }
 
 
@@ -128,50 +171,7 @@ namespace Onliner_for_windows_10
             return mainBorder;
         }
 
-
-
-        private void MediaElement_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            MediaElement med = (MediaElement)sender;
-            med.Play();
-        }
-
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            YouTubePlayerControl pl = new YouTubePlayerControl();
-            //MainGrid.Children.Add(pl);
-
-        }
-
-        private void player_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-        {
-
-        }
-
         private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-
-
-        private void Button_Click_3(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void PopUpTest_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-
-        }
-
-        private void Button_Click_4(object sender, RoutedEventArgs e)
         {
 
         }

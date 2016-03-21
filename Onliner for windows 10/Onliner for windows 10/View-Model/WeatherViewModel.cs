@@ -116,9 +116,9 @@ namespace Onliner_for_windows_10.View_Model
 
                 CurrentProgress = false;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageDialog msg = new MessageDialog(ex.ToString());
+                MessageDialog msg = new MessageDialog("Упс, вы не подключены к интернету :(");
                 await msg.ShowAsync();
             }
         }

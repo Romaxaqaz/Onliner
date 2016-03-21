@@ -30,7 +30,7 @@ namespace Onliner_for_windows_10.Views.News
         public FavoriteNewsView()
         {
             this.InitializeComponent();
-            news = SQLiteDB.GetAllNews();
+           // news = SQLiteDB.GetAllNews("");
             TestGridView.ItemsSource = news;
         }
 

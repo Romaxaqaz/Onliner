@@ -17,10 +17,12 @@
     <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>Onliner for windows 10_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>Onliner for windows 10_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
-    <AppxPackageDir>F:\universal app\</AppxPackageDir>
+    <AppxPackageDir>F:\universal app\ReleaseOnliner\</AppxPackageDir>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <AppxBundle>Always</AppxBundle>
+    <PackageCertificateThumbprint>C757BE25490DB61A4CA24EF4E32C9CFD470FAA34</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
@@ -28,7 +30,7 @@
     <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>ARM</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
@@ -97,6 +99,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Files\Weather\townWeather.txt" />
+    <None Include="Onliner for windows 10_StoreKey.pfx" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -114,10 +117,12 @@
     <Compile Include="Converters\TextTrimmingConverter.cs" />
     <Compile Include="Converters\UpdateLogoImage.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Helper\MemoryRandomAccessStream.cs" />
     <Compile Include="Helper\WebViewHelper.cs" />
     <Compile Include="ImageCollection\SVGImage.cs" />
     <Compile Include="Model\Additionalinformation.cs" />
     <Compile Include="Model\BestrateRespose.cs" />
+    <Compile Include="Model\Catalog\Carts.cs" />
     <Compile Include="Model\Catalog\CategoryListViewModel.cs" />
     <Compile Include="Model\Catalog\ElectronicSection.cs" />
     <Compile Include="Model\CategoryNews.cs" />
@@ -145,7 +150,6 @@
     <Compile Include="Presentation\MenuItem.cs" />
     <Compile Include="Presentation\NotifyPropertyChanged.cs" />
     <Compile Include="Presentation\ObjectToMenuItemConverter.cs" />
-    <Compile Include="Presentation\ShellViewModel.cs" />
     <Compile Include="SQLiteDataBase\SQLiteDB.cs" />
     <Compile Include="Tiles\DesignTimeData.cs" />
     <Compile Include="Tiles\LiveTileBuilder.cs" />
@@ -163,9 +167,14 @@
       <DependentUpon>MessegeSenderControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\SwipeableSplitView.cs" />
+    <Compile Include="UserControls\TabHeader\HeaderTab.cs" />
+    <Compile Include="UserControls\TabHeader\HorizontalStretchPanel.cs" />
+    <Compile Include="View-Model\MainPageViewModel.cs" />
     <Compile Include="View-Model\MessagePageViewModel.cs" />
     <Compile Include="View-Model\NewsSectionPageViewModel.cs" />
     <Compile Include="View-Model\OpinionsViewModel.cs" />
+    <Compile Include="View-Model\SettigPageViewModel.cs" />
+    <Compile Include="View-Model\ShellViewModel.cs" />
     <Compile Include="View-Model\ViewNewsPageViewModel.cs" />
     <Compile Include="View-Model\WeatherViewModel.cs" />
     <Compile Include="Views\Message\MessagePage.xaml.cs">
@@ -282,6 +291,7 @@
     <Content Include="ImageCollection\logoApp.png" />
     <Content Include="ImageCollection\MainImageLogo.png" />
     <Content Include="ImageCollection\123.jpg" />
+    <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup>

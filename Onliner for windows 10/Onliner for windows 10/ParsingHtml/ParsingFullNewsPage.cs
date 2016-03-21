@@ -58,14 +58,14 @@ namespace Onliner_for_windows_10.ParsingHtml
         public ParsingFullNewsPage(string page)
         {
             urlPageNews = page;
-            loadePage =  GetHtmlPage();
+            loadePage = GetHtmlPage();
         }
 
         /// <summary>
         /// Get html page to string
         /// </summary>
         /// <returns>string page</returns>
-        private  string GetHtmlPage()
+        private string GetHtmlPage()
         {
             request.GetRequestOnliner(urlPageNews);
             return request.ResultGetRequsetString;
@@ -79,46 +79,46 @@ namespace Onliner_for_windows_10.ParsingHtml
         {
             FullItemNews fullNews = new FullItemNews();
             htmlDoc.LoadHtml(loadePage);
-            
-                newsID = htmlDoc.DocumentNode.Descendants(NameTagSpan).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "news_view_count").FirstOrDefault().Attributes["news_id"].Value;
-                string _category = htmlDoc.DocumentNode.Descendants(NameTagDiv).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-post-tags-1").LastOrDefault().Descendants(NameTagStrong).LastOrDefault().Descendants(NameTagA).LastOrDefault().InnerText;
-                string _time = htmlDoc.DocumentNode.Descendants(NameTagDiv).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-post-tags-1").LastOrDefault().Descendants("time").FirstOrDefault().InnerText;
-                string _title = htmlDoc.DocumentNode.Descendants("h3").Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-posts-1-item__title").LastOrDefault().Descendants(NameTagA).FirstOrDefault().InnerText;
-                string _image = htmlDoc.DocumentNode.Descendants(NameTagFigure).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-posts-1-item__image").LastOrDefault().Descendants(NameTagImg).FirstOrDefault().Attributes[AttributeTagSRC].Value;
 
-                NewsListItem.Add(new ListViewItemSelectorModel("header", _category, _time));
-                NewsListItem.Add(new ListViewItemSelectorModel("title", _title));
-                NewsListItem.Add(new ListViewItemSelectorModel("picture", _image));
+            newsID = htmlDoc.DocumentNode.Descendants(NameTagSpan).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "news_view_count").FirstOrDefault().Attributes["news_id"].Value;
+            string _category = htmlDoc.DocumentNode.Descendants(NameTagDiv).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-post-tags-1").LastOrDefault().Descendants(NameTagStrong).LastOrDefault().Descendants(NameTagA).LastOrDefault().InnerText;
+            string _time = htmlDoc.DocumentNode.Descendants(NameTagDiv).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-post-tags-1").LastOrDefault().Descendants("time").FirstOrDefault().InnerText;
+            string _title = htmlDoc.DocumentNode.Descendants("h3").Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-posts-1-item__title").LastOrDefault().Descendants(NameTagA).FirstOrDefault().InnerText;
+            string _image = htmlDoc.DocumentNode.Descendants(NameTagFigure).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-posts-1-item__image").LastOrDefault().Descendants(NameTagImg).FirstOrDefault().Attributes[AttributeTagSRC].Value;
 
-                var ListPTag = htmlDoc.DocumentNode.Descendants(NameTagDiv).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-posts-1-item__text").ToList();
-                htmlDoc.LoadHtml(ListPTag[0].InnerHtml);
-                var contentNews = htmlDoc.DocumentNode.Descendants("p").ToList();
-                foreach (var item in contentNews)
+            NewsListItem.Add(new ListViewItemSelectorModel("header", _category, _time));
+            NewsListItem.Add(new ListViewItemSelectorModel("title", _title));
+            NewsListItem.Add(new ListViewItemSelectorModel("picture", _image));
+
+            var ListPTag = htmlDoc.DocumentNode.Descendants(NameTagDiv).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-posts-1-item__text").ToList();
+            htmlDoc.LoadHtml(ListPTag[0].InnerHtml);
+            var contentNews = htmlDoc.DocumentNode.Descendants("p").ToList();
+            foreach (var item in contentNews)
+            {
+                if (item.InnerHtml.Contains("<img"))
                 {
-                    if (item.InnerHtml.Contains("<img"))
+                    string url = item.Descendants("img").FirstOrDefault().Attributes["src"].Value;
+                    NewsListItem.Add(new ListViewItemSelectorModel("image", url));
+                }
+                else if (item.InnerHtml.Contains("iframe"))
+                {
+                    if (item.InnerHtml.Contains("https://www.youtube.com/embed/"))
                     {
-                        string url = item.Descendants("img").FirstOrDefault().Attributes["src"].Value;
-                        NewsListItem.Add(new ListViewItemSelectorModel("image", url));
-                    }
-                    else if (item.InnerHtml.Contains("iframe"))
-                    {
-                        if (item.InnerHtml.Contains("https://www.youtube.com/embed/"))
-                        {
-                            string linkVideo = item.Descendants("iframe").FirstOrDefault().Attributes["src"].Value;
-                            string path = linkVideo.Replace("https://www.youtube.com/embed/", "");
-                            var pathUri = await YouTube.GetVideoUriAsync(path, YouTubeQuality.Quality480P);
-                            NewsListItem.Add(new ListViewItemSelectorModel("video", pathUri.Uri));
-                        }
-                        else
-                        {
-                            NewsListItem.Add(new ListViewItemSelectorModel("web", item.InnerHtml));
-                        }
+                        string linkVideo = item.Descendants("iframe").FirstOrDefault().Attributes["src"].Value;
+                        string path = linkVideo.Replace("https://www.youtube.com/embed/", "");
+                        var pathUri = await YouTube.GetVideoUriAsync(path, YouTubeQuality.Quality480P);
+                        NewsListItem.Add(new ListViewItemSelectorModel("video", pathUri.Uri));
                     }
                     else
                     {
-                        NewsListItem.Add(new ListViewItemSelectorModel("story", item.InnerHtml));
+                        NewsListItem.Add(new ListViewItemSelectorModel("web", item.InnerHtml));
                     }
                 }
+                else
+                {
+                    NewsListItem.Add(new ListViewItemSelectorModel("story", item.InnerHtml));
+                }
+            }
             return NewsListItem;
         }
 

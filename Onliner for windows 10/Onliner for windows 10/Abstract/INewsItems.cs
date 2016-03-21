@@ -11,7 +11,7 @@ namespace Onliner_for_windows_10.Interfaces
          string CountViews { get; set; }
          string Themes { get; set; }
          string Title { get; set; }
-         string Image { get; set; }
+         byte[] Image { get; set; }
          string Span { get; set; }
          string Description { get; set; }
          string Footer { get; set; }

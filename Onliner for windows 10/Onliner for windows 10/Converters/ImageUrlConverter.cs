@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Onliner_for_windows_10.Helper;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
@@ -14,18 +16,13 @@ namespace Onliner_for_windows_10
 {
     public class ImageUrlConverters : IValueConverter
     {
+        BitmapImage bitmapImage;
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            string pattern = @"https?://[\w./]+\/[\w./]+\.(bmp|png|jpg|gif|jpeg)";
-            string s = value.ToString();
-            Regex htmlreg = new Regex("(?<=src=\").*?(?=\")");
-            string result = htmlreg.Match(s).ToString();
-            if(string.IsNullOrEmpty(result))
-            {
-                Regex imageUrlPattern = new Regex(pattern);
-                result = imageUrlPattern.Match(s).ToString();
-            }
-            return result;
+            byte[] byteArray = value as byte[];
+            var img = new BitmapImage();
+            CreateBitmap(byteArray);
+            return bitmapImage;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -33,13 +30,45 @@ namespace Onliner_for_windows_10
             throw new NotImplementedException();
         }
 
-        public async static Task<byte[]> ImageToBytes(BitmapImage image)
+        public static async Task<BitmapImage> GetImageFromStream(IRandomAccessStream stream)
         {
-            RandomAccessStreamReference streamRef = RandomAccessStreamReference.CreateFromUri(image.UriSource);
-            IRandomAccessStreamWithContentType streamWithContent = await streamRef.OpenReadAsync();
-            byte[] buffer = new byte[streamWithContent.Size];
-            await streamWithContent.ReadAsync(buffer.AsBuffer(), (uint)streamWithContent.Size, InputStreamOptions.None);
-            return buffer;
+            BitmapImage bmp = new BitmapImage();
+            await bmp.SetSourceAsync(stream);
+            return bmp;
         }
+
+
+        private async Task CreateBitmap(byte[] array)
+        {
+            try
+            {
+                bitmapImage = new BitmapImage();
+                IRandomAccessStream stream = await this.ConvertToRandomAccessStream(array);
+                bitmapImage.SetSource(stream);
+            }
+            catch
+            {
+             
+            }
+        }
+
+
+        private async Task<IRandomAccessStream> ConvertToRandomAccessStream(byte[] bytes)
+        {
+            var randomAccessStream = new InMemoryRandomAccessStream();
+            using (var writer = new DataWriter(randomAccessStream))
+            {
+                writer.WriteBytes(bytes);
+                await writer.StoreAsync();
+                await writer.FlushAsync();
+                writer.DetachStream();
+                writer.Dispose();
+            }
+            randomAccessStream.Seek(0);
+
+            return randomAccessStream;
+        }
+
     }
+
 }

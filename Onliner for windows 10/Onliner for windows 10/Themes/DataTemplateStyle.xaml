@@ -22,7 +22,7 @@
 
     <DataTemplate x:Key="NewsThemeList">
         <Grid x:Name="ActualWidthStack"  
-        		Margin="1" 
+        		Margin="1,1,0,0" 
         		Background="{ThemeResource BackGroundCustomNewsItemColorBrush}" 
         		BorderThickness="0">
             <Grid.RowDefinitions>

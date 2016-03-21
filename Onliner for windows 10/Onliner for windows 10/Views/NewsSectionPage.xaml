@@ -18,13 +18,6 @@
     >
     <Page.Resources>
         <converter:SelectionChangedConverter x:Key="SelectionChangedConverter" />
-
-        <Storyboard x:Name="Storyboard1">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="image">
-                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="1"/>
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
         <local:ImageUrlConverters x:Key="ImageUrlConverter" />
         <local:TextIcoNewsConverter x:Key="TextIcoNewsConverter"/>
         <local:TextTrimmingConverter x:Key="TextTrimmingConverter"/>
@@ -32,34 +25,34 @@
     </Page.Resources>
 
 
-    <RelativePanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <controls:PageHeader x:Name="pageHeader" 
-                             Frame="{x:Bind Frame}"
                              Text="Новости"
                              FontWeight="Bold"
-                             Background="Yellow"
-                             BackButtonVisibility="Visible"
-                             VisualStateNarrowMinWidth="-1">
-            <!--  place stretched, across top  -->
-            <RelativePanel.AlignTopWithPanel>True</RelativePanel.AlignTopWithPanel>
-            <RelativePanel.AlignRightWithPanel>True</RelativePanel.AlignRightWithPanel>
-            <RelativePanel.AlignLeftWithPanel>True</RelativePanel.AlignLeftWithPanel>
-            <!--  secondary commands  -->
+                             Frame="{x:Bind Frame}"
+                             Background="{ThemeResource BackGroundCustomHeaderColorBrush}"
+                             Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
+                             VisualStateNarrowMinWidth="1"
+                             BackButtonVisibility="Collapsed"
+                             RelativePanel.AlignLeftWithPanel="True"
+                             RelativePanel.AlignRightWithPanel="True"
+                             RelativePanel.AlignTopWithPanel="True">
+           
             <controls:PageHeader.PrimaryCommands>
-                <AppBarButton Icon="Favorite" Label="favorite" Command="{Binding FavoritePageCommand}"/>
+                <AppBarButton Icon="Favorite" Label="favorite" Command="{Binding FavoritePageCommand}" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
             </controls:PageHeader.PrimaryCommands>
-            <controls:PageHeader.SecondaryCommands>
-                <AppBarButton Icon="Link" Label="Settings" />
-            </controls:PageHeader.SecondaryCommands>
         </controls:PageHeader>
         
-        <Grid Background="{ThemeResource BackGroundCustomNewsHeaderColorBrush}"
-               BorderBrush="LightGray" BorderThickness="0,1,0,0">
-            <RelativePanel.Below>pageHeader</RelativePanel.Below>
-            <RelativePanel.AlignLeftWithPanel>True</RelativePanel.AlignLeftWithPanel>
-            <RelativePanel.AlignRightWithPanel>True</RelativePanel.AlignRightWithPanel>
-            <RelativePanel.AlignBottomWithPanel>True</RelativePanel.AlignBottomWithPanel>
-            
+        <Grid Background="{ThemeResource BackGroundCustomNewsHeaderColorBrush}" Grid.Row="1"
+               BorderBrush="LightGray" BorderThickness="0,1,0,0"
+              RelativePanel.AlignBottomWithPanel="True"
+                      RelativePanel.AlignLeftWithPanel="True"
+                      RelativePanel.AlignRightWithPanel="True"
+                      RelativePanel.Below="pageHeader">
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup x:Name="VisualStateGroup">
                     <VisualState x:Name="VisualStateMobile">
@@ -70,7 +63,6 @@
                             <Setter Target="grid.(FrameworkElement.HorizontalAlignment)" Value="Stretch"/>
                         </VisualState.Setters>
                     </VisualState>
-
                     <VisualState x:Name="VisualStateTablet">
                         <VisualState.StateTriggers>
                             <AdaptiveTrigger MinWindowWidth="600"/>
@@ -89,34 +81,48 @@
                     </VisualState>
                 </VisualStateGroup>
             </VisualStateManager.VisualStateGroups>
-            <!--Static pivot menu-->
-            <Grid x:Name="grid" 
-			VerticalAlignment="Top" 
-			HorizontalAlignment="Stretch" 
-			Height="50" MinWidth="320">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <RadioButton Name="tech" Content="&#xE1E4;" Tag="0" Command="{Binding HeaderRadioButtonCommand}" CommandParameter="{Binding ElementName=tech}" Height="50" Grid.Column="0" FontSize="16" HorizontalAlignment="Stretch" IsChecked="False" Style="{ThemeResource NewsPageHeadeMenuRadioButtonStyle2}"/>
-                <RadioButton Name="people" Content="&#xE125;" Tag="1" Command="{Binding HeaderRadioButtonCommand}" CommandParameter="{Binding ElementName=people}" Height="50" Grid.Column="1" FontSize="16" HorizontalAlignment="Stretch" IsChecked="False" Style="{ThemeResource NewsPageHeadeMenuRadioButtonStyle2}"/>
-                <RadioButton Name="auto" Content="&#xEC47;" Tag="2" Command="{Binding HeaderRadioButtonCommand}" CommandParameter="{Binding ElementName=auto}" Height="50" Grid.Column="2" FontSize="16" HorizontalAlignment="Stretch" Style="{ThemeResource NewsPageHeadeMenuRadioButtonStyle2}"/>
-                <RadioButton Name="house" Content="&#xE825;" Tag="3" Command="{Binding HeaderRadioButtonCommand}" CommandParameter="{Binding ElementName=house}" Height="50" Grid.Column="3" FontSize="16" HorizontalAlignment="Stretch" Style="{ThemeResource NewsPageHeadeMenuRadioButtonStyle2}"/>
-                <RadioButton Name="soc" Content="&#xE2AF;" Tag="4" Command="{Binding HeaderRadioButtonCommand}" CommandParameter="{Binding ElementName=soc}" Height="50" Grid.Column="4" FontSize="16" HorizontalAlignment="Stretch" Style="{ThemeResource NewsPageHeadeMenuRadioButtonStyle2}"/>
-            </Grid>
-            <!--Flipview for static pivot-->
-            <FlipView Margin="0,50,0,0"
-			x:Name="FlipNews" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
-			Style="{ThemeResource NewsFlipViewStyle}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <ListView x:Name="TabListview" ItemContainerStyle="{ThemeResource HeaderTabListViewItemContainerStyle}" 
+                      SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
+                      VerticalAlignment="Bottom" Height="48" Grid.Row="0">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="SelectionChanged">
-                        <Core:InvokeCommandAction Command="{Binding PivotOrFlipViewSelectionChange}" CommandParameter="{Binding ElementName=FlipNews}"/>
+                        <Core:InvokeCommandAction Command="{Binding PivotOrFlipViewSelectionChange}" CommandParameter="{Binding ElementName=TabListview, Path=SelectedIndex}"/>
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
-                <FlipViewItem>
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UserControls:HorizontalStretchPanel />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListViewItem >
+                    <UserControls:TabHeader Glyph="&#xE1E4;" Label="Технологии"
+                                     FontSize="20"  Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                </ListViewItem>
+                <ListViewItem>
+                    <UserControls:TabHeader Glyph="&#xE125;" Label="Люди"
+                                     FontSize="20"  Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                </ListViewItem>
+                <ListViewItem>
+                    <UserControls:TabHeader Glyph="&#xEC47;" Label="Авто"
+                                     FontSize="20"  Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                </ListViewItem>
+                <ListViewItem>
+                    <UserControls:TabHeader Glyph="&#xE825;" Label="Недвижимость"
+                                     FontSize="20"  Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                </ListViewItem>
+                <ListViewItem>
+                    <UserControls:TabHeader Glyph="&#xE2AF;" Label="Мнения"
+                                     FontSize="20"  Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                </ListViewItem>
+            </ListView>
+            <ProgressBar Foreground="Blue" Grid.Row="0" Grid.ColumnSpan="5" Background="Transparent" IsIndeterminate="{Binding ProgressRing}" VerticalAlignment="Top"/>
+            <!--Flipview for static pivot-->
+            <Pivot x:Name="FlipNews" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" Background="Gray" Grid.Row="1">
+                <PivotItem Margin="0,-48,0,0">
                     <GridView x:Name="TechGridView"
                     ItemsSource="{Binding TechNewsList}"
 					ItemTemplate="{ThemeResource NewsThemeList}"  
@@ -140,12 +146,17 @@
                             </TransitionCollection>
                         </GridView.ItemContainerTransitions>
                     </GridView>
-                </FlipViewItem>
-                <FlipViewItem>
+                </PivotItem>
+                <PivotItem Margin="0,-48,0,0">
                     <GridView x:Name="PeopleGridView" 
                           ItemsSource="{Binding PeopleNewsList}"
                           ItemTemplate="{ThemeResource NewsThemeList}" 
                           SizeChanged="myGridView_SizeChanged" >
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                <Core:InvokeCommandAction Command="{Binding OpenFullNewsCommandNav}" CommandParameter="{Binding ElementName=PeopleGridView, Path=SelectedItem}"/>
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
                         <GridView.ItemContainerTransitions>
                             <TransitionCollection>
                                 <EntranceThemeTransition IsStaggeringEnabled="True" 
@@ -157,9 +168,14 @@
                             </TransitionCollection>
                         </GridView.ItemContainerTransitions>
                     </GridView>
-                </FlipViewItem>
-                <FlipViewItem>
+                </PivotItem>
+                <PivotItem  Margin="0,-48,0,0">
                     <GridView x:Name="AutoGridView" ItemsSource="{Binding AutoNewsList}" ItemTemplate="{ThemeResource NewsThemeList}"  SizeChanged="myGridView_SizeChanged">
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                <Core:InvokeCommandAction Command="{Binding OpenFullNewsCommandNav}" CommandParameter="{Binding ElementName=AutoGridView, Path=SelectedItem}"/>
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
                         <GridView.ItemContainerTransitions>
                             <TransitionCollection>
                                 <EntranceThemeTransition IsStaggeringEnabled="True" 
@@ -171,9 +187,14 @@
                             </TransitionCollection>
                         </GridView.ItemContainerTransitions>
                     </GridView>
-                </FlipViewItem>
-                <FlipViewItem>
+                </PivotItem>
+                <PivotItem  Margin="0,-48,0,0">
                     <GridView x:Name="HouseGridView"  ItemsSource="{Binding HouseNewsList}" ItemTemplate="{ThemeResource NewsThemeList}"  SizeChanged="myGridView_SizeChanged">
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                <Core:InvokeCommandAction Command="{Binding OpenFullNewsCommandNav}" CommandParameter="{Binding ElementName=HouseGridView, Path=SelectedItem}"/>
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
                         <GridView.ItemContainerTransitions>
                             <TransitionCollection>
                                 <EntranceThemeTransition IsStaggeringEnabled="True" 
@@ -185,8 +206,8 @@
                             </TransitionCollection>
                         </GridView.ItemContainerTransitions>
                     </GridView>
-                </FlipViewItem>
-                <FlipViewItem>
+                </PivotItem>
+                <PivotItem Margin="0,-48,0,0">
                     <GridView x:Name="SpeakGridView"  ItemsSource="{Binding OpinionsNewsList}" ItemTemplate="{ThemeResource OpinionsList}"  SizeChanged="myGridView_SizeChanged">
                         <interactivity:Interaction.Behaviors>
                             <core:EventTriggerBehavior  EventName="SelectionChanged">
@@ -206,9 +227,8 @@
                             </TransitionCollection>
                         </GridView.ItemContainerTransitions>
                     </GridView>
-                </FlipViewItem>
-            </FlipView>
-            <ProgressRing Width="100" Height="100" IsActive="{Binding ProgressRing}"/>
+                </PivotItem>
+            </Pivot>
         </Grid>
-    </RelativePanel>
+    </Grid>
 </Page>

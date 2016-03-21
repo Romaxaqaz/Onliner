@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Onliner_for_windows_10.Converters;
 using Onliner_for_windows_10.Model;
+using Onliner_for_windows_10.Model.Catalog;
 using Onliner_for_windows_10.Model.LocalSetteing;
 using Onliner_for_windows_10.ProfilePage;
 using System;
@@ -12,6 +13,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.Networking.Connectivity;
 using Windows.Storage;
 using Windows.UI.Popups;
 
@@ -22,7 +24,8 @@ namespace Onliner_for_windows_10.Login
     /// </summary>
     public class Request
     {
-        
+        private const string InternerNotEnableMessage = "Упс, вы не подключены к интернету :(";
+
         #region Onliner url API
         private const string UserApiOnliner = "https://user.api.onliner.by/login";
         private const string CommentsApiTech = "http://tech.onliner.by/comments/add?";
@@ -68,37 +71,55 @@ namespace Onliner_for_windows_10.Login
         /// </summary>
         public async Task<string> GetRequestOnlinerAsync(string url)
         {
-                Loadcookie("cookie");
-                HttpClientHandler handler = new HttpClientHandler();
-                if (CookieSession != null)
-                {
-                    handler.CookieContainer = CookieSession;
-                }
-                HttpClient httpClient = new HttpClient(handler);
+            try
+            {
+                if (!HasInternet()) throw new WebException();
+
+                HttpClient httpClient = new HttpClient();
                 var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
                 ResultGetRequsetString = await response.Content.ReadAsStringAsync();
-                return ResultGetRequsetString;
+            }
+            catch (WebException)
+            {
+                Message(InternerNotEnableMessage);
+                return null;
+            }
+
+            return ResultGetRequsetString;
         }
 
         public async void GetRequestOnliner(string url)
         {
-            Loadcookie("cookie");
-            HttpClientHandler handler = new HttpClientHandler();
-            if (CookieSession != null)
+            try
             {
-                handler.CookieContainer = CookieSession;
+                if (!HasInternet()) ResultGetRequsetString = null;
+                HttpClient httpClient = new HttpClient();
+                var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
+                ResultGetRequsetString = await response.Content.ReadAsStringAsync();
             }
-            HttpClient httpClient = new HttpClient(handler);
-            var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
-            ResultGetRequsetString = await response.Content.ReadAsStringAsync();
+            catch (WebException ex) { Message(ex.ToString()); }
         }
 
+        public async Task<byte[]> GetRequestByteOnliner(string url)
+        {
+            byte[] result = null;
+            try
+            {
+                if (!HasInternet()) return null;
+                HttpClient httpClient = new HttpClient();
+                await Task.CompletedTask;
+                result = await httpClient.GetByteArrayAsync(new Uri(url));
+            }
+            catch (WebException ex) { Message(ex.ToString()); }
+            return result;
+        }
 
         /// <summary>
         /// POST requset for authorization
         /// </summary>
         public async Task<bool> PostRequestUserApi(string login, string password)
         {
+            if (!HasInternet()) throw new WebException();
             bool resultReques = false;
             //get token for authorizton
             HttpRequestMessage req = new HttpRequestMessage(System.Net.Http.HttpMethod.Get, UserApiOnliner);
@@ -161,6 +182,7 @@ namespace Onliner_for_windows_10.Login
         /// </summary>
         public async Task AddComments(string newsID, string message)
         {
+
             if (newsID == string.Empty) { throw new Exception(); }
             if (message == string.Empty) { throw new Exception(); }
 
@@ -169,9 +191,9 @@ namespace Onliner_for_windows_10.Login
             {
                 handler.CookieContainer = CookieSession;
             }
-
             try
             {
+                if (!HasInternet()) throw new WebException();
                 HttpClient httpClient = new HttpClient(handler);
                 HttpRequestMessage postRequest = new HttpRequestMessage(HttpMethod.Post, CommentsApiTech + (ConvertToAjaxTime.ConvertToUnixTimestamp().ToString()));
                 postRequest.Headers.Add("Accept", "application/json, text/javascript, */*; q=0.01");
@@ -187,11 +209,7 @@ namespace Onliner_for_windows_10.Login
                 response = await httpClient.SendAsync(postRequest);
                 ResponceResult("ok");
             }
-            catch (WebException ex)
-            {
-                MessageDialog messageExeption = new MessageDialog(ex.Response.ToString());
-                await messageExeption.ShowAsync();
-            }
+            catch (WebException ex) { Message(ex.ToString()); }
 
         }
 
@@ -200,6 +218,7 @@ namespace Onliner_for_windows_10.Login
         /// </summary>
         public async void EditPreferencesProfile(string pmNotification, string hideOnlineStatus, string showEmail, string birthdayView)
         {
+
             if (EditProfileToken == string.Empty)
             {
                 EditProfileToken = await GetEditProfileToken();
@@ -221,23 +240,42 @@ namespace Onliner_for_windows_10.Login
             }
             postData.Append("birthdayView=" + birthdayView);
 
-            PostRequestFormData(EditPreferencesProfileApi, "profile.onliner.by", "http://profile.onliner.by", postData.ToString());
+            await PostRequestFormData(EditPreferencesProfileApi, "profile.onliner.by", "http://profile.onliner.by", postData.ToString());
         }
 
         /// <summary>
         /// GET request to obtain the number of incoming messages
         /// </summary>
-        public async void MessageUnread()
+        public async Task<string> MessageUnread()
         {
+            string result = string.Empty;
             if (CookieSession == null)
             {
                 Loadcookie("cookie");
             }
-            HttpClientHandler handler = new HttpClientHandler();
-            handler.CookieContainer = CookieSession;
-            HttpClient httpClient = new HttpClient(handler);
-            var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, UnreadApi)).Result;
-            Additionalinformation.Instance.UnreadeMessage = await response.Content.ReadAsStringAsync();
+            try
+            {
+                if (!HasInternet()) return null;
+                HttpClientHandler handler = new HttpClientHandler();
+                handler.CookieContainer = CookieSession;
+                HttpClient httpClient = new HttpClient(handler);
+                var response = httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, UnreadApi)).Result;
+                result = await response.Content.ReadAsStringAsync();
+            }
+            catch (WebException ex) { Message(ex.ToString()); }
+            return result;
+        }
+
+        public async Task<string> ShopCount(string userId)
+        {
+            if (!HasInternet()) throw new WebException();
+            string url = $"https://cart.api.onliner.by/users/{userId}/positions/summary";
+            HttpClient httpClient = new HttpClient();
+            var response = httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, url)).Result;
+            var content = await response.Content.ReadAsStringAsync();
+            var result = (Carts)JsonConvert.DeserializeObject<Carts>(content);
+            if (result == null) return "0";
+            return result.total.ToString();
         }
 
         /// <summary>
@@ -245,35 +283,41 @@ namespace Onliner_for_windows_10.Login
         /// <param name="currency">currency type: USD, EUR, RUB</param>
         /// <param name="nbrb">type of bank: nbrb, buy, sold</param>
         /// </summary>
-        public async void Bestrate(string currency = "USD", string type = "nbrb")
+        public async Task<BestrateRespose> Bestrate(string currency = "USD", string type = "nbrb")
         {
-            string url = "http://www.onliner.by/sdapi/kurs/api/bestrate?currency=" + currency + "&type=" + type;
-            if (CookieSession == null)
+            BestrateRespose bestrateResponse = null;
+            try
             {
-                Loadcookie("cookie");
+                if (!HasInternet()) return null;
+                string url = "http://www.onliner.by/sdapi/kurs/api/bestrate?currency=" + currency + "&type=" + type;
+                HttpClient httpClient = new HttpClient();
+                var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
+                var resultJson = await response.Content.ReadAsStringAsync();
+                bestrateResponse = JsonConvert.DeserializeObject<BestrateRespose>(resultJson);
             }
-            HttpClientHandler handler = new HttpClientHandler();
-            handler.CookieContainer = CookieSession;
-            HttpClient httpClient = new HttpClient(handler);
-            var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
-            var resultJson = await response.Content.ReadAsStringAsync();
-            BestrateRespose bestrateResponse = JsonConvert.DeserializeObject<BestrateRespose>(resultJson);
-            Additionalinformation.Instance.Current = bestrateResponse.amount;
+            catch (WebException ex) { Message(ex.ToString()); }
+            return bestrateResponse;
         }
 
         public async Task<string> GetRequest(string url, string qStringParam)
         {
+            string result = string.Empty;
             string paramName = "name=";
             string urlPath = $"{url}{paramName}{qStringParam}";
             if (CookieSession == null)
             {
                 Loadcookie("cookie");
             }
-            HttpClientHandler handler = new HttpClientHandler();
-            handler.CookieContainer = CookieSession;
-            HttpClient httpClient = new HttpClient(handler);
-            var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, urlPath)).Result;
-            var result = await response.Content.ReadAsStringAsync();
+            try
+            {
+                if (!HasInternet()) throw new WebException();
+                HttpClientHandler handler = new HttpClientHandler();
+                handler.CookieContainer = CookieSession;
+                HttpClient httpClient = new HttpClient(handler);
+                var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, urlPath)).Result;
+                result = await response.Content.ReadAsStringAsync();
+            }
+            catch (WebException ex) { Message(ex.ToString()); }
             return result;
 
         }
@@ -282,16 +326,26 @@ namespace Onliner_for_windows_10.Login
         /// GET request for weather
         /// <param name="townID">id town</param>
         /// </summary>
-        public async Task<WeatherJSon> Weather(string townID= "26850")
+        public async Task<WeatherJSon> Weather(string townID = "26850")
         {
-            string url = $"http://www.onliner.by/sdapi/pogoda/api/forecast/{townID}";
-            HttpClient httpClient = new HttpClient();
-            var response =  httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
-            var resultJson = await response.Content.ReadAsStringAsync();
-            var regex = new Regex(@"(\S(19|20)[0-9]{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\S\S)", RegexOptions.Compiled | RegexOptions.Multiline);
-            var myString = regex.Replace(resultJson, "").Replace("\"forecast\":{", "\"forecast\":[").Replace("},\"now\":", "],\"now\":");
-            var result = (WeatherJSon)JsonConvert.DeserializeObject<WeatherJSon>(myString);
-            return result;
+            WeatherJSon weather = null;
+            try
+            {
+                if (!HasInternet()) throw new WebException();
+                string url = $"http://www.onliner.by/sdapi/pogoda/api/forecast/{townID}";
+                HttpClient httpClient = new HttpClient();
+                var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
+                var resultJson = await response.Content.ReadAsStringAsync();
+                var regex = new Regex(@"(\S(19|20)[0-9]{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\S\S)", RegexOptions.Compiled | RegexOptions.Multiline);
+                var myString = regex.Replace(resultJson, "").Replace("\"forecast\":{", "\"forecast\":[").Replace("},\"now\":", "],\"now\":");
+                weather = (WeatherJSon)JsonConvert.DeserializeObject<WeatherJSon>(myString);
+            }
+            catch (WebException)
+            {
+                Message(InternerNotEnableMessage);
+                return null;
+            }
+            return weather;
         }
 
         /// <summary>
@@ -301,22 +355,27 @@ namespace Onliner_for_windows_10.Login
         /// </summary>
         public async Task<MessageJson> Message(string f, string p)
         {
-            Loadcookie("cookie");
+            MessageJson message = null;
             string url = $"https://profile.onliner.by/messages/load/?f={f}&p={p}&token=" + ConvertToAjaxTime.ConvertToUnixTimestamp().ToString();
             if (CookieSession == null)
             {
                 Loadcookie("cookie");
             }
-            HttpClientHandler handler = new HttpClientHandler();
-            handler.CookieContainer = CookieSession;
-            HttpClient httpClient = new HttpClient(handler);
-            var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
-            var resultJson = await response.Content.ReadAsStringAsync();
+            try
+            {
+                if (!HasInternet()) return message;
+                HttpClientHandler handler = new HttpClientHandler();
+                handler.CookieContainer = CookieSession;
+                HttpClient httpClient = new HttpClient(handler);
+                var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
+                var resultJson = await response.Content.ReadAsStringAsync();
 
-            var regex = new Regex("(\"m\\d+\":)", RegexOptions.Compiled | RegexOptions.Multiline);
-            var myString = regex.Replace(resultJson, "").Replace("\"messages\":{", "\"messages\":[").Replace("}}}", "}]}");
-            var result = (MessageJson)JsonConvert.DeserializeObject<MessageJson>(myString);
-            return result;
+                var regex = new Regex("(\"m\\d+\":)", RegexOptions.Compiled | RegexOptions.Multiline);
+                var myString = regex.Replace(resultJson, "").Replace("\"messages\":{", "\"messages\":[").Replace("}}}", "}]}");
+                message = (MessageJson)JsonConvert.DeserializeObject<MessageJson>(myString);
+            }
+            catch (WebException ex) { Message(ex.ToString()); }
+            return message;
         }
 
         /// <summary>
@@ -324,6 +383,7 @@ namespace Onliner_for_windows_10.Login
         /// </summary>
         public async void SaveEditProfile(List<object> ParamsList, BirthDayDate bday)
         {
+            if (!HasInternet()) throw new WebException();
             if (EditProfileToken == string.Empty)
             {
                 EditProfileToken = await GetEditProfileToken();
@@ -334,8 +394,6 @@ namespace Onliner_for_windows_10.Login
             {
                 handler.CookieContainer = CookieSession;
             }
-            try
-            {
                 StringBuilder postData = new StringBuilder();
                 postData.Append("token=" + EditProfileToken + "&");
                 postData.Append("city=" + WebUtility.UrlEncode(ParamsList[0].ToString()) + "&");
@@ -353,13 +411,7 @@ namespace Onliner_for_windows_10.Login
                 postData.Append("devices=" + ParamsList[9].ToString() + "&");
                 postData.Append("signature=" + WebUtility.UrlEncode(ParamsList[10].ToString()));
 
-                PostRequestFormData(EdipProfile, "profile.onliner.by", "http://profile.onliner.by", postData.ToString());
-            }
-            catch (WebException ex)
-            {
-                MessageDialog messageExeption = new MessageDialog(ex.Response.ToString());
-                await messageExeption.ShowAsync();
-            }
+                await PostRequestFormData(EdipProfile, "profile.onliner.by", "http://profile.onliner.by", postData.ToString());
 
         }
 
@@ -368,6 +420,7 @@ namespace Onliner_for_windows_10.Login
         /// </summary>
         public async void Changepass(string oldPass, string repeatPass, string newPass)
         {
+            if (!HasInternet()) throw new WebException();
             if (EditProfileToken == string.Empty)
             {
                 EditProfileToken = await GetEditProfileToken();
@@ -378,22 +431,14 @@ namespace Onliner_for_windows_10.Login
             {
                 handler.CookieContainer = CookieSession;
             }
-            try
-            {
                 StringBuilder postData = new StringBuilder();
                 postData.Append("token=" + EditProfileToken + "&");
                 postData.Append("old_password=" + oldPass + "&");
                 postData.Append("password=" + repeatPass + "&");
                 postData.Append("password_confirm=" + newPass + "&");
 
-                PostRequestFormData(ChangePassProfile, "profile.onliner.by", "http://profile.onliner.by", postData.ToString());
-            }
-            catch (WebException ex)
-            {
-                MessageDialog messageExeption = new MessageDialog(ex.Response.ToString());
-                await messageExeption.ShowAsync();
-            }
-
+                await PostRequestFormData(ChangePassProfile, "profile.onliner.by", "http://profile.onliner.by", postData.ToString());
+            
         }
 
         /// <summary>
@@ -401,11 +446,17 @@ namespace Onliner_for_windows_10.Login
         /// </summary>
         private async Task<string> GetEditProfileToken()
         {
-            HttpRequestMessage req = new HttpRequestMessage(System.Net.Http.HttpMethod.Get, EdipProfile);
-            response = await httpClient.SendAsync(req);
-            var responseBodyAsText = await response.Content.ReadAsStringAsync();
-            string bufferToken = Regex.Match(responseBodyAsText, @"(token:(.*)')").Value;
-            string token = bufferToken.Replace("token: '", "").Replace("'", "");
+            string token = string.Empty;
+            try
+            {
+                if (!HasInternet()) throw new WebException();
+                HttpRequestMessage req = new HttpRequestMessage(System.Net.Http.HttpMethod.Get, EdipProfile);
+                response = await httpClient.SendAsync(req);
+                var responseBodyAsText = await response.Content.ReadAsStringAsync();
+                string bufferToken = Regex.Match(responseBodyAsText, @"(token:(.*)')").Value;
+                token = bufferToken.Replace("token: '", "").Replace("'", "");
+            }
+            catch (WebException ex) { Message(ex.ToString()); }
             return token;
         }
 
@@ -420,6 +471,7 @@ namespace Onliner_for_windows_10.Login
         {
             try
             {
+                if (!HasInternet()) throw new WebException();
                 HttpClientHandler handler = new HttpClientHandler();
                 if (CookieSession != null)
                 {
@@ -444,8 +496,7 @@ namespace Onliner_for_windows_10.Login
             }
             catch (WebException ex)
             {
-                MessageDialog message = new MessageDialog(ex.ToString());
-                await message.ShowAsync();
+                Message(ex.ToString());
             }
         }
 
@@ -491,6 +542,19 @@ namespace Onliner_for_windows_10.Login
             {
                 return;
             }
+        }
+
+        public bool HasInternet()
+        {
+            var connectionProfile = NetworkInformation.GetInternetConnectionProfile();
+            return (connectionProfile != null &&
+                    connectionProfile.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess);
+        }
+
+        public async void Message(string message)
+        {
+            MessageDialog msg = new MessageDialog(message);
+            await msg.ShowAsync();
         }
     }
 }

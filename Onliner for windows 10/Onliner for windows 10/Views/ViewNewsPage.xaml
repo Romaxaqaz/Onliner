@@ -211,19 +211,21 @@
         </VisualStateManager.VisualStateGroups>
         <controls:PageHeader x:Name="pageHeader" 
                              Frame="{x:Bind Frame}"
-                             Background="Yellow"
-                             BackButtonVisibility="Visible"
-                             VisualStateNarrowMinWidth="-1">
+                             Background="{ThemeResource BackGroundCustomHeaderColorBrush}"
+                             Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
+                             VisualStateNarrowMinWidth="1">
             <!--  place stretched, across top  -->
             <RelativePanel.AlignTopWithPanel>True</RelativePanel.AlignTopWithPanel>
             <RelativePanel.AlignRightWithPanel>True</RelativePanel.AlignRightWithPanel>
             <RelativePanel.AlignLeftWithPanel>True</RelativePanel.AlignLeftWithPanel>
             <!--  secondary commands  -->
             <controls:PageHeader.PrimaryCommands>
-                <AppBarButton Icon="Save" Label="Save" Command="{Binding SaveNewsInDB}"/>
-                <AppBarButton Icon="Link" Label="Открыть в бр" Command="{Binding OpenNewsInBrowser}"/>
-                <AppBarButton Name="CommentsCoomBarButton" Icon="Comment" Label="Комментарии" Command="{Binding ChangeCommetnsGridVisible}"/>
+                <AppBarButton Name="CommentsCoomBarButton" Icon="Comment" Label="Комментарии" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Command="{Binding ChangeCommetnsGridVisible}"/>
             </controls:PageHeader.PrimaryCommands>
+            <controls:PageHeader.SecondaryCommands>
+                <AppBarButton Icon="Save" Label="Save" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Command="{Binding SaveNewsInDB}"/>
+                <AppBarButton Icon="Link" Label="Открыть в бр" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Command="{Binding OpenNewsInBrowser}"/>
+            </controls:PageHeader.SecondaryCommands>
         </controls:PageHeader>
         <Grid Background="{ThemeResource BackGroundCustomColorBrush}">
             <RelativePanel.Below>pageHeader</RelativePanel.Below>

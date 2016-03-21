@@ -280,9 +280,9 @@ namespace Onliner_for_windows_10.View_Model
             var item = (MessageList)obj;
             if (item.unread == "1")
             {
-                request.PostRequestFormData(MessageMaskReadUrl, HostMessage, Origin, GeneratePostDataMessageId(item.id));
+                await request.PostRequestFormData(MessageMaskReadUrl, HostMessage, Origin, GeneratePostDataMessageId(item.id));
                 await UpdateItemSourceList(SelectedIndex);
-                request.MessageUnread();
+                await request.MessageUnread();
             }
             ShowListViewItemContent(item);
         }

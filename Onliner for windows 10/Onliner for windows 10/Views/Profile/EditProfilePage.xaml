@@ -5,10 +5,22 @@
     xmlns:local="using:Onliner_for_windows_10.Views.Profile"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Template10.Controls"
     mc:Ignorable="d">
 
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <ScrollViewer>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <controls:PageHeader Text="Редактировать профиль" FontWeight="Bold"
+                             Frame="{x:Bind Frame}"
+                             Background="{ThemeResource BackGroundCustomHeaderColorBrush}"
+                             Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
+                             VisualStateNarrowMinWidth="1"
+                             BackButtonVisibility="Collapsed"/>
+        <ScrollViewer Grid.Row="1">
             <Pivot x:Name="DataProfilePivot" Background="White" SelectionChanged="DataProfilePivot_SelectionChanged">
                 <PivotItem>
                     <PivotItem.Header>

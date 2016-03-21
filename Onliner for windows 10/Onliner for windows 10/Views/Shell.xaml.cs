@@ -22,14 +22,21 @@ namespace Onliner_for_windows_10.Views
     {
         public static Shell Instance { get; set; }
         public static HamburgerMenu HamburgerMenu => Instance.MyHamburgerMenu;
+        private View_Model.ShellViewModel viewModel = new View_Model.ShellViewModel();
 
         public Shell()
         {
             this.InitializeComponent();
-            var fakeObject = Additionalinformation.Instance;
-            ImageS.ImageSource = new BitmapImage(new Uri(fakeObject.AvatarUrl));
-            Login.Text = fakeObject.Login;
             Instance = this;
+            Loaded += Shell_Loaded;    
+        }
+
+        private void Shell_Loaded(object sender, RoutedEventArgs e)
+        {
+            ProfileStackpanel.DataContext = viewModel;
+            WeatherStackpanel.DataContext = viewModel;
+            CurrentStackpanel.DataContext = viewModel;
+            MessageStackpanel.DataContext = viewModel;
         }
 
         public Shell(INavigationService navigationService) : this()

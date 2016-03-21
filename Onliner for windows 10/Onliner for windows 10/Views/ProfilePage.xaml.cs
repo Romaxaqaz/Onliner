@@ -65,8 +65,15 @@ namespace Onliner_for_windows_10.ProfilePage
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             string key = (string)e.Parameter;
-            Task taskProfileLoad = ProfileDataLoad(key);
-            await taskProfileLoad;
+            if (request.HasInternet())
+            {
+                Task taskProfileLoad = ProfileDataLoad(key);
+                await taskProfileLoad;
+            }
+            else
+            {
+                request.Message("Упс, вы не подключены к интернету :(");
+            }
 
         }
 
@@ -127,7 +134,6 @@ namespace Onliner_for_windows_10.ProfilePage
 
                 Additionalinformation.Instance.AvatarUrl = avatarImage;
                 Additionalinformation.Instance.Login = loginUser;
-                AppBarForMobile.Visibility = Visibility.Visible;
                 SendMessageTextBox.Text = NameButtonSendMessage;
             }
 
@@ -172,30 +178,12 @@ namespace Onliner_for_windows_10.ProfilePage
         }
 
         private void ProfileFlipview_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (ProfileFlipview.SelectedIndex == 0)
-            {
-                ProfileTabButton.IsChecked = true;
-                ProfileTabButtonOther.IsChecked = false;
-            }
-            else
-            {
-                ProfileTabButton.IsChecked = false;
-                ProfileTabButtonOther.IsChecked = true;
-            }
+        { 
         }
 
         private void ProfileTabButton_Click(object sender, RoutedEventArgs e)
         {
             RadioButton radBut = sender as RadioButton;
-            if (radBut.Name == "ProfileTabButton")
-            {
-                ProfileFlipview.SelectedIndex = 0;
-            }
-            else
-            {
-                ProfileFlipview.SelectedIndex = 1;
-            }
         }
 
         private void PinWindow_Click(object sender, RoutedEventArgs e)
