@@ -5,8 +5,9 @@
     xmlns:local="using:Onliner_for_windows_10.Views.News"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:converter="using:Onliner_for_windows_10.Converters"
-    xmlns:localConvert="using:Onliner_for_windows_10"
+    xmlns:converter="using:Onliner.Converters"
+    xmlns:controls="using:Template10.Controls"
+    xmlns:localConvert="using:Onliner.Converters"
     mc:Ignorable="d">
     <Page.Resources>
 
@@ -207,41 +208,49 @@
             </StackPanel>
         </DataTemplate>
     </Page.Resources>
-    
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
         </Grid.RowDefinitions>
-        <AutoSuggestBox x:Name="suggestBox" PlaceholderText="Поиск..."
-        QueryIcon="Find" TextChanged="suggestBox_TextChanged">
-            <AutoSuggestBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Title}"/>
-                </DataTemplate>
-            </AutoSuggestBox.ItemTemplate>
-        </AutoSuggestBox>
-        <GridView x:Name="TestGridView" Grid.Row="1"
+        <controls:PageHeader BackButtonVisibility="Collapsed"
+                             Frame="{x:Bind Frame}"
+                             Content="Сохраненные"
+                             FontWeight="Bold"
+                             Background="{ThemeResource BackGroundCustomHeaderColorBrush}"
+                             Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
+                             VisualStateNarrowMinWidth="1">
+            <controls:PageHeader.PrimaryCommands>
+                <AppBarButton Icon="Delete" Click="AppBarButton_Click"/>
+            </controls:PageHeader.PrimaryCommands>
+        </controls:PageHeader>
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <AutoSuggestBox x:Name="suggestBox" PlaceholderText="Поиск..."
+        QueryIcon="Find" Margin="5" TextChanged="suggestBox_TextChanged">
+                <AutoSuggestBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Title}"/>
+                    </DataTemplate>
+                </AutoSuggestBox.ItemTemplate>
+            </AutoSuggestBox>
+            <GridView x:Name="TestGridView" Grid.Row="1"
                           ItemTemplate="{StaticResource NewsThemeList}" >
-            <GridView.ItemContainerTransitions>
-                <TransitionCollection>
-                    <EntranceThemeTransition IsStaggeringEnabled="True" 
+                <GridView.ItemContainerTransitions>
+                    <TransitionCollection>
+                        <EntranceThemeTransition IsStaggeringEnabled="True" 
 								FromVerticalOffset="300" 
 								FromHorizontalOffset="0"/>
-                    <AddDeleteThemeTransition/>
-                    <NavigationThemeTransition/>
-                    <ContentThemeTransition/>
-                </TransitionCollection>
-            </GridView.ItemContainerTransitions>
-        </GridView>
-        <AppBar VerticalAlignment="Bottom" Grid.Row="2"
-                Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
-                    Background="{ThemeResource BackGroundCustomMainElementColorBrush}">
-            <AppBarButton Content="change" Icon="AllApps" HorizontalAlignment="Right"
-                          Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
-                    Click="AppBarButton_Click"/>
-        </AppBar>
+                        <AddDeleteThemeTransition/>
+                        <NavigationThemeTransition/>
+                        <ContentThemeTransition/>
+                    </TransitionCollection>
+                </GridView.ItemContainerTransitions>
+            </GridView>
+        </Grid>
     </Grid>
-    
 </Page>

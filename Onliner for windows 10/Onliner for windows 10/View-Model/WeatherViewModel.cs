@@ -1,7 +1,5 @@
 ﻿using MyToolkit.Command;
 using Newtonsoft.Json;
-using Onliner_for_windows_10.Login;
-using Onliner_for_windows_10.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,13 +9,15 @@ using Template10.Mvvm;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Onliner.Http;
+using Onliner.Model.JsonModel.Weather;
 
 namespace Onliner_for_windows_10.View_Model
 {
     public class WeatherViewModel : ViewModelBase
     {
         private bool _currentProgress = true;
-        private Request request = new Request();
+        private HttpRequest HttpRequest = new HttpRequest();
         private ObservableCollection<Forecast> forecastItems;
         private ObservableCollection<object> weatherTodayItems;
         public ObservableCollection<TownWeatherID> TownList { get; private set; }
@@ -101,7 +101,7 @@ namespace Onliner_for_windows_10.View_Model
                 CurrentProgress = true;
 
                 var _temperatureToday = new ObservableCollection<object>();
-                var responsseObject = await request.Weather(townID);
+                var responsseObject = await HttpRequest.Weather(townID);
                 if (responsseObject.today.morning != null)
                 {
                     _temperatureToday.Add(responsseObject.today.morning);
@@ -116,9 +116,9 @@ namespace Onliner_for_windows_10.View_Model
 
                 CurrentProgress = false;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageDialog msg = new MessageDialog(ex.ToString());
+                MessageDialog msg = new MessageDialog("Упс, вы не подключены к интернету :(");
                 await msg.ShowAsync();
             }
         }

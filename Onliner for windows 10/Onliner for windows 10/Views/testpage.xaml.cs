@@ -1,35 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using MyToolkit.Media;
-using MyToolkit.Multimedia;
-using Onliner_for_windows_10.UserControls;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI;
-using Onliner_for_windows_10.Login;
 using HtmlAgilityPack;
 using MyToolkit.Controls;
-// Шаблон элемента пустой страницы задокументирован по адресу http://go.microsoft.com/fwlink/?LinkId=234238
+using Windows.Storage.Streams;
+using System.Threading.Tasks;
+using Onliner.ParsingHtml;
+using Onliner.Http;
 
 namespace Onliner_for_windows_10
 {
-    /// <summary>
-    /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
-    /// </summary>
+
     public sealed partial class testpage : Page
     {
+        private ParsingNewsSection parsNewsSection = new ParsingNewsSection();
+
+       // private string imageURL = "https://content.onliner.by/news/2016/03/default/a0040ecfbf7f5662c8c916a34cd4ff61.jpeg";
+       // private readonly string PeoplehUrlNews = "http://people.onliner.by/";
+       // private readonly string TechUrlNews = "http://tech.onliner.by/";
 
         public class CommentsContent
         {
@@ -43,7 +38,7 @@ namespace Onliner_for_windows_10
             }
         }
 
-        Request request = new Request();
+        private HttpRequest HttpRequest = new HttpRequest();
         private HtmlDocument htmlDoc = new HtmlDocument();
         List<CommentsContent> liststring = new List<CommentsContent>();
 
@@ -57,6 +52,38 @@ namespace Onliner_for_windows_10
         public testpage()
         {
             this.InitializeComponent();
+            Loaded += Testpage_Loaded;
+        }
+
+        private async void Testpage_Loaded(object sender, RoutedEventArgs e)
+        {
+           //var PeopleNewsList = await parsNewsSection.NewsItemList(PeoplehUrlNews);
+            //var PeopleNewsList2 = await parsNewsSection.NewsItemList(TechUrlNews);
+        }
+
+
+        public async  Task<byte[]> GetBytesFromStream(IRandomAccessStream randomStream)
+        {
+            var reader = new DataReader(randomStream.GetInputStreamAt(0));
+            var bytes = new byte[randomStream.Size];
+            await reader.LoadAsync((uint)randomStream.Size);
+            reader.ReadBytes(bytes);
+            return bytes;
+        }
+
+        public static async Task<BitmapImage> GetImageFromStream(IRandomAccessStream stream)
+        {
+            BitmapImage bmp = new BitmapImage();
+            await bmp.SetSourceAsync(stream);
+            return bmp;
+        } 
+
+        internal static async Task<InMemoryRandomAccessStream> ConvertTo(byte[] arr)
+        {
+            InMemoryRandomAccessStream randomAccessStream = new InMemoryRandomAccessStream();
+            await randomAccessStream.WriteAsync(arr.AsBuffer());
+            randomAccessStream.Seek(0);
+            return randomAccessStream;
         }
 
 
@@ -128,50 +155,7 @@ namespace Onliner_for_windows_10
             return mainBorder;
         }
 
-
-
-        private void MediaElement_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            MediaElement med = (MediaElement)sender;
-            med.Play();
-        }
-
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            YouTubePlayerControl pl = new YouTubePlayerControl();
-            //MainGrid.Children.Add(pl);
-
-        }
-
-        private void player_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-        {
-
-        }
-
         private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-
-
-        private void Button_Click_3(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void PopUpTest_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-
-        }
-
-        private void Button_Click_4(object sender, RoutedEventArgs e)
         {
 
         }

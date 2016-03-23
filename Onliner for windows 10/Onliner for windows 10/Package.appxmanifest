@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="b8017211-aecd-4e20-b1ce-929e2a4f81d7" Publisher="CN=romax" Version="1.0.0.0" />
+  <Identity Name="56651RomanPanteleev.onliner.by" Publisher="CN=A404710C-A9C9-4A71-956F-B7CC4AF7DBE1" Version="1.0.0.0" />
   <mp:PhoneIdentity PhoneProductId="b8017211-aecd-4e20-b1ce-929e2a4f81d7" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>Onliner for windows 10</DisplayName>
-    <PublisherDisplayName>romaxa</PublisherDisplayName>
+    <DisplayName>onliner.by</DisplayName>
+    <PublisherDisplayName>Roman Panteleev</PublisherDisplayName>
     <Logo>Assets\NewStoreLogo.png</Logo>
   </Properties>
   <Dependencies>

@@ -26,6 +26,9 @@
     <SolidColorBrush x:Key="BackGroundCustomYellowColorBrush" Color="Yellow"/>
     <!--Background header-->
     <SolidColorBrush x:Key="BackGroundCustomHeaderColorBrush" Color="Yellow"/>
+    <!--Background header child-->
+    <SolidColorBrush x:Key="BackGroundCustomHeaderChildColorBrush" Color="White"/>
+    
     <!--Background main element 'profile, weather'-->
     <SolidColorBrush x:Key="BackGroundCustomMainElementColorBrush" Color="Yellow"/>
 

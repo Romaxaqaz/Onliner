@@ -8,6 +8,7 @@
     xmlns:Onliner_for_windows_10="using:Onliner_for_windows_10"
     x:Class="Onliner_for_windows_10.ProfilePage.ProfilePage"
     xmlns:userControls="using:Onliner_for_windows_10.UserControls"
+    xmlns:controls="using:Template10.Controls"
     xmlns:tile="using:Onliner_for_windows_10.Tiles.TileTemplates"
     xmlns:model="using:Onliner_for_windows_10.ProfilePage"
     mc:Ignorable="d">
@@ -347,7 +348,11 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource BackGroundCustomColorBrush}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
                 <VisualState x:Name="VisualStateMobile">
@@ -376,127 +381,115 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <ScrollViewer>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <!-- Profile image-->
-                <StackPanel x:Name="stackPanelAccauntInfo" 
+        <controls:PageHeader x:Name="pageHeader" 
+                             Text="Личный кабинет"
+                             FontWeight="Bold"
+                             Frame="{x:Bind Frame}"
+                             Background="{ThemeResource BackGroundCustomHeaderColorBrush}"
+                             Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
+                             
+                             VisualStateNarrowMinWidth="1"
+                             BackButtonVisibility="Collapsed">
+            <controls:PageHeader.SecondaryCommands>
+                <AppBarButton Name="EditProfile" Label="Редактировать профиль" Foreground="Black" Icon="Setting" Click="EditProfile_Click"/>
+                <AppBarButton Name="PinWindow" Label="Найти пользователя" Icon="OtherUser" Foreground="Black" Click="PinWindow_Click"/>
+                <AppBarButton Name="ExitProfile" Label="Выход" Icon="Remove" Foreground="Black" Click="ExitProfile_Click"/>
+            </controls:PageHeader.SecondaryCommands>
+        </controls:PageHeader>
+        <Grid Background="{ThemeResource BackGroundCustomColorBrush}" Grid.Row="1">
+            <ScrollViewer>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <!-- Profile image-->
+                    <StackPanel x:Name="stackPanelAccauntInfo" 
 			Grid.Column="0" 
 			Grid.Row="0" 
 			HorizontalAlignment="Stretch"  d:DataContext="{d:DesignInstance Type=model:ProfileData}"
 			Background="{ThemeResource BackGroundCustomMainElementColorBrush}">
-                    <StackPanel.ChildrenTransitions>
-                        <TransitionCollection>
-                            <EdgeUIThemeTransition Edge="Bottom"/>
-                        </TransitionCollection>
-                    </StackPanel.ChildrenTransitions>
-                    <StackPanel>
                         <StackPanel.ChildrenTransitions>
                             <TransitionCollection>
-                                <EdgeUIThemeTransition Edge="Left"/>
+                                <EdgeUIThemeTransition Edge="Bottom"/>
                             </TransitionCollection>
                         </StackPanel.ChildrenTransitions>
-                        <TextBlock x:Name="AccauntNameTextBlock" 
+                        <StackPanel>
+                            <StackPanel.ChildrenTransitions>
+                                <TransitionCollection>
+                                    <EdgeUIThemeTransition Edge="Left"/>
+                                </TransitionCollection>
+                            </StackPanel.ChildrenTransitions>
+                            <TextBlock x:Name="AccauntNameTextBlock" 
 					Text="{Binding AccauntName}" 
 					TextAlignment="Center" 
 					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
-					FontSize="20" Style="{ThemeResource SubtitleTextBlockStyle}"
+					FontSize="24" Style="{ThemeResource SubtitleTextBlockStyle}"
 					FontWeight="Bold" 
 					Margin="0,10,0,10"/>
 
-                        <Ellipse  Width="120" Height="120" VerticalAlignment="Top" HorizontalAlignment="Center">
-                            <Ellipse.Fill>
-                                <ImageBrush>
-                                    <ImageBrush.ImageSource>
-                                        <BitmapImage DecodePixelHeight="250" DecodePixelWidth="250" UriSource="{Binding Avatar}" />
-                                    </ImageBrush.ImageSource>
-                                </ImageBrush>
-                            </Ellipse.Fill>
-                        </Ellipse>
+                            <Ellipse  Width="150" Height="150" VerticalAlignment="Top" HorizontalAlignment="Center">
+                                <Ellipse.Fill>
+                                    <ImageBrush>
+                                        <ImageBrush.ImageSource>
+                                            <BitmapImage DecodePixelHeight="250" DecodePixelWidth="250" UriSource="{Binding Avatar}" />
+                                        </ImageBrush.ImageSource>
+                                    </ImageBrush>
+                                </Ellipse.Fill>
+                            </Ellipse>
 
-                        <TextBlock x:Name="StatusProfileTextBlock" 
+                            <TextBlock x:Name="StatusProfileTextBlock" 
 					Text="{Binding Status}" 
 					TextAlignment="Center" 
                     Foreground="{ThemeResource ForegroundCustomBlackBrush}"
 					Margin="0,10,0,0"/>
-                    </StackPanel>
-                    <Grid  
+                        </StackPanel>
+                        <Grid  
 				HorizontalAlignment="Stretch" 
 				VerticalAlignment="Bottom" 
 				Grid.ColumnSpan="2" 
 				Margin="0,10,0,0" 
 				Grid.Column="0" 
 				Grid.Row="0" x:Name="ButtonsControlStackPanel">
-                        <Grid.ChildrenTransitions>
-                            <TransitionCollection>
-                                <EdgeUIThemeTransition Edge="Left"/>
-                            </TransitionCollection>
-                        </Grid.ChildrenTransitions>
-                        <Button Name="SendMessageButton" Height="35" FontSize="16" HorizontalAlignment="Stretch" BorderThickness="0" Click="Button_Click" Style="{StaticResource SendMessageButtonStyle}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="&#xE715;" FontFamily="Segoe MDL2 Assets" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{ThemeResource ForegroundCustomWhiteBrush}"/>
-                                <TextBlock Name="SendMessageTextBox" Text="Написать сообщение" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0" FontFamily="Nirmala UI Semilight" Foreground="{ThemeResource ForegroundCustomWhiteBrush}"/>
-                            </StackPanel>
-                        </Button>
+                            <Grid.ChildrenTransitions>
+                                <TransitionCollection>
+                                    <EdgeUIThemeTransition Edge="Left"/>
+                                </TransitionCollection>
+                            </Grid.ChildrenTransitions>
+                            <Button Name="SendMessageButton" Height="35" FontSize="16" HorizontalAlignment="Stretch" BorderThickness="0" Click="Button_Click" Style="{StaticResource SendMessageButtonStyle}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE715;" FontFamily="Segoe MDL2 Assets" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{ThemeResource ForegroundCustomWhiteBrush}"/>
+                                    <TextBlock Name="SendMessageTextBox" Text="Написать сообщение" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0" FontFamily="Nirmala UI Semilight" Foreground="{ThemeResource ForegroundCustomWhiteBrush}"/>
+                                </StackPanel>
+                            </Button>
 
+                        </Grid>
+                    </StackPanel>
+                    <!-- Other data-->
+                    <Grid Name="PivotControlInformation" Grid.ColumnSpan="2" Grid.Row="1" Background="{ThemeResource BackGroundCustomMainElementColorBrush}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <ListView x:Name="DataProfileList" 
+				                        ItemTemplate="{StaticResource DataProfileStyleList}"
+                                      Background="{ThemeResource BackGroundCustomColorBrush}" 
+				                        HorizontalAlignment="Stretch" Grid.Row="1" >
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                        </ListView>
                     </Grid>
-                </StackPanel>
-                <!-- Other data-->
-                <Grid Name="PivotControlInformation" Grid.ColumnSpan="2" Grid.Row="1" Background="{ThemeResource BackGroundCustomMainElementColorBrush}">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <Grid Name="TabGrid" VerticalAlignment="Top" HorizontalAlignment="Stretch" >
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <RadioButton Name="ProfileTabButton" Content="&#xE77B;" Tag="Учетная запись" Height="50" Grid.Column="0" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle}" Click="ProfileTabButton_Click"/>
-                        <RadioButton Name="ProfileTabButtonOther" Content="&#xE71D;" Tag="Дополнительно" Height="50" Grid.Column="1" HorizontalAlignment="Stretch" Style="{StaticResource NewsPageHeadeMenuRadioButtonStyle}" Click="ProfileTabButton_Click"/>
-                    </Grid>
-                    <FlipView Name="ProfileFlipview" 
-                              Background="{ThemeResource BackGroundCustomColorBrush}" 
-                              HorizontalAlignment="Center" 
-                              Grid.Row="1" 
-                              SelectionChanged="ProfileFlipview_SelectionChanged">
-                        <FlipViewItem Margin="0">
-                            <StackPanel x:Name="stackPanelAccauntInfo2">
-                                <StackPanel.DataContext>
-                                    <local:ProfilePataList/>
-                                </StackPanel.DataContext>
-                                <ListView x:Name="DataProfileList" 
-				                        ItemTemplate="{StaticResource DataProfileStyleList}" 
-				                        HorizontalAlignment="Stretch">
-                                    <ListView.ItemContainerStyle>
-                                        <Style TargetType="ListViewItem">
-                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                        </Style>
-                                    </ListView.ItemContainerStyle>
-                                </ListView>
-                            </StackPanel>
-                        </FlipViewItem>
-                        <FlipViewItem Margin="0">
-                        </FlipViewItem>
-                    </FlipView>
+                    <StackPanel/>
                 </Grid>
-                <StackPanel/>
-            </Grid>
-        </ScrollViewer>
-        <CommandBar Name="AppBarForMobile" VerticalAlignment="Bottom" Grid.Row="1" Visibility="Collapsed" 
-                    Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
-                    Background="{ThemeResource BackGroundCustomMainElementColorBrush}">
-            <AppBarButton Name="EditProfile" Label="Редактировать профиль" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Icon="Setting" Click="EditProfile_Click"/>
-            <AppBarButton Name="PinWindow" Label="Найти пользователя" Icon="OtherUser" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Click="PinWindow_Click"/>
-            <AppBarButton Name="ExitProfile" Label="Выход" Icon="Remove" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Click="ExitProfile_Click"/>
-        </CommandBar>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Page>
