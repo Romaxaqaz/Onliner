@@ -1,21 +1,12 @@
 ﻿using HtmlAgilityPack;
-using Onliner_for_windows_10.Login;
-using Onliner_for_windows_10.ProfilePage;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using Windows.Phone.UI.Input;
+using Onliner.Http;
+using Onliner.Model.ProfileModel;
+using Onliner.Model.JsonModel.Profile;
 
 // Шаблон элемента пустой страницы задокументирован по адресу http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -26,7 +17,7 @@ namespace Onliner_for_windows_10.Views.Profile
     /// </summary>
     public sealed partial class EditProfilePage : Page
     {
-        private Request request = new Request();
+        private HttpRequest HttpRequest = new HttpRequest();
         private BirthDayDate bday = new BirthDayDate();
         private HtmlDocument resultat = new HtmlDocument();
         private List<object> ParamsList = new List<object>();
@@ -44,7 +35,6 @@ namespace Onliner_for_windows_10.Views.Profile
             {
                 Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
             }
-            Additionalinformation.Instance.NameActivePage = "Новости";
         }
 
         private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
@@ -56,15 +46,14 @@ namespace Onliner_for_windows_10.Views.Profile
         private void EditProfilePage_Loaded(object sender, RoutedEventArgs e)
         {
             ShowParamsProfile();
-            Additionalinformation.Instance.NameActivePage = "Редактирование профиля";
         }
 
         public void ShowParamsProfile()
         {
             ParamsList.Clear();
             List<EditProfileData> profileDataEdit = new List<EditProfileData>();
-            request.GetRequestOnliner("https://profile.onliner.by/edit");
-            EditProfilePageContent = request.ResultGetRequsetString;
+            HttpRequest.GetRequestOnliner("https://profile.onliner.by/edit");
+            EditProfilePageContent = HttpRequest.ResultGetRequsetString;
             resultat.LoadHtml(EditProfilePageContent);
 
             List<HtmlNode> editDataList = resultat.DocumentNode.Descendants().Where
@@ -196,7 +185,7 @@ namespace Onliner_for_windows_10.Views.Profile
         private void SaveData_Click(object sender, RoutedEventArgs e)
         {
             SetInputParamsProfile();
-            request.SaveEditProfile(ParamsList, bday);
+            HttpRequest.SaveEditProfile(ParamsList, bday);
         }
 
         private void SaveDDayEdit_Click(object sender, RoutedEventArgs e)
@@ -205,7 +194,7 @@ namespace Onliner_for_windows_10.Views.Profile
             string OnlineStatus = CheckBoxValue(hideOnlineStatusCheckBox).ToString();
             string ShowEmail = CheckBoxValue(showEmailCheckBox).ToString();
             string BirthDay = BirthdayView[BirthDayComboBox.SelectedIndex];
-            request.EditPreferencesProfile(PmNotification, OnlineStatus, ShowEmail, BirthDay);
+            HttpRequest.EditPreferencesProfile(PmNotification, OnlineStatus, ShowEmail, BirthDay);
  
         }
 
@@ -250,7 +239,7 @@ namespace Onliner_for_windows_10.Views.Profile
 
         private void ChangePassButton_Click(object sender, RoutedEventArgs e)
         {
-            request.Changepass(OldPassTextBox.Text,RepeatPassTextBox.Text,NewsPassTextBox.Text);
+            HttpRequest.Changepass(OldPassTextBox.Text,RepeatPassTextBox.Text,NewsPassTextBox.Text);
             Frame.Navigate(typeof(MainPage));
             Frame.BackStack.Clear();
         }

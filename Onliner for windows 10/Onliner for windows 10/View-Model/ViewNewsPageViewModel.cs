@@ -7,10 +7,10 @@ using Windows.System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
 using MyToolkit.Command;
-using Onliner_for_windows_10.Login;
-using Onliner_for_windows_10.Model;
-using Onliner_for_windows_10.Model.DataTemplateSelector;
-using Onliner_for_windows_10.ParsingHtml;
+using Onliner.ParsingHtml;
+using Onliner.Http;
+using Onliner.Model.News;
+using Onliner.Model.DataTemplateSelector;
 
 namespace Onliner_for_windows_10.View_Model
 {
@@ -18,7 +18,7 @@ namespace Onliner_for_windows_10.View_Model
     {
         private ParsingFullNewsPage fullPagePars;
         private FullItemNews fullItem = new FullItemNews();
-        private Request request = new Request();
+        private HttpRequest HttpRequest = new HttpRequest();
         private string loaderPage = string.Empty;
         private string NewsID = string.Empty;
 
@@ -103,7 +103,7 @@ namespace Onliner_for_windows_10.View_Model
         {
             fullPagePars = new ParsingFullNewsPage(urlPage);
             NewsItemContent = new ObservableCollection<ListViewItemSelectorModel>(await fullPagePars.NewsMainInfo());
-            CommentsItem = new ObservableCollection<Model.CommentsItem>(await fullPagePars.CommentsMainInfo());
+            CommentsItem = new ObservableCollection<CommentsItem>(await fullPagePars.CommentsMainInfo());
         }
 
         private void VisibleCommentsGrid()
@@ -144,19 +144,19 @@ namespace Onliner_for_windows_10.View_Model
         /// </summary>
         /// <param name="obj">comments data</param>
         private async void AddComments(object obj) =>
-            await request.AddComments(fullPagePars.NewsID, obj.ToString());
+            await HttpRequest.AddComments(fullPagePars.NewsID, obj.ToString());
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)
         {
             LinkNews = parameter?.ToString();
-            if (request.HasInternet())
+            if (HttpRequest.HasInternet())
             {
                 await LoadNewsData(LinkNews);
                 ProgressRing = false;
             }
             else
             {
-                request.Message("Упс, вы не подключены к интернету :(");
+                HttpRequest.Message("Упс, вы не подключены к интернету :(");
             }
             await Task.CompletedTask;
         }

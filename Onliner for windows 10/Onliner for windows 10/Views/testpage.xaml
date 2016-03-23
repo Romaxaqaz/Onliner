@@ -76,38 +76,125 @@
     </Page.Resources>
 
     <Grid Background="Aqua">
+        <Grid x:Name="ActualWidthStack"  
+        		Margin="1,1,0,0" 
+        		Background="{ThemeResource BackGroundCustomNewsItemColorBrush}" 
+        		BorderThickness="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="100"/>
+                <RowDefinition Height="20"/>
+            </Grid.RowDefinitions>
+            <Grid.ChildrenTransitions>
+                <TransitionCollection>
+                    <EdgeUIThemeTransition Edge="Bottom"/>
+                </TransitionCollection>
+            </Grid.ChildrenTransitions>
+            <TextBlock x:Name="ThemeTextBlock" 
+        			Text="Социум" 
+        			Foreground="Blue"
+        			FontSize="12" Grid.Row="0" Style="{ThemeResource CaptionTextBlockStyle}"/>
+            <TextBlock x:Name="titleTextBlock"
+        			Text="Разозлившись на непослушных студентов, преподаватель отправил iPhone одного из них в мусорку. Кто прав?" 
+        			Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
+                    TextWrapping="WrapWholeWords"
+                    TextTrimming="WordEllipsis"
+        			FontSize="15"
+                    ContinuumNavigationTransitionInfo.IsEntranceElement="True" Grid.Row="1" Style="{ThemeResource BodyTextBlockStyle}"/>
+            <Grid Grid.Row="2">
+                <Image Name="ImageListSectionNews" Opacity="100" Source="ms-appx:///ImageCollection/123.jpg">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
+                </Image>
+            </Grid>
+            <Grid HorizontalAlignment="Stretch" Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="0"
-              Background="LightGray"
-              Height="48">
-         
+                <StackPanel Grid.Column="0" 
+        				Orientation="Horizontal" 
+        				Margin="10" 
+        				VerticalAlignment="Center" 
+        				HorizontalAlignment="Center">
+                    <TextBlock FontSize="16" 
+        					Text="&#xE890;" 
+        					FontFamily="Segoe MDL2 Assets"
+                                   Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                    <TextBlock Text="9999" 
+        					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
+        					TextWrapping="Wrap" 
+        					FontSize="12" 
+        					Margin="3,0,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" 
+        				Orientation="Horizontal" 
+        				Margin="5" 
+        				VerticalAlignment="Center" 
+        				HorizontalAlignment="Center">
+                    <TextBlock FontSize="16" 
+        					Text="&#xE8F2;" 
+        					FontFamily="Segoe MDL2 Assets" 
+        					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                    <TextBlock Text="999" 
+        					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
+        					TextWrapping="Wrap" 
+        					FontSize="12" 
+        					Margin="3,0,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2" 
+        				Orientation="Horizontal" 
+        				Margin="5" 
+        				VerticalAlignment="Center" 
+        				HorizontalAlignment="Center">
+                    <TextBlock FontSize="15" 
+        					Text="&#xE114;" 
+        					FontFamily="Segoe MDL2 Assets"
+                                   Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                    <TextBlock Text="999" 
+        					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
+        					TextWrapping="Wrap" 
+        					FontSize="10" 
+        					Margin="3,0,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="3" 
+        				Orientation="Horizontal" 
+        				Margin="5" 
+        				VerticalAlignment="Center" 
+        				HorizontalAlignment="Center">
+                    <TextBlock FontSize="15" 
+        					Text="&#xE116;" 
+        					FontFamily="Segoe MDL2 Assets"
+                                   Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                    <TextBlock Text="999" 
+        					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
+        					TextWrapping="Wrap" 
+        					FontSize="10" Margin="3,0,0,0"/>
+                </StackPanel>
+
+            </Grid>
+            <TextBlock x:Name="subtitleTextBlock" 
+        			Text="Скорости жизни растут, и за ними все сложнее успевать. Одним в силу традиционных ориентиров, вторым — из-за их отсутствия в принципе. Сегодня утром обычный конфликт случился между преподавателем Белорусской государственной академии связи и студентом. «Увидев в моих руках телефон, преподаватель со словами больше ты его не увидишь швырнул iPhone 5s в мусорку». Теперь студент хочет проучить педагога. А тот вздыхает: «Я был неправ, но больше на них ничего не действует»." 
+        			Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
+        			TextWrapping="WrapWholeWords" 
+        			TextTrimming="WordEllipsis"
+        			Padding="5" 
+        			FontSize="12"  
+        			TextAlignment="Justify" Grid.Row="4"/>
+            <TextBlock x:Name="descriptionTextBlock" 
+        			Text="Автор: Александр Владыко. Фото: Влад Борисевич "  TextAlignment="Right"
+        			Foreground="Gray" Padding="2"
+        			TextWrapping="WrapWholeWords" FontSize="12" Grid.Row="5" Style="{ThemeResource BaseTextBlockStyle}"/>
         </Grid>
 
-        <Pivot Grid.Row="1"
-               x:Name="pivot"
-               SelectedIndex="0">
-            <!--Pivot item one-->
-            <PivotItem Margin="0">
-                <TextBlock Text="ONE" Foreground="Red" FontSize="33"/>
-            </PivotItem>
-            <PivotItem Margin="0">
-                <TextBlock Text="TWO" Foreground="Red" FontSize="33"/>
-            </PivotItem>
-            <PivotItem Margin="0">
-                <TextBlock Text="Tree" Foreground="Red" FontSize="33"/>
-            </PivotItem>
-            <PivotItem Margin="0">
-                <TextBlock Text="Tree" Foreground="Red" FontSize="33"/>
-            </PivotItem>
-            <PivotItem Margin="0">
-                <TextBlock Text="Tree" Foreground="Red" FontSize="33"/>
-            </PivotItem>
-        </Pivot>
+
+
+
     </Grid>
 
 </Page>

@@ -30,7 +30,7 @@
                        Text="{Binding Label}"
                        HorizontalAlignment="Center"
                    FontSize="14" TextAlignment="Center"
-                   VerticalAlignment="Center" Visibility="Collapsed" Margin="5,0,0,0"/>
+                   VerticalAlignment="Center" Visibility="Collapsed" Margin="2,0,0,0"/>
     </Grid>
     <!--
     <Grid Width="100" Height="50">

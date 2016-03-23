@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Onliner for windows 10", "Onliner for windows 10\Onliner for windows 10.csproj", "{982A0616-4981-4BE6-A9E2-EF8739313A8E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Onliner", "Onliner\Onliner.csproj", "{5B168F1F-3703-4658-8982-A74FEFB672B4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,22 @@ Global
 		{982A0616-4981-4BE6-A9E2-EF8739313A8E}.Release|x86.ActiveCfg = Release|x86
 		{982A0616-4981-4BE6-A9E2-EF8739313A8E}.Release|x86.Build.0 = Release|x86
 		{982A0616-4981-4BE6-A9E2-EF8739313A8E}.Release|x86.Deploy.0 = Release|x86
+		{5B168F1F-3703-4658-8982-A74FEFB672B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B168F1F-3703-4658-8982-A74FEFB672B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B168F1F-3703-4658-8982-A74FEFB672B4}.Debug|ARM.ActiveCfg = Debug|ARM
+		{5B168F1F-3703-4658-8982-A74FEFB672B4}.Debug|ARM.Build.0 = Debug|ARM
+		{5B168F1F-3703-4658-8982-A74FEFB672B4}.Debug|x64.ActiveCfg = Debug|x64
+		{5B168F1F-3703-4658-8982-A74FEFB672B4}.Debug|x64.Build.0 = Debug|x64
+		{5B168F1F-3703-4658-8982-A74FEFB672B4}.Debug|x86.ActiveCfg = Debug|x86
+		{5B168F1F-3703-4658-8982-A74FEFB672B4}.Debug|x86.Build.0 = Debug|x86
+		{5B168F1F-3703-4658-8982-A74FEFB672B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B168F1F-3703-4658-8982-A74FEFB672B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B168F1F-3703-4658-8982-A74FEFB672B4}.Release|ARM.ActiveCfg = Release|ARM
+		{5B168F1F-3703-4658-8982-A74FEFB672B4}.Release|ARM.Build.0 = Release|ARM
+		{5B168F1F-3703-4658-8982-A74FEFB672B4}.Release|x64.ActiveCfg = Release|x64
+		{5B168F1F-3703-4658-8982-A74FEFB672B4}.Release|x64.Build.0 = Release|x64
+		{5B168F1F-3703-4658-8982-A74FEFB672B4}.Release|x86.ActiveCfg = Release|x86
+		{5B168F1F-3703-4658-8982-A74FEFB672B4}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

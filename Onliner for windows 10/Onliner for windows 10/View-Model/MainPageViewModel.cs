@@ -3,15 +3,14 @@ using System.Threading.Tasks;
 using Template10.Mvvm;
 using Windows.System;
 using MyToolkit.Command;
-using Onliner_for_windows_10.Login;
-using Onliner_for_windows_10.Model.LocalSetteing;
-
+using Onliner.Http;
+using Onliner.Model.LocalSetteing;
 
 namespace Onliner_for_windows_10.View_Model
 {
     public class MainPageViewModel : ViewModelBase
     {
-        private Request requestToApi = new Login.Request();
+        private HttpRequest HttpRequestToApi = new HttpRequest();
 
         private readonly string AutorizationUrl = "https://www.onliner.by/#registration";
 
@@ -98,7 +97,7 @@ namespace Onliner_for_windows_10.View_Model
             }
             else
             {
-                bool Status = await requestToApi.PostRequestUserApi(Login, Password);
+                bool Status = await HttpRequestToApi.PostRequestUserApi(Login, Password);
                 if (Status)
                 {
                     NavigationService.Navigate(typeof(ProfilePage.ProfilePage));
