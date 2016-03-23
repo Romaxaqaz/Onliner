@@ -1,20 +1,8 @@
-﻿using Onliner_for_windows_10.Login;
-using Onliner_for_windows_10.Model.ProfileModel;
-using Onliner_for_windows_10.ParsingHtml;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
+﻿using Onliner.Http;
+using Onliner.Model.ProfileModel;
+using Onliner.ParsingHtml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // Шаблон элемента пустой страницы задокументирован по адресу http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -26,7 +14,7 @@ namespace Onliner_for_windows_10.Views.Profile
     public sealed partial class SearchUserPage : Page
     {
         private const string UrlApiSearchProfile = "http://forum.onliner.by/memberlist.php?";
-        private Request request = new Request();
+        private HttpRequest HttpRequest = new HttpRequest();
         private ParsingSearchUserResult searchResult = new ParsingSearchUserResult();
 
         public SearchUserPage()
@@ -40,7 +28,7 @@ namespace Onliner_for_windows_10.Views.Profile
             {
                 if (e.Key == Windows.System.VirtualKey.Enter)
                 {
-                    var htmlResult = await request.GetRequest(UrlApiSearchProfile, AutoSuggestBox.Text);
+                    var htmlResult = await HttpRequest.GetRequest(UrlApiSearchProfile, AutoSuggestBox.Text);
                     var resultList = searchResult.GetResultList(htmlResult);
                     ListviewUserResult.ItemsSource = resultList;
                 }

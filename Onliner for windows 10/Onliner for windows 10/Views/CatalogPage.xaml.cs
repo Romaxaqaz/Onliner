@@ -1,19 +1,13 @@
-﻿using Onliner_for_windows_10.Model.Catalog;
-using Onliner_for_windows_10.ProfilePage;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-
-// Шаблон элемента пустой страницы задокументирован по адресу http://go.microsoft.com/fwlink/?LinkId=234238
+using Onliner.Model.Catalog;
 
 namespace Onliner_for_windows_10.Views
 {
-    /// <summary>
-    /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
-    /// </summary>
     public sealed partial class CatalogPage : Page
     {
         ObservableCollection<ElectronicSection> catL;
@@ -26,7 +20,6 @@ namespace Onliner_for_windows_10.Views
 
         private void CatalogPage_Loaded(object sender, RoutedEventArgs e)
         {
-            Additionalinformation.Instance.NameActivePage = "Каталог";
             catL = new ObservableCollection<ElectronicSection>();
             catL.Add(new ElectronicSection() { Category = "Телефония и связь", CategoryType = "Мобильные телефоны" });
             catL.Add(new ElectronicSection() { Category = "Телефония и связь", CategoryType = "Умные часы" });

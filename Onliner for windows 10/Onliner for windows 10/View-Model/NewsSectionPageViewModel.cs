@@ -1,22 +1,16 @@
 ﻿using MyToolkit.Command;
-using Onliner_for_windows_10.Common;
-using Onliner_for_windows_10.Model;
-using Onliner_for_windows_10.ParsingHtml;
-using Onliner_for_windows_10.SQLiteDataBase;
+using Onliner.Model.News;
+using Onliner.Model.OpinionsModel;
+using Onliner.ParsingHtml;
+using Onliner.SQLiteDataBase;
 using Onliner_for_windows_10.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using Template10.Common;
 using Template10.Mvvm;
-using Template10.Services.NavigationService;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using static Onliner_for_windows_10.SQLiteDataBase.SQLiteDB;
+using static Onliner.SQLiteDataBase.SQLiteDB;
 
 namespace Onliner_for_windows_10.View_Model
 {
@@ -139,7 +133,7 @@ namespace Onliner_for_windows_10.View_Model
             }
             catch(NullReferenceException)
             {
-                await LoadNews();
+          
             }
         }
 
@@ -174,7 +168,7 @@ namespace Onliner_for_windows_10.View_Model
         private async Task<ObservableCollection<ItemsNews>> GetNewsCollection(IEnumerable<ItemsNews> collection, string urlNews, string sqlDBPath, SectionNewsDB sectionDB)
         {      
             var newListNews = await parsNewsSection.NewsItemList(urlNews, sectionDB);
-            return await UpdateAndRetuntCollection(newListNews, sectionDB);
+            return await SQLiteDB.UpdateAndRetuntCollection(newListNews, sectionDB);
         }
 
         private void DetailsPage(object obj)
@@ -197,7 +191,7 @@ namespace Onliner_for_windows_10.View_Model
             TechNewsList = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_TECH);
             if (TechNewsList == null)
             {
-                TechNewsList = await UpdateAndRetuntCollection(await parsNewsSection.NewsItemList(TechUrlNews, SectionNewsDB.Tech), SectionNewsDB.Tech);
+                TechNewsList = await SQLiteDB.UpdateAndRetuntCollection(await parsNewsSection.NewsItemList(TechUrlNews, SectionNewsDB.Tech), SectionNewsDB.Tech);
             }
             ProgressRing = false;
             await Task.CompletedTask;

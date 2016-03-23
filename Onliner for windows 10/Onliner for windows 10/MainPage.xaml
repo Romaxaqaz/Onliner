@@ -44,9 +44,10 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader BackButtonVisibility="Collapsed"
+        <controls:PageHeader 
                              Frame="{x:Bind Frame}"
                              Content="Авторизация"
+                             VisualStateNarrowMinWidth="1" FontWeight="Bold" BackButtonVisibility="Collapsed"
                              Background="{ThemeResource BackGroundCustomHeaderColorBrush}"
                              Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}">
         </controls:PageHeader>

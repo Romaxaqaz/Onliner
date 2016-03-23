@@ -1,24 +1,13 @@
 ﻿using HtmlAgilityPack;
 using MyToolkit.Controls;
-using Onliner_for_windows_10.Login;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-
-// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
+using Onliner.Http;
 
 namespace Onliner_for_windows_10.UserControls
 {
@@ -44,7 +33,7 @@ namespace Onliner_for_windows_10.UserControls
             }
         }
 
-        private Request request = new Request();
+        private HttpRequest HttpRequest = new HttpRequest();
         private HtmlDocument htmlDoc = new HtmlDocument();
         private ObservableCollection<CommentsContent> liststring = new ObservableCollection<CommentsContent>();
         private SolidColorBrush grayColor = new SolidColorBrush(Color.FromArgb(255, 190, 190, 190));

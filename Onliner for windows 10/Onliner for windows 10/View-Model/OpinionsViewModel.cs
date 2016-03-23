@@ -5,17 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Onliner_for_windows_10.Model;
-using Onliner_for_windows_10.Login;
 using HtmlAgilityPack;
-using System.ComponentModel;
 using MyToolkit.Command;
-using Windows.UI.Xaml.Controls;
+using Onliner.Http;
+using Onliner.Model.OpinionsModel;
 
 namespace Onliner_for_windows_10.View_Model
 {
     public class OpinionsViewModel
     {
-        private Request request = new Request();
+        private HttpRequest HttpRequest = new HttpRequest();
         private OpinionModel opinionModel;
         private HtmlDocument HtmlDocument = new HtmlDocument();
         private ObservableCollection<OpinionModel> _opinionsItems = new ObservableCollection<OpinionModel>();
@@ -49,10 +48,10 @@ namespace Onliner_for_windows_10.View_Model
 
         public OpinionsViewModel()
         {
-            if (!request.HasInternet())
+            if (!HttpRequest.HasInternet())
             {
-                request.GetRequestOnliner(UrlApiOpinions);
-                ResultHtmlPage = request.ResultGetRequsetString;
+                HttpRequest.GetRequestOnliner(UrlApiOpinions);
+                ResultHtmlPage = HttpRequest.ResultGetRequsetString;
                 HtmlDocument.LoadHtml(ResultHtmlPage);
 
                 List<HtmlNode> opinionsItems = HtmlDocument.DocumentNode.Descendants().Where

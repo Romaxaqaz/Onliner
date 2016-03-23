@@ -1,23 +1,20 @@
-﻿using HtmlAgilityPack;
-using Onliner_for_windows_10.Login;
-using Onliner_for_windows_10.Views.Profile;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
-using System;
 using Windows.Phone.UI.Input;
-using Onliner_for_windows_10.Model.Message;
-using Onliner_for_windows_10.Tile;
-using LiveTileUWP;
-using Onliner_for_windows_10.Tiles.TileTemplates;
-using Windows.UI.Xaml.Media;
-using Windows.UI;
-using Onliner_for_windows_10.Model.LocalSetteing;
 using Windows.UI.Popups;
-using System.Threading.Tasks;
+using HtmlAgilityPack;
+using Onliner_for_windows_10.Views.Profile;
+using Onliner_for_windows_10.Model.Message;
+using Onliner.Model.ProfileModel;
+using Onliner.Http;
+using Onliner.Model.AdditionalInformation;
+using Onliner.Model.LocalSetteing;
 
 namespace Onliner_for_windows_10.ProfilePage
 {
@@ -30,7 +27,7 @@ namespace Onliner_for_windows_10.ProfilePage
 
         private ProfileData profile = new ProfileData();
         private HtmlDocument resultat = new HtmlDocument();
-        private Request request = new Request();
+        private HttpRequest HttpRequest = new HttpRequest();
         private BirthDayDate bday = new BirthDayDate();
         private List<object> ParamsList = new List<object>();
         public string ProfileListData { get; set; }
@@ -65,14 +62,14 @@ namespace Onliner_for_windows_10.ProfilePage
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             string key = (string)e.Parameter;
-            if (request.HasInternet())
+            if (HttpRequest.HasInternet())
             {
                 Task taskProfileLoad = ProfileDataLoad(key);
                 await taskProfileLoad;
             }
             else
             {
-                request.Message("Упс, вы не подключены к интернету :(");
+                HttpRequest.Message("Упс, вы не подключены к интернету :(");
             }
 
         }
@@ -112,9 +109,9 @@ namespace Onliner_for_windows_10.ProfilePage
                 changeInfo = true;
             }
 
-            var parsHtml = new ParsingHtml.ParsingHtml();
-            string resultGetRequest = await request.GetRequestOnlinerAsync(profileUrl);
-            resultat.LoadHtml(resultGetRequest);
+            var parsHtml = new  Onliner.ParsingHtml.ParsingHtml();
+            string resultGetHttpRequest = await HttpRequest.GetRequestOnlinerAsync(profileUrl);
+            resultat.LoadHtml(resultGetHttpRequest);
 
             string loginUser = parsHtml.ParsElementHtml(accauntNameParsParam, resultat);
             string avatarImage = parsHtml.ParsElementHtml(accauntImageParsParam, resultat);
@@ -212,7 +209,7 @@ namespace Onliner_for_windows_10.ProfilePage
         {
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
             LocalSettingParams.RemoveAllParams();
-            request.Remoovecookie("");
+            HttpRequest.Remoovecookie("");
             Frame.Navigate(typeof(MainPage));
         }
     }

@@ -5,9 +5,9 @@
     xmlns:local="using:Onliner_for_windows_10.Views.News"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:converter="using:Onliner_for_windows_10.Converters"
+    xmlns:converter="using:Onliner.Converters"
     xmlns:controls="using:Template10.Controls"
-    xmlns:localConvert="using:Onliner_for_windows_10"
+    xmlns:localConvert="using:Onliner.Converters"
     mc:Ignorable="d">
     <Page.Resources>
 

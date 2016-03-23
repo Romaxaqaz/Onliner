@@ -393,7 +393,6 @@
         </Setter>
     </Style>
 
-
     <Style x:Key="HeaderTabListViewItemContainerStyle"
                TargetType="ListViewItem">
         <Setter Property="Background"

@@ -387,12 +387,13 @@
                              Frame="{x:Bind Frame}"
                              Background="{ThemeResource BackGroundCustomHeaderColorBrush}"
                              Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
+                             
                              VisualStateNarrowMinWidth="1"
                              BackButtonVisibility="Collapsed">
             <controls:PageHeader.SecondaryCommands>
-                <AppBarButton Name="EditProfile" Label="Редактировать профиль" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Icon="Setting" Click="EditProfile_Click"/>
-                <AppBarButton Name="PinWindow" Label="Найти пользователя" Icon="OtherUser" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Click="PinWindow_Click"/>
-                <AppBarButton Name="ExitProfile" Label="Выход" Icon="Remove" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Click="ExitProfile_Click"/>
+                <AppBarButton Name="EditProfile" Label="Редактировать профиль" Foreground="Black" Icon="Setting" Click="EditProfile_Click"/>
+                <AppBarButton Name="PinWindow" Label="Найти пользователя" Icon="OtherUser" Foreground="Black" Click="PinWindow_Click"/>
+                <AppBarButton Name="ExitProfile" Label="Выход" Icon="Remove" Foreground="Black" Click="ExitProfile_Click"/>
             </controls:PageHeader.SecondaryCommands>
         </controls:PageHeader>
         <Grid Background="{ThemeResource BackGroundCustomColorBrush}" Grid.Row="1">

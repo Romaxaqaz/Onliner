@@ -9,11 +9,11 @@
       xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
      xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
     xmlns:controls="using:Template10.Controls"
-    xmlns:conver="using:Onliner_for_windows_10.Converters"
-    xmlns:Model="using:Onliner_for_windows_10.Model"
-    xmlns:Selector="using:Onliner_for_windows_10.Model.DataTemplateSelector"
+    xmlns:conver="using:Onliner.Converters"
+    xmlns:Model="using:Onliner.Model"
+    xmlns:Selector="using:Onliner.Model.DataTemplateSelector"
     xmlns:toolkit="using:MyToolkit.Controls"
-    xmlns:webviewhelper="using:Onliner_for_windows_10.Helper"
+    xmlns:webviewhelper="using:Onliner.Helpers"
     xmlns:UserControl="using:Onliner_for_windows_10.UserControls"
     x:Class="Onliner_for_windows_10.Views.ViewNewsPage"
     mc:Ignorable="d">
@@ -223,8 +223,8 @@
                 <AppBarButton Name="CommentsCoomBarButton" Icon="Comment" Label="Комментарии" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Command="{Binding ChangeCommetnsGridVisible}"/>
             </controls:PageHeader.PrimaryCommands>
             <controls:PageHeader.SecondaryCommands>
-                <AppBarButton Icon="Save" Label="Save" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Command="{Binding SaveNewsInDB}"/>
-                <AppBarButton Icon="Link" Label="Открыть в бр" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Command="{Binding OpenNewsInBrowser}"/>
+                <AppBarButton Icon="Save" Label="Save" Foreground="Black" Command="{Binding SaveNewsInDB}"/>
+                <AppBarButton Icon="Link" Label="Открыть в бр" Foreground="Black" Command="{Binding OpenNewsInBrowser}"/>
             </controls:PageHeader.SecondaryCommands>
         </controls:PageHeader>
         <Grid Background="{ThemeResource BackGroundCustomColorBrush}">

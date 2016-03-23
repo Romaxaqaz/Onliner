@@ -26,22 +26,22 @@
             <Pivot.Items>
                 <PivotItem Header="Основные">
                     <StackPanel>
-                        <CheckBox x:Name="AutoUpdateCheckBox" Content="Автоматически обновлять ленту новостей при старте" Margin="5"/>
-                        <CheckBox x:Name="LoadImageCheckBox" Content="Загружать изображения" Margin="5"/>
+                        <CheckBox x:Name="AutoUpdateCheckBox" Content="Автоматически обновлять ленту новостей при старте" Margin="5" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                        <CheckBox x:Name="LoadImageCheckBox" Content="Загружать изображения" Margin="5" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                     </StackPanel>
                 </PivotItem>
                 <PivotItem Header="Оформление">
                     <StackPanel>
-                        <ComboBox Header="Фон" SelectedIndex="0" Margin="5">
+                        <ComboBox Header="Фон" SelectedIndex="0" Margin="5" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}">
                             <ComboBoxItem Content="светлый"/>
                             <ComboBoxItem Content="темный"/>
                         </ComboBox>
-                        <Button Content="Set dark theme" Width="100" Height="50" Margin="5" Click="Button_Click"/>
+                        <Button Content="Set dark theme" Width="100" Height="50" Margin="5" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Click="Button_Click"/>
                     </StackPanel>
                 </PivotItem>
                 <PivotItem Header="Контент">
                     <StackPanel MaxWidth="600">
-                        <ComboBox Header="Количество новостей, сохраняемых в кэш" SelectedIndex="0" Margin="5">
+                        <ComboBox Header="Количество новостей, сохраняемых в кэш" SelectedIndex="0" Margin="5" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}">
                             <ComboBoxItem Content="50"/>
                             <ComboBoxItem Content="100"/>
                             <ComboBoxItem Content="150"/>
@@ -52,13 +52,18 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Text=" Лента новостей сохраняется в кэш, для дальнейшей загрузки их без интернета" MaxWidth="600" HorizontalAlignment="Left" TextWrapping="Wrap" Grid.Row="0"/>
+                            <TextBlock Text=" Лента новостей сохраняется в кэш, для дальнейшей загрузки их без интернета" 
+                                       MaxWidth="600" 
+                                       HorizontalAlignment="Left" 
+                                       TextWrapping="Wrap" 
+                                       Grid.Row="0"
+                                       Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                             <Grid Grid.Row="1" Margin="5">
                                 <mytoolkit:RingSlice StartAngle="0" EndAngle="359" Fill="LightGray" Radius="50" InnerRadius="40"/>
                                 <mytoolkit:RingSlice Name="RingSlice" StartAngle="0" EndAngle="100" Fill="Gray" Radius="50" InnerRadius="40"/>
-                                <TextBlock x:Name="Size" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="Size" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                             </Grid>
-                            <Button x:Name="ClearDB" Content="Очистить кэш" Grid.Row="2" Margin="5" HorizontalAlignment="Center" Click="ClearDB_Click"/>
+                            <Button x:Name="ClearDB" Content="Очистить кэш" Grid.Row="2" Margin="5" HorizontalAlignment="Center" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Click="ClearDB_Click"/>
 
                         </Grid>
                     </StackPanel>

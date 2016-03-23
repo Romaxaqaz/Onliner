@@ -1,19 +1,16 @@
-﻿using Onliner_for_windows_10.Login;
-using Onliner_for_windows_10.Model.LocalSetteing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Template10.Mvvm;
 using Windows.UI.Xaml.Navigation;
+using Onliner.Http;
+using Onliner.Model.LocalSetteing;
 
 namespace Onliner_for_windows_10.View_Model
 {
     public class ShellViewModel : ViewModelBase
     {
         Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-        private Request request = new Request();
+        private HttpRequest HttpRequest = new HttpRequest();
 
         private string shop = "0";
         public string Shop
@@ -49,7 +46,7 @@ namespace Onliner_for_windows_10.View_Model
             get
             {
                 var avatar = localSettings.Values[LocalSettingParams.AvatarUrl];
-                if (avatar != null && request.HasInternet())
+                if (avatar != null && HttpRequest.HasInternet())
                 {
                     _avatarUrl = avatar.ToString();
                 }
@@ -98,25 +95,25 @@ namespace Onliner_for_windows_10.View_Model
 
         private async Task GetWeatherNow()
         {
-            var weather = await request.Weather();       
+            var weather = await HttpRequest.Weather();       
             Weather = weather == null ? "-" : weather.now.temperature;
         }
 
         private async Task GetCurrent()
         {
-            var current = await request.Bestrate();
+            var current = await HttpRequest.Bestrate();
             Current = current == null ? "-" : current.amount;
         }
 
         private async Task GetMessage()
         {
-            var msg = await request.MessageUnread();
+            var msg = await HttpRequest.MessageUnread();
             Message = msg == null ? "-" : msg;
         }
 
         private async Task GetCartCount()
         {
-          // Shop = await request.ShopCount("543687");
+          // Shop = await HttpRequest.ShopCount("543687");
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)

@@ -1,10 +1,9 @@
 ﻿using MyToolkit.Command;
-using Onliner_for_windows_10.Login;
-using Onliner_for_windows_10.Model;
+using Onliner.Http;
+using Onliner.Model.JsonModel.Message;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Template10.Mvvm;
@@ -25,7 +24,7 @@ namespace Onliner_for_windows_10.View_Model
         private readonly string Origin = "https://profile.onliner.by";
         #endregion
 
-        private Request request = new Request();
+        private HttpRequest HttpRequest = new HttpRequest();
         private MessageList messageListforRawText;
         private List<string> MessageIdList = new List<string>();
 
@@ -192,39 +191,39 @@ namespace Onliner_for_windows_10.View_Model
 
         private async Task DeleteMarkMessage()
         {
-            await request.PostRequestFormData(DeleteMessage, HostMessage, Origin, await GeneratePostDataMessageIdList());
+            await HttpRequest.PostRequestFormData(DeleteMessage, HostMessage, Origin, await GeneratePostDataMessageIdList());
             HtmlMessageContent = string.Empty;
             await UpdateItemSourceList(SelectedIndex);
         }
 
         private async Task DeleteOneMessage()
         {
-            await request.PostRequestFormData(DeleteMessage, HostMessage, Origin, GeneratePostDataMessageId(messageListforRawText.id));
+            await HttpRequest.PostRequestFormData(DeleteMessage, HostMessage, Origin, GeneratePostDataMessageId(messageListforRawText.id));
             HtmlMessageContent = string.Empty;
             await UpdateItemSourceList(SelectedIndex);
         }
 
         private async Task SaveOneMessage()
         {
-            await request.PostRequestFormData(SaveMessageUrl, HostMessage, Origin, GeneratePostDataMessageId(messageListforRawText.id));
+            await HttpRequest.PostRequestFormData(SaveMessageUrl, HostMessage, Origin, GeneratePostDataMessageId(messageListforRawText.id));
              await UpdateItemSourceList(SelectedIndex);
         }
 
         private async Task SpamMarkMessage()
         {
-            await request.PostRequestFormData(MarkSpamUrl, HostMessage, Origin, GeneratePostDataMessageId(messageListforRawText.id));
+            await HttpRequest.PostRequestFormData(MarkSpamUrl, HostMessage, Origin, GeneratePostDataMessageId(messageListforRawText.id));
             await UpdateItemSourceList(SelectedIndex);
         }
 
         private async Task SaveMarkMessage()
         {
-            await request.PostRequestFormData(SaveMessageUrl, HostMessage, Origin, await GeneratePostDataMessageIdList());
+            await HttpRequest.PostRequestFormData(SaveMessageUrl, HostMessage, Origin, await GeneratePostDataMessageIdList());
             await UpdateItemSourceList(SelectedIndex);
         }
 
         private async Task MarkReadMessage()
         {
-            await request.PostRequestFormData(MessageMaskReadUrl, HostMessage, Origin, await GeneratePostDataMessageIdList());
+            await HttpRequest.PostRequestFormData(MessageMaskReadUrl, HostMessage, Origin, await GeneratePostDataMessageIdList());
             await UpdateItemSourceList(SelectedIndex);
         }
 
@@ -244,7 +243,7 @@ namespace Onliner_for_windows_10.View_Model
         private async Task SendMessage()
         {
             PopUpSender = false;
-            await request.PostRequestFormData(ComposeMessageUrl, HostMessage, Origin, DataForAnswer().ToString());
+            await HttpRequest.PostRequestFormData(ComposeMessageUrl, HostMessage, Origin, DataForAnswer().ToString());
         }
 
         private void SetParamsMessage(bool rawText)
@@ -280,9 +279,9 @@ namespace Onliner_for_windows_10.View_Model
             var item = (MessageList)obj;
             if (item.unread == "1")
             {
-                await request.PostRequestFormData(MessageMaskReadUrl, HostMessage, Origin, GeneratePostDataMessageId(item.id));
+                await HttpRequest.PostRequestFormData(MessageMaskReadUrl, HostMessage, Origin, GeneratePostDataMessageId(item.id));
                 await UpdateItemSourceList(SelectedIndex);
-                await request.MessageUnread();
+                await HttpRequest.MessageUnread();
             }
             ShowListViewItemContent(item);
         }
@@ -292,21 +291,21 @@ namespace Onliner_for_windows_10.View_Model
             switch (index)
             {
                 case 0:
-                    var inMessage = await request.Message("0", "1");
+                    var inMessage = await HttpRequest.Message("0", "1");
                     if (inMessage != null)
                     {
                         IncomingMessage = new ObservableCollection<MessageList>(inMessage.messages);
                     }
                     break;
                 case 1:
-                    var outMessage = await request.Message("-1", "1");
+                    var outMessage = await HttpRequest.Message("-1", "1");
                     if (outMessage != null)
                     {
                         OutgoingMessage = new ObservableCollection<MessageList>(outMessage.messages);
                     }
                     break;
                 case 2:
-                    var saveMessage = await request.Message("1", "1");
+                    var saveMessage = await HttpRequest.Message("1", "1");
                     if (saveMessage != null)
                     {
                         SavedMessage = new ObservableCollection<MessageList>(saveMessage.messages);

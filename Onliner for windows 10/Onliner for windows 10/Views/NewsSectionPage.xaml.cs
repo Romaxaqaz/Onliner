@@ -11,7 +11,6 @@ namespace Onliner_for_windows_10.Views
         {
             this.InitializeComponent();
             NewsSectionPageViewModel newsModel = new NewsSectionPageViewModel();
-            NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Enabled;
             this.DataContext = newsModel;
             this.Loaded += MainOageLoaded;
 

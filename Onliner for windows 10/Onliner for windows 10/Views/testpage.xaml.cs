@@ -1,46 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using MyToolkit.Media;
-using MyToolkit.Multimedia;
-using Onliner_for_windows_10.UserControls;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI;
-using Onliner_for_windows_10.Login;
 using HtmlAgilityPack;
 using MyToolkit.Controls;
-using System.Net.Http;
-using Windows.Storage;
 using Windows.Storage.Streams;
 using System.Threading.Tasks;
-using Windows.Graphics.Imaging;
-using Onliner_for_windows_10.ParsingHtml;
-// Шаблон элемента пустой страницы задокументирован по адресу http://go.microsoft.com/fwlink/?LinkId=234238
+using Onliner.ParsingHtml;
+using Onliner.Http;
 
 namespace Onliner_for_windows_10
 {
-    /// <summary>
-    /// Пустая страница, которую можно использовать саму по себе или для перехода внутри фрейма.
-    /// </summary>
+
     public sealed partial class testpage : Page
     {
         private ParsingNewsSection parsNewsSection = new ParsingNewsSection();
 
-        private string imageURL = "https://content.onliner.by/news/2016/03/default/a0040ecfbf7f5662c8c916a34cd4ff61.jpeg";
-        private readonly string PeoplehUrlNews = "http://people.onliner.by/";
-        private readonly string TechUrlNews = "http://tech.onliner.by/";
+       // private string imageURL = "https://content.onliner.by/news/2016/03/default/a0040ecfbf7f5662c8c916a34cd4ff61.jpeg";
+       // private readonly string PeoplehUrlNews = "http://people.onliner.by/";
+       // private readonly string TechUrlNews = "http://tech.onliner.by/";
 
         public class CommentsContent
         {
@@ -54,7 +38,7 @@ namespace Onliner_for_windows_10
             }
         }
 
-        Request request = new Request();
+        private HttpRequest HttpRequest = new HttpRequest();
         private HtmlDocument htmlDoc = new HtmlDocument();
         List<CommentsContent> liststring = new List<CommentsContent>();
 

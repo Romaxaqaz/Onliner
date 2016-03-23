@@ -1,18 +1,10 @@
-﻿using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
-using Onliner_for_windows_10.ParsingHtml;
-using Onliner_for_windows_10.Model;
-using Windows.UI.Xaml.Controls.Primitives;
-using Onliner_for_windows_10.Login;
-using System;
+﻿using System;
 using Windows.UI.Popups;
 using Windows.Phone.UI.Input;
-using Onliner_for_windows_10.Model.DataTemplateSelector;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Onliner_for_windows_10.View_Model;
+using Onliner.Model.DataTemplateSelector;
 
 namespace Onliner_for_windows_10.Views
 {
