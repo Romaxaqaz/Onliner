@@ -28,150 +28,7 @@ namespace Onliner_for_windows_10.View_Model
         private MessageList messageListforRawText;
         private List<string> MessageIdList = new List<string>();
 
-        #region Properties
-        private int selectedIndex = 0;
-        public int SelectedIndex
-        {
-            get
-            {
-                return selectedIndex;
-            }
-            set
-            {
-                Set(ref selectedIndex, value);
-            }
-        }
-
-        private bool saveButtonVisible;
-        public bool SaveButtonVisible
-        {
-            get
-            {
-                return saveButtonVisible;
-            }
-            set
-            {
-                Set(ref saveButtonVisible, value);
-            }
-        }
-
-        private bool popUpSender = false;
-        public bool PopUpSender
-        {
-            get
-            {
-                return popUpSender;
-            }
-            set
-            {
-                Set(ref popUpSender, value);
-            }
-        }
-
-        private bool viewContentMessage;
-        public bool ViewContentMessage
-        {
-            get
-            {
-                return viewContentMessage;
-            }
-            set
-            {
-                Set(ref viewContentMessage, value);
-            }
-        }
-
-        private string htmlMessageContent = string.Empty;
-        public string HtmlMessageContent
-        {
-            get
-            {
-                return htmlMessageContent;
-            }
-            set
-            {
-                Set(ref htmlMessageContent, value);
-            }
-        }
-        #endregion
-
-        #region MessageSenderData
-        private string userNameRecipient = "";
-        public string UserNameRecipient
-        {
-            get
-            {
-                return userNameRecipient;
-            }
-            set
-            {
-                Set(ref userNameRecipient, value);
-            }
-        }
-        private string messageHeader = "";
-        public string MessageHeader
-        {
-            get
-            {
-                return messageHeader;
-            }
-            set
-            {
-                Set(ref messageHeader, value);
-            }
-        }
-        private string messageText = "";
-        public string MessageText
-        {
-            get
-            {
-                return messageText;
-            }
-            set
-            {
-                Set(ref messageText, value);
-            }
-        }
-        #endregion
-
-        #region Collection
-        private ObservableCollection<MessageList> incomingMessage;
-        private ObservableCollection<MessageList> outgoingMessage;
-        private ObservableCollection<MessageList> savedMessage;
-        public ObservableCollection<MessageList> IncomingMessage
-        {
-            get { return incomingMessage; }
-            set { Set(ref incomingMessage, value); }
-        }
-        public ObservableCollection<MessageList> OutgoingMessage
-        {
-            get { return outgoingMessage; }
-            set { Set(ref outgoingMessage, value); }
-        }
-        public ObservableCollection<MessageList> SavedMessage
-        {
-            get { return savedMessage; }
-            set { Set(ref savedMessage, value); }
-        }
-        #endregion
-
-        #region Command
-        public RelayCommand<object> PivotSelectionChange { get; private set; }
-        public RelayCommand<object> ListMessageSelectionChange { get; private set; }
-        public RelayCommand<object> CheckListItemChecked { get; private set; }
-        public RelayCommand<object> CheckListItemUnChecked { get; private set; }
-
-        public RelayCommand SendMessageCommand { get; private set; }
-        public RelayCommand AnswerSendMessageCommand { get; private set; }
-        public RelayCommand NewMessageCreate { get; private set; }
-        public RelayCommand MarkReadMessageCommand { get; private set; }
-        public RelayCommand SaveMarkMessageCommand { get; private set; }
-        public RelayCommand SpamMarkMessageCommand { get; private set; }
-        public RelayCommand SaveMessageCommand { get; private set; }
-        public RelayCommand DeleteMessageCommand { get; private set; }
-        public RelayCommand DeleteMarkMessageCommand { get; private set; }
-        #endregion
-
+        #region Methods
         public MessagePageViewModel()
         {
             PivotSelectionChange = new RelayCommand<object>(async (obj) => await UpdateItemSourceList(SelectedIndex));
@@ -316,7 +173,11 @@ namespace Onliner_for_windows_10.View_Model
 
         private void ShowListViewItemContent(MessageList Item)
         {
+            MessageLogoContent = false;
             messageListforRawText = Item;
+            AuthorName = Item.authorName;
+            TimeAuthor = Item.time;
+            AuthorImage = $"https://content.onliner.by/user/avatar/80x80/{Item.authorId}";
             HtmlMessageContent = Item.text.Replace("class=\"uncited\"", "style=\"border: 1px solid black; padding: 2\"");
             if (SelectedIndex == 2)
             {
@@ -364,7 +225,9 @@ namespace Onliner_for_windows_10.View_Model
         }
 
         private void CreateMessage() =>
-           PopUpSender = true;
+            PopUpSender = PopUpSender == true ? false : true;
+        
+           
 
         private void ChekcListItemRemove(object obj) =>
             MessageIdList.Remove(obj.ToString());
@@ -376,5 +239,186 @@ namespace Onliner_for_windows_10.View_Model
         {
             await Task.CompletedTask;
         }
+        #endregion
+
+        #region Properties
+        private int selectedIndex = 0;
+        public int SelectedIndex
+        {
+            get
+            {
+                return selectedIndex;
+            }
+            set
+            {
+                Set(ref selectedIndex, value);
+            }
+        }
+
+        private bool saveButtonVisible;
+        public bool SaveButtonVisible
+        {
+            get
+            {
+                return saveButtonVisible;
+            }
+            set
+            {
+                Set(ref saveButtonVisible, value);
+            }
+        }
+
+        private bool popUpSender = false;
+        public bool PopUpSender
+        {
+            get
+            {
+                return popUpSender;
+            }
+            set
+            {
+                Set(ref popUpSender, value);
+            }
+        }
+
+        private bool viewContentMessage;
+        public bool ViewContentMessage
+        {
+            get
+            {
+                return viewContentMessage;
+            }
+            set
+            {
+                Set(ref viewContentMessage, value);
+            }
+        }
+
+        private string htmlMessageContent = string.Empty;
+        public string HtmlMessageContent
+        {
+            get
+            {
+                return htmlMessageContent;
+            }
+            set
+            {
+                Set(ref htmlMessageContent, value);
+            }
+        }
+
+        private bool messageLogoContent = true;
+        public bool MessageLogoContent
+        {
+            get
+            {
+                return messageLogoContent;
+            }
+            set
+            {
+                Set(ref messageLogoContent, value);
+            }
+        }
+
+        private string authorName;
+        public string AuthorName
+        {
+            get { return authorName; }
+            set { Set(ref authorName, value); }
+        }
+
+        private string authorImage;
+
+        public string AuthorImage
+        {
+            get { return authorImage; }
+            set { Set(ref authorImage, value); }
+        }
+
+        private string timeAuthor;
+        public string TimeAuthor
+        {
+            get { return timeAuthor; }
+            set { Set(ref timeAuthor, value); }
+        }
+        #endregion
+
+        #region MessageSenderData
+        private string userNameRecipient = "";
+        public string UserNameRecipient
+        {
+            get
+            {
+                return userNameRecipient;
+            }
+            set
+            {
+                Set(ref userNameRecipient, value);
+            }
+        }
+        private string messageHeader = "";
+        public string MessageHeader
+        {
+            get
+            {
+                return messageHeader;
+            }
+            set
+            {
+                Set(ref messageHeader, value);
+            }
+        }
+        private string messageText = "";
+        public string MessageText
+        {
+            get
+            {
+                return messageText;
+            }
+            set
+            {
+                Set(ref messageText, value);
+            }
+        }
+        #endregion
+
+        #region Collection
+        private ObservableCollection<MessageList> incomingMessage;
+        private ObservableCollection<MessageList> outgoingMessage;
+        private ObservableCollection<MessageList> savedMessage;
+        public ObservableCollection<MessageList> IncomingMessage
+        {
+            get { return incomingMessage; }
+            set { Set(ref incomingMessage, value); }
+        }
+        public ObservableCollection<MessageList> OutgoingMessage
+        {
+            get { return outgoingMessage; }
+            set { Set(ref outgoingMessage, value); }
+        }
+        public ObservableCollection<MessageList> SavedMessage
+        {
+            get { return savedMessage; }
+            set { Set(ref savedMessage, value); }
+        }
+        #endregion
+
+        #region Command
+        public RelayCommand<object> PivotSelectionChange { get; private set; }
+        public RelayCommand<object> ListMessageSelectionChange { get; private set; }
+        public RelayCommand<object> CheckListItemChecked { get; private set; }
+        public RelayCommand<object> CheckListItemUnChecked { get; private set; }
+
+        public RelayCommand SendMessageCommand { get; private set; }
+        public RelayCommand AnswerSendMessageCommand { get; private set; }
+        public RelayCommand NewMessageCreate { get; private set; }
+        public RelayCommand MarkReadMessageCommand { get; private set; }
+        public RelayCommand SaveMarkMessageCommand { get; private set; }
+        public RelayCommand SpamMarkMessageCommand { get; private set; }
+        public RelayCommand SaveMessageCommand { get; private set; }
+        public RelayCommand DeleteMessageCommand { get; private set; }
+        public RelayCommand DeleteMarkMessageCommand { get; private set; }
+        #endregion
     }
+
 }

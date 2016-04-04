@@ -2,6 +2,7 @@
 using Windows.UI.Xaml.Controls;
 using Template10.Services.NavigationService;
 using Template10.Controls;
+using Onliner_for_windows_10.View_Model;
 
 namespace Onliner_for_windows_10.Views
 {
@@ -9,7 +10,7 @@ namespace Onliner_for_windows_10.Views
     {
         public static Shell Instance { get; set; }
         public static HamburgerMenu HamburgerMenu => Instance.MyHamburgerMenu;
-        private View_Model.ShellViewModel viewModel = new View_Model.ShellViewModel();
+       
 
         public Shell()
         {
@@ -20,10 +21,11 @@ namespace Onliner_for_windows_10.Views
 
         private void Shell_Loaded(object sender, RoutedEventArgs e)
         {
-            ProfileStackpanel.DataContext = viewModel;
-            WeatherStackpanel.DataContext = viewModel;
-            CurrentStackpanel.DataContext = viewModel;
-            MessageStackpanel.DataContext = viewModel;
+            var ai = ShellViewModel.Instance;
+            ProfileStackpanel.DataContext = ai;
+            WeatherStackpanel.DataContext = ai;
+            CurrentStackpanel.DataContext = ai;
+            MessageStackpanel.DataContext = ai;
         }
 
         public Shell(INavigationService navigationService) : this()

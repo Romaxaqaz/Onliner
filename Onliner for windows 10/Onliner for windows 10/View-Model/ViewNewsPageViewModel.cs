@@ -11,6 +11,7 @@ using Onliner.ParsingHtml;
 using Onliner.Http;
 using Onliner.Model.News;
 using Onliner.Model.DataTemplateSelector;
+using static Onliner.Setting.SettingParams;
 
 namespace Onliner_for_windows_10.View_Model
 {
@@ -104,6 +105,7 @@ namespace Onliner_for_windows_10.View_Model
             fullPagePars = new ParsingFullNewsPage(urlPage);
             NewsItemContent = new ObservableCollection<ListViewItemSelectorModel>(await fullPagePars.NewsMainInfo());
             CommentsItem = new ObservableCollection<CommentsItem>(await fullPagePars.CommentsMainInfo());
+            
         }
 
         private void VisibleCommentsGrid()
@@ -143,8 +145,34 @@ namespace Onliner_for_windows_10.View_Model
         /// Add comments
         /// </summary>
         /// <param name="obj">comments data</param>
-        private async void AddComments(object obj) =>
-            await HttpRequest.AddComments(fullPagePars.NewsID, obj.ToString());
+        private async void AddComments(object obj)
+        {
+            var boolAuthorization = Convert.ToBoolean(GetParamsSetting(AuthorizationKey));
+            if (boolAuthorization)
+            {
+                await HttpRequest.AddComments(fullPagePars.NewsID, obj.ToString(), LinkNews);
+                CommentsItem comItem = new Onliner.Model.News.CommentsItem();
+                comItem.Nickname = ShellViewModel.Instance.Login;
+                comItem.Image = ShellViewModel.Instance.AvatarUrl;
+                comItem.Time = "Только что";
+                comItem.Data = obj.ToString();
+                CommentsItem.Add(comItem);
+            }
+            else
+            {
+                var dialog = new MessageDialog("Чтобы оставлять комментарии необходимо авторизоваться..");
+
+                dialog.Commands.Add(new UICommand { Label = "авторизоваться", Id = 0 });
+                dialog.Commands.Add(new UICommand { Label = "нет", Id = 1 });
+
+                var result = await dialog.ShowAsync();
+
+                if ((int)result.Id == 0)
+                {
+                    NavigationService.Navigate(typeof(MainPage));
+                }
+            }
+        }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)
         {

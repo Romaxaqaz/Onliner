@@ -30,7 +30,7 @@ namespace Onliner.Converters
         }
 
 
-        private async Task CreateBitmap(byte[] array)
+        private async void CreateBitmap(byte[] array)
         {
             try
             {

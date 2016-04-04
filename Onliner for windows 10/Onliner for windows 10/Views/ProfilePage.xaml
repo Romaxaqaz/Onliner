@@ -9,11 +9,13 @@
     x:Class="Onliner_for_windows_10.ProfilePage.ProfilePage"
     xmlns:userControls="using:Onliner_for_windows_10.UserControls"
     xmlns:controls="using:Template10.Controls"
+    xmlns:converter="using:Onliner.Converters"
     xmlns:tile="using:Onliner_for_windows_10.Tiles.TileTemplates"
     xmlns:model="using:Onliner_for_windows_10.ProfilePage"
     mc:Ignorable="d">
     <!-- Data for listview-->
     <Page.Resources>
+        <converter:BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
         <DataTemplate x:Key="DataProfileStyleList">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -331,7 +333,7 @@
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundBaseLowBrush}"/>
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource Gray}"/>
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Gray"/>
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush" Storyboard.TargetName="ContentPresenter">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledTransparentBrush}"/>
@@ -391,9 +393,9 @@
                              VisualStateNarrowMinWidth="1"
                              BackButtonVisibility="Collapsed">
             <controls:PageHeader.SecondaryCommands>
-                <AppBarButton Name="EditProfile" Label="Редактировать профиль" Foreground="Black" Icon="Setting" Click="EditProfile_Click"/>
-                <AppBarButton Name="PinWindow" Label="Найти пользователя" Icon="OtherUser" Foreground="Black" Click="PinWindow_Click"/>
-                <AppBarButton Name="ExitProfile" Label="Выход" Icon="Remove" Foreground="Black" Click="ExitProfile_Click"/>
+                <AppBarButton Name="EditProfile" Label="Редактировать профиль" Foreground="Black" Icon="Setting" Command="{Binding EditProfileCommand}" Visibility="{Binding CommandButtonVisibility, Converter={StaticResource BoolToVisibility}}"/>
+                <AppBarButton Name="PinWindow" Label="Найти пользователя" Icon="OtherUser" Foreground="Black" Command="{Binding SearchUsersCommand}"/>
+                <AppBarButton Name="ExitProfile" Label="Выход" Icon="Remove" Foreground="Black" Command="{Binding ExitProfileCommand}" Visibility="{Binding CommandButtonVisibility, Converter={StaticResource BoolToVisibility}}"/>
             </controls:PageHeader.SecondaryCommands>
         </controls:PageHeader>
         <Grid Background="{ThemeResource BackGroundCustomColorBrush}" Grid.Row="1">
@@ -412,7 +414,7 @@
                     <StackPanel x:Name="stackPanelAccauntInfo" 
 			Grid.Column="0" 
 			Grid.Row="0" 
-			HorizontalAlignment="Stretch"  d:DataContext="{d:DesignInstance Type=model:ProfileData}"
+			HorizontalAlignment="Stretch"
 			Background="{ThemeResource BackGroundCustomMainElementColorBrush}">
                         <StackPanel.ChildrenTransitions>
                             <TransitionCollection>
@@ -426,7 +428,7 @@
                                 </TransitionCollection>
                             </StackPanel.ChildrenTransitions>
                             <TextBlock x:Name="AccauntNameTextBlock" 
-					Text="{Binding AccauntName}" 
+					Text="{Binding NickName}" 
 					TextAlignment="Center" 
 					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
 					FontSize="24" Style="{ThemeResource SubtitleTextBlockStyle}"
@@ -461,10 +463,10 @@
                                     <EdgeUIThemeTransition Edge="Left"/>
                                 </TransitionCollection>
                             </Grid.ChildrenTransitions>
-                            <Button Name="SendMessageButton" Height="35" FontSize="16" HorizontalAlignment="Stretch" BorderThickness="0" Click="Button_Click" Style="{StaticResource SendMessageButtonStyle}">
+                            <Button Name="SendMessageButton" Height="35" FontSize="16" HorizontalAlignment="Stretch" BorderThickness="0" Command="{Binding ActionWithMessageCommand}" Style="{StaticResource SendMessageButtonStyle}">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="&#xE715;" FontFamily="Segoe MDL2 Assets" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{ThemeResource ForegroundCustomWhiteBrush}"/>
-                                    <TextBlock Name="SendMessageTextBox" Text="Написать сообщение" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0" FontFamily="Nirmala UI Semilight" Foreground="{ThemeResource ForegroundCustomWhiteBrush}"/>
+                                    <TextBlock Name="SendMessageTextBox" Text="{Binding TextButtonMessageContent}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0" FontFamily="Nirmala UI Semilight" Foreground="{ThemeResource ForegroundCustomWhiteBrush}"/>
                                 </StackPanel>
                             </Button>
 
@@ -478,7 +480,8 @@
                         </Grid.RowDefinitions>
                         <ListView x:Name="DataProfileList" 
 				                        ItemTemplate="{StaticResource DataProfileStyleList}"
-                                      Background="{ThemeResource BackGroundCustomColorBrush}" 
+                                       Background="{ThemeResource BackGroundCustomColorBrush}" 
+                                  ItemsSource="{Binding ProfileDataCollection}"
 				                        HorizontalAlignment="Stretch" Grid.Row="1" >
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
@@ -491,5 +494,10 @@
                 </Grid>
             </ScrollViewer>
         </Grid>
+        <ProgressRing Width="100" Height="100" 
+                      IsActive="{Binding ProgressRingIsActive, Mode=TwoWay}" Foreground="Blue"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Grid.RowSpan="2"/>
     </Grid>
 </Page>

@@ -455,7 +455,7 @@
         <!-- EndRegion -->
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition/>
@@ -518,7 +518,7 @@
                       VerticalAlignment="Top" Height="48" Grid.Row="0">
                         <Interactivity:Interaction.Behaviors>
                             <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                <Core:InvokeCommandAction Command="{Binding PivotOrFlipViewSelectionChange}" CommandParameter="{Binding ElementName=TabListview, Path=SelectedIndex}"/>
+                                <Core:InvokeCommandAction Command="{Binding PivotSelectionChange}" CommandParameter="{Binding ElementName=TabListview, Path=SelectedIndex}"/>
                             </Core:EventTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
                         <ListView.ItemsPanel>
@@ -580,7 +580,7 @@
                                Grid.RowSpan="2" 
                                Margin="0,0,0,0" 
                                Visibility="{Binding unread, Converter={StaticResource TrueOrFalseUnread}}"/>
-                                            <CheckBox Name="ChekcListItem" 
+                          <CheckBox Name="ChekcListItem" 
                               Tag="{Binding id}" 
                               Grid.Column="1" 
                               Grid.RowSpan="2"
@@ -790,7 +790,7 @@
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="{Binding authorName}" 
+                    <TextBlock Text="{Binding AuthorName}" 
                            FontSize="18" 
                            FontWeight="Bold" 
                            Margin="2"/>
@@ -799,8 +799,8 @@
                        Height="80" 
                        Grid.Row="1" 
                        HorizontalAlignment="Left"
-                       Margin="2" />
-                    <TextBlock Text="{Binding time}" 
+                       Margin="2" Source="{Binding AuthorImage}"/>
+                    <TextBlock Text="{Binding TimeAuthor}" 
                            Grid.Row="0" 
                            Grid.Column="1" 
                            VerticalAlignment="
@@ -819,6 +819,25 @@
                     <AppBarButton Name="Save" Icon="Save" Label="Сохранить" Command="{Binding SaveMessageCommand}"/>
                     <AppBarButton Name="Delete" Icon="Delete" Label="Удалить" Command="{Binding DeleteMessageCommand}"/>
                 </CommandBar>
+                <Grid Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding MessageLogoContent, Converter={StaticResource BoolToVisible}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="&#xE8BD;" 
+                               FontSize="72"
+                               FontFamily="Segoe MDL2 Assets"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Margin="10"
+                               Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                    <TextBlock Text="Пожалуйста, выберите сообщение или создайте новое" 
+                               FontSize="24"
+                               TextWrapping="Wrap" 
+                               Grid.Row="1"
+                               Margin="10"
+                               Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                </Grid>
             </Grid>
             <Popup Name="PopupMessageSender" 
                HorizontalAlignment="Stretch" 

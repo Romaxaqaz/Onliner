@@ -103,6 +103,7 @@ namespace Onliner_for_windows_10.UserControls
         {
             if (string.IsNullOrEmpty(html)) return;
             htmlDoc.LoadHtml(html);
+            ST.Children.Clear();
 
             StackPanel gridC = new StackPanel();
 
@@ -111,38 +112,49 @@ namespace Onliner_for_windows_10.UserControls
                 x.Attributes["class"].Value.Contains("comment-content"))).
                 Select(x => x.ChildNodes).ToList();
 
-            foreach (var item in userList[0])
+            if (userList.Count == 0)
             {
-                if (item.Name.Equals("blockquote"))
-                {
-                    liststring.Add(new CommentsContent("blockquote", item.InnerHtml));
-                }
-                else if (item.Name.Equals("p"))
-                {
-                    liststring.Add(new CommentsContent("p", item.InnerHtml));
-                }
+                HtmlView htmlViewr = new HtmlView();
+                htmlViewr.Html = html;
+                htmlViewr.FontSize = 14;
+                htmlViewr.Foreground = (Brush)(Application.Current.Resources["ForegroundCustomOtherBlackBrush"]);
+                gridC.Children.Add(htmlViewr);
             }
-
-            foreach (var item in liststring)
+            else
             {
-                if (item.Tag.Equals("blockquote"))
+                foreach (var item in userList[0])
                 {
-                    htmlDoc.LoadHtml(item.Content);
-                    List<HtmlNode> countBlo = htmlDoc.DocumentNode.Descendants("blockquote").ToList();
-                    countBlock = countBlo.Count + 1;
-                    var bordres = ReturnBorderComplete(item.Content);
-                    gridC.Children.Add(bordres);
-                    countStep = 0;
-                }
-                else if (item.Tag.Equals("p"))
-                {
-                    HtmlView htmlViewr = new HtmlView();
-                    htmlViewr.Html = item.Content;
-                    htmlViewr.FontSize = 14;
-                    htmlViewr.Foreground = (Brush)(Application.Current.Resources["ForegroundCustomOtherBlackBrush"]);
-                    gridC.Children.Add(htmlViewr);
+                    if (item.Name.Equals("blockquote"))
+                    {
+                        liststring.Add(new CommentsContent("blockquote", item.InnerHtml));
+                    }
+                    else if (item.Name.Equals("p"))
+                    {
+                        liststring.Add(new CommentsContent("p", item.InnerHtml));
+                    }
                 }
 
+                foreach (var item in liststring)
+                {
+                    if (item.Tag.Equals("blockquote"))
+                    {
+                        htmlDoc.LoadHtml(item.Content);
+                        List<HtmlNode> countBlo = htmlDoc.DocumentNode.Descendants("blockquote").ToList();
+                        countBlock = countBlo.Count + 1;
+                        var bordres = ReturnBorderComplete(item.Content);
+                        gridC.Children.Add(bordres);
+                        countStep = 0;
+                    }
+                    else if (item.Tag.Equals("p"))
+                    {
+                        HtmlView htmlViewr = new HtmlView();
+                        htmlViewr.Html = item.Content;
+                        htmlViewr.FontSize = 14;
+                        htmlViewr.Foreground = (Brush)(Application.Current.Resources["ForegroundCustomOtherBlackBrush"]);
+                        gridC.Children.Add(htmlViewr);
+                    }
+
+                }
             }
             liststring.Clear();
             ST.Children.Add(gridC);

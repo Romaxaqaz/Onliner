@@ -1,12 +1,12 @@
 ﻿{
   "dependencies": {
     "HtmlAgilityPack": "1.4.9",
-    "Intense": "0.4.0",
+    "Intense": "0.5.0",
     "Microsoft.ApplicationInsights.WindowsApps": "1.1.1",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
     "MyToolkit": "2.5.11",
     "MyToolkit.Extended": "2.5.11",
-    "Newtonsoft.Json": "8.0.2",
+    "Newtonsoft.Json": "8.0.3",
     "SQLite.Net-PCL": "3.1.1",
     "Template10": "1.1.8",
     "WinRTXamlToolkit.Controls.DataVisualization.UWP": "2.0.0",

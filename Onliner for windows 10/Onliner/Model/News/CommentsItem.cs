@@ -4,6 +4,8 @@ namespace Onliner.Model.News
 {
     public class CommentsItem : ICommentsItem
     {
+        public string ID { get; set; }
+
         public string Data { get;  set; }
 
         public string Image { get; set; }
@@ -15,5 +17,7 @@ namespace Onliner.Model.News
         public string Time { get; set; }
 
         public string ColorItem { get; set; }
+
+        public string Like { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace Onliner_for_windows_10.Views
     public sealed partial class ViewNewsPage : Page
     {
         private ViewNewsPageViewModel viewModel = new ViewNewsPageViewModel();
-
+        private bool DownPosition = false;
         public ViewNewsPage()
         {
             this.InitializeComponent();
@@ -41,9 +41,27 @@ namespace Onliner_for_windows_10.Views
 
         private async void NewsListInfo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ListViewItemSelectorModel feedItem = e.AddedItems[0] as ListViewItemSelectorModel;
-            MessageDialog msg = new MessageDialog(feedItem.Type);
-            await msg.ShowAsync();
+        }
+
+        private void DownListButton_Click(object sender, RoutedEventArgs e)
+        { 
+            
+            if(DownPosition==false)
+            {
+                CommentsListView.SelectedIndex = 0;
+                CommentsListView.ScrollIntoView(CommentsListView.SelectedItem);
+                DownPosition = true;
+                DownListButton.Visibility = Visibility.Visible;
+                UpListButton.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                CommentsListView.SelectedIndex = CommentsListView.Items.Count - 1;
+                CommentsListView.ScrollIntoView(CommentsListView.SelectedItem);
+                DownPosition = false;
+                DownListButton.Visibility = Visibility.Collapsed;
+                UpListButton.Visibility = Visibility.Visible;
+            }
         }
     }
 }

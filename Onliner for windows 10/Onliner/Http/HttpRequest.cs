@@ -28,10 +28,10 @@ namespace Onliner.Http
 
         #region Onliner url API
         private const string UserApiOnliner = "https://user.api.onliner.by/login";
-        private const string CommentsApiTech = "http://tech.onliner.by/comments/add?";
-        private const string CommentsApiPeople = "http://people.onliner.by/comments/add?";
-        private const string CommentsApiAuto = "http://people.onliner.by/comments/add?";
-        private const string CommentsApiHouse = "http://people.onliner.by/comments/add?";
+        private const string CommentsApiTech = "https://tech.onliner.by/comments/add?";
+        private const string CommentsApiPeople = "https://people.onliner.by/comments/add?";
+        private const string CommentsApiAuto = "https://auto.onliner.by/comments/add?";
+        private const string CommentsApiHouse = "https://realt.onliner.by/comments/add?";
         private const string UnreadApi = "http://www.onliner.by/sdapi/api/messages/unread/";
         private const string EdipProfile = "https://profile.onliner.by/edit";
         private const string EditPreferencesProfileApi = "https://profile.onliner.by/preferences";
@@ -74,9 +74,9 @@ namespace Onliner.Http
             try
             {
                 if (!HasInternet()) throw new WebException();
-
                 HttpClient httpClient = new HttpClient();
                 var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
+
                 ResultGetRequsetString = await response.Content.ReadAsStringAsync();
             }
             catch (WebException)
@@ -88,6 +88,23 @@ namespace Onliner.Http
             return ResultGetRequsetString;
         }
 
+        public async Task<string> GetTypeRequestOnlinerAsync(string url)
+        {
+
+            HttpWebRequest request =
+            (HttpWebRequest)WebRequest.Create(url);
+
+            request.Method = "GET";
+            request.Accept = "application/json; charset=utf-8";
+
+
+            var response = await request.GetResponseAsync();
+            StreamReader reader = new StreamReader(response.GetResponseStream());
+            StringBuilder output = new StringBuilder();
+            output.Append(reader.ReadToEnd());
+            return output.ToString();
+        }
+
         public async void GetRequestOnliner(string url)
         {
             try
@@ -97,7 +114,7 @@ namespace Onliner.Http
                 var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
                 ResultGetRequsetString = await response.Content.ReadAsStringAsync();
             }
-            catch (WebException ex) { Message(ex.ToString()); }
+            catch (WebException ex) {  await Message(ex.ToString()); }
         }
 
         public async Task<byte[]> GetRequestByteOnliner(string url)
@@ -110,7 +127,7 @@ namespace Onliner.Http
                 await Task.CompletedTask;
                 result = await httpClient.GetByteArrayAsync(new Uri(url));
             }
-            catch (WebException ex) { Message(ex.ToString()); }
+            catch (WebException ex) {  await Message(ex.ToString()); }
             return result;
         }
 
@@ -180,7 +197,7 @@ namespace Onliner.Http
         /// <summary>
         /// POST request to add a comment
         /// </summary>
-        public async Task AddComments(string newsID, string message)
+        public async Task AddComments(string newsID, string message, string linkNews)
         {
 
             if (newsID == string.Empty) { throw new Exception(); }
@@ -191,26 +208,22 @@ namespace Onliner.Http
             {
                 handler.CookieContainer = CookieSession;
             }
-            try
-            {
-                if (!HasInternet()) throw new WebException();
-                HttpClient httpClient = new HttpClient(handler);
-                HttpRequestMessage postRequest = new HttpRequestMessage(HttpMethod.Post, CommentsApiTech + (ConvertToAjaxTime.ConvertToUnixTimestamp().ToString()));
-                postRequest.Headers.Add("Accept", "application/json, text/javascript, */*; q=0.01");
-                postRequest.Headers.Add("Accept-Encoding", "gzip, deflate");
-                postRequest.Headers.Add("Accept-Language", "en-US,en;q=0.8,ru;q=0.6");
-                postRequest.Headers.Add("Host", "tech.onliner.by");
-                postRequest.Headers.Add("Origin", "http://tech.onliner.by");
-                postRequest.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36");
-                StringBuilder postData = new StringBuilder();
-                postData.Append("message=" + WebUtility.UrlEncode(message) + "&");
-                postData.Append("postId=" + WebUtility.UrlEncode(newsID));
-                postRequest.Content = new System.Net.Http.StringContent(postData.ToString(), UnicodeEncoding.UTF8, "application/x-www-form-urlencoded");
-                response = await httpClient.SendAsync(postRequest);
-                ResponceResult("ok");
-            }
-            catch (WebException ex) { Message(ex.ToString()); }
-
+            if (!HasInternet()) throw new WebException();
+            HttpClient httpClient = new HttpClient(handler);
+            var finalURl = GetApionLinks(linkNews) + ConvertToAjaxTime.ConvertToUnixTimestamp().ToString();
+            HttpRequestMessage postRequest = new HttpRequestMessage(HttpMethod.Post, finalURl);
+            postRequest.Headers.Add("Accept", "application/json, text/javascript, */*; q=0.01");
+            postRequest.Headers.Add("Accept-Encoding", "gzip, deflate");
+            postRequest.Headers.Add("Accept-Language", "en-US,en;q=0.8,ru;q=0.6");
+            postRequest.Headers.Add("Referer", $"{linkNews}");
+            postRequest.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36");
+            postRequest.Headers.Add("X-Requested-With", "XMLHttpRequest");
+            StringBuilder postData = new StringBuilder();
+            postData.Append("message=" + WebUtility.UrlEncode(message) + "&");
+            postData.Append("postId=" + WebUtility.UrlEncode(newsID));
+            postRequest.Content = new System.Net.Http.StringContent(postData.ToString(), UnicodeEncoding.UTF8, "application/x-www-form-urlencoded");
+            response = await httpClient.SendAsync(postRequest);
+            string res = response.Content.ToString();
         }
 
         /// <summary>
@@ -262,7 +275,10 @@ namespace Onliner.Http
                 var response = httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, UnreadApi)).Result;
                 result = await response.Content.ReadAsStringAsync();
             }
-            catch (WebException ex) { Message(ex.ToString()); }
+            catch (WebException)
+            {
+               return null;
+            }
             return result;
         }
 
@@ -295,7 +311,7 @@ namespace Onliner.Http
                 var resultJson = await response.Content.ReadAsStringAsync();
                 bestrateResponse = JsonConvert.DeserializeObject<BestrateRespose>(resultJson);
             }
-            catch (WebException ex) { Message(ex.ToString()); }
+            catch (WebException ex) {  await Message(ex.ToString()); }
             return bestrateResponse;
         }
 
@@ -317,7 +333,7 @@ namespace Onliner.Http
                 var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, urlPath)).Result;
                 result = await response.Content.ReadAsStringAsync();
             }
-            catch (WebException ex) { Message(ex.ToString()); }
+            catch (WebException ex) { }
             return result;
 
         }
@@ -331,7 +347,8 @@ namespace Onliner.Http
             WeatherJSon weather = null;
             try
             {
-                if (!HasInternet()) throw new WebException();
+                if (!HasInternet()) return null;
+
                 string url = $"http://www.onliner.by/sdapi/pogoda/api/forecast/{townID}";
                 HttpClient httpClient = new HttpClient();
                 var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
@@ -342,7 +359,6 @@ namespace Onliner.Http
             }
             catch (WebException)
             {
-                Message(InternerNotEnableMessage);
                 return null;
             }
             return weather;
@@ -374,7 +390,7 @@ namespace Onliner.Http
                 var myString = regex.Replace(resultJson, "").Replace("\"messages\":{", "\"messages\":[").Replace("}}}", "}]}");
                 message = (MessageJson)JsonConvert.DeserializeObject<MessageJson>(myString);
             }
-            catch (WebException ex) { Message(ex.ToString()); }
+            catch (WebException) { }
             return message;
         }
 
@@ -456,7 +472,7 @@ namespace Onliner.Http
                 string bufferToken = Regex.Match(responseBodyAsText, @"(token:(.*)')").Value;
                 token = bufferToken.Replace("token: '", "").Replace("'", "");
             }
-            catch (WebException ex) { Message(ex.ToString()); }
+            catch (WebException ex) {  await Message(ex.ToString()); }
             return token;
         }
 
@@ -496,7 +512,7 @@ namespace Onliner.Http
             }
             catch (WebException ex)
             {
-                Message(ex.ToString());
+                 await Message(ex.ToString());
             }
         }
 
@@ -517,10 +533,11 @@ namespace Onliner.Http
         /// <summary>
         /// Remove cookie
         /// </summary>
-        public async void Remoovecookie(string filename)
+        public async void Remoovecookie()
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
             StorageFile sampleFile = await localFolder.CreateFileAsync("cookie", CreationCollisionOption.ReplaceExisting);
+            await sampleFile.DeleteAsync();
         }
 
         /// <summary>
@@ -533,6 +550,7 @@ namespace Onliner.Http
             try
             {
                 sampleFile = await localFolder.GetFileAsync(filename);
+                if (sampleFile == null) return;
                 using (Stream stream = await sampleFile.OpenStreamForReadAsync())
                 {
                     CookieSession = SerializeCookie.Deserialize(stream, new Uri("http://www.onliner.by"));
@@ -551,10 +569,20 @@ namespace Onliner.Http
                     connectionProfile.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess);
         }
 
-        public async void Message(string message)
+        public async Task Message(string message)
         {
             MessageDialog msg = new MessageDialog(message);
             await msg.ShowAsync();
+        }
+
+
+        private string GetApionLinks(string link)
+        {
+            if (link.Contains("tech.onliner.by")) return CommentsApiTech;
+            if (link.Contains("people.onliner.by")) return CommentsApiPeople;
+            if (link.Contains("auto.onliner.by")) return CommentsApiAuto;
+            if (link.Contains("realt.onliner.by")) return CommentsApiHouse;
+            return string.Empty;
         }
     }
 }

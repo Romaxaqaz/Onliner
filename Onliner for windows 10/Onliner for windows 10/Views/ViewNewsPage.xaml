@@ -10,7 +10,6 @@
      xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
     xmlns:controls="using:Template10.Controls"
     xmlns:conver="using:Onliner.Converters"
-    xmlns:Model="using:Onliner.Model"
     xmlns:Selector="using:Onliner.Model.DataTemplateSelector"
     xmlns:toolkit="using:MyToolkit.Controls"
     xmlns:webviewhelper="using:Onliner.Helpers"
@@ -19,9 +18,6 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-
-       
-
         <DataTemplate x:Key="CommentsList">
             <Border BorderThickness="0,0,0,1" BorderBrush="Gray">
                 <Grid  HorizontalAlignment="Stretch">
@@ -47,7 +43,7 @@
                         </Ellipse.Fill>
                     </Ellipse>
                     <TextBlock Text="{Binding Nickname}" Grid.Column="1" Grid.ColumnSpan="2" FontWeight="Bold" FontSize="14" TextAlignment="Left" VerticalAlignment="Center" Margin="3" HorizontalAlignment="Stretch" TextWrapping="NoWrap" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
-                    <TextBlock Text="{Binding Time}" Grid.Row="0" Grid.Column="3" FontSize="12" TextAlignment="Right" VerticalAlignment="Center" Margin="2" Foreground="Gray" Grid.ColumnSpan="2" FontFamily="Segoe UI Light" HorizontalAlignment="Stretch"/>
+                    <TextBlock Text="{Binding Time}" Grid.Row="0" Grid.Column="3" FontSize="14" TextAlignment="Right" VerticalAlignment="Center" Margin="2" Foreground="Gray" Grid.ColumnSpan="2" FontFamily="Segoe UI Light" HorizontalAlignment="Stretch"/>
                     <UserControl:CommentsContentViewer x:Name="CommentsContentViewer" UserControl:CommentsContentViewer.HtmlString="{Binding Data}" BorderThickness="1" FontSize="14" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"/>
                     <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Margin="2" >
                         <TextBlock Text="&#xE19F;" FontSize="14" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Foreground="Gray"/>
@@ -134,7 +130,7 @@
                            Style="{ThemeResource BodyTextBlockStyle}"
                            VerticalAlignment="Center"
                            Foreground="Gray"
-                           Margin="5"
+                           Margin="0,3,3,0"
                            TextAlignment="Right"/>
             </Grid>
         </DataTemplate>
@@ -145,13 +141,12 @@
                            Style="{ThemeResource SubtitleTextBlockStyle}"
                            TextWrapping="Wrap"
                            Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
-                           Margin="5"/>
+                           Margin="5,0,5,3"/>
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="PictureTemlate">
             <Grid HorizontalAlignment="Stretch">
-                <Image Source="{Binding Value}">
-                </Image>
+                <Image Source="{Binding Value}" Margin="0"/>
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="StoryTemlate">
@@ -177,7 +172,10 @@
 
         <conver:BooleanToVisibilityConverter x:Key="BooleToVisible"/>
     </Page.Resources>
+    
     <RelativePanel>
+        
+        <!--#region Visual State Manager-->
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="FullNewsVisualStateGroup">
                 <VisualState x:Name="DeskTopVisualState">
@@ -209,6 +207,9 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
+        <!--#endregion-->
+        
+        <!--#region Page Header-->
         <controls:PageHeader x:Name="pageHeader" 
                              Frame="{x:Bind Frame}"
                              Background="{ThemeResource BackGroundCustomHeaderColorBrush}"
@@ -223,10 +224,13 @@
                 <AppBarButton Name="CommentsCoomBarButton" Icon="Comment" Label="Комментарии" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Command="{Binding ChangeCommetnsGridVisible}"/>
             </controls:PageHeader.PrimaryCommands>
             <controls:PageHeader.SecondaryCommands>
-                <AppBarButton Icon="Save" Label="Save" Foreground="Black" Command="{Binding SaveNewsInDB}"/>
+                <AppBarButton Icon="Save" Label="Сохранить" Foreground="Black" Command="{Binding SaveNewsInDB}"/>
                 <AppBarButton Icon="Link" Label="Открыть в бр" Foreground="Black" Command="{Binding OpenNewsInBrowser}"/>
             </controls:PageHeader.SecondaryCommands>
         </controls:PageHeader>
+        <!--#endregion-->
+        
+        <!--#region MainGrid-->
         <Grid Background="{ThemeResource BackGroundCustomColorBrush}">
             <RelativePanel.Below>pageHeader</RelativePanel.Below>
             <RelativePanel.AlignLeftWithPanel>True</RelativePanel.AlignLeftWithPanel>
@@ -246,6 +250,8 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
+                    
+                    <!--#region NewsSection-->
                     <Grid x:Name="MainNewsData"
                       Grid.Row="0" 
                       Grid.Column="0" 
@@ -257,6 +263,9 @@
                               SelectionChanged="NewsListInfo_SelectionChanged">
                         </ListView>
                     </Grid>
+                    <!--#endregion-->
+
+                    <!--#region Comments Section-->
                     <Grid x:Name="GridComments" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Background="{ThemeResource BackGroundCustomColorBrush}" Visibility="{Binding CommentsVisible, Converter={StaticResource BooleToVisible}}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
@@ -277,6 +286,42 @@
                             </ListView.ItemContainerTransitions>
 
                         </ListView>
+                        <Button x:Name="DownListButton" Width="32" Height="32" Grid.Row="0" 
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Right" Foreground="Gray"
+                                Margin="0,5,10,0" Click="DownListButton_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Grid>
+                                        <Ellipse Stroke="Gray" StrokeThickness="1">
+                                        </Ellipse>
+                                        <ContentPresenter HorizontalAlignment="Center"  
+                                  VerticalAlignment="Center">
+                                            <TextBlock x:Name="Test" Text="&#xE019;" FontSize="18" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"  Foreground="Gray"/>
+                                        </ContentPresenter>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <Button x:Name="UpListButton" Width="32" Height="32" Grid.Row="0" 
+                                VerticalAlignment="Top" Visibility="Collapsed"
+                                HorizontalAlignment="Right" Foreground="Gray"
+                                Margin="0,8,10,0" Click="DownListButton_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Grid>
+                                        <Ellipse Stroke="Gray" StrokeThickness="1">
+                                        </Ellipse>
+                                        <ContentPresenter HorizontalAlignment="Center"  
+                                  VerticalAlignment="Center">
+                                            <TextBlock x:Name="Test" Text="&#xE018;" FontSize="18" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"  Foreground="Gray"/>
+                                        </ContentPresenter>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
                         <Grid HorizontalAlignment="Stretch" Background="LightGray" Height="48" Grid.Row="1" VerticalAlignment="Bottom">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -297,7 +342,7 @@
                                 </Interactivity:Interaction.Behaviors>
                             </TextBox>
                             <Button Name="AddCommentButton"
-                                Content="&#xE8F2;" 
+                                Content="&#xE724;" 
                                 FontSize="18" 
                                 FontFamily="Segoe MDL2 Assets" 
                                 Margin="4"
@@ -309,6 +354,8 @@
                                 Command="{Binding CommentsAdd}" CommandParameter="{Binding ElementName=ContentCommentTextBox, Path=Text}"/>
                         </Grid>
                     </Grid>
+                    <!--#endregion-->
+                
                 </Grid>
             </Grid>
             <ProgressRing Name="NewsProgressRing" 
@@ -319,7 +366,10 @@
                       HorizontalAlignment="Center"
                       IsActive="{Binding ProgressRing}"/>
         </Grid>
+        <!--#endregion-->
+        
     </RelativePanel>
+    
     <Page.Transitions>
         <TransitionCollection>
             <PaneThemeTransition Edge="Top"/>

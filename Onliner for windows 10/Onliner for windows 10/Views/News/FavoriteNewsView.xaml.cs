@@ -11,7 +11,7 @@ namespace Onliner_for_windows_10.Views.News
 {
     public sealed partial class FavoriteNewsView : Page
     {
-        private ObservableCollection<ItemsNews> news;
+        private ObservableCollection<ItemsNews> news = new ObservableCollection<ItemsNews>();
         public FavoriteNewsView()
         {
             this.InitializeComponent();
@@ -31,7 +31,6 @@ namespace Onliner_for_windows_10.Views.News
 
         private void AppBarButton_Click(object sender, RoutedEventArgs e)
         {
-            SQLiteDB.RemoveDataBase();
         }
     }
 }

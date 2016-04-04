@@ -5,11 +5,13 @@
     xmlns:local="using:Onliner_for_windows_10.Views.Setting"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core" 
     xmlns:controls="using:Template10.Controls"
-    xmlns:mytoolkit="using:WinRTXamlToolkit.Controls"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource BackGroundCustomColorBrush}">
+
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition/>
@@ -22,29 +24,69 @@
                              VisualStateNarrowMinWidth="1"
                              BackButtonVisibility="Collapsed"/>
 
-        <Pivot x:Name="SettingPivot" SelectionChanged="SettingPivot_SelectionChanged" Grid.Row="1">
+        <Pivot x:Name="SettingPivot"  Grid.Row="1"
+               Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
+               Background="{ThemeResource BackGroundCustomColorBrush}"
+               SelectedIndex="{Binding PivotSelectedIndex, Mode=TwoWay}">
+            <Interactivity:Interaction.Behaviors>
+                <Core:EventTriggerBehavior EventName="SelectionChanged">
+                    <Core:InvokeCommandAction Command="{Binding PivotSelectedIndexCommand}" CommandParameter="{Binding PivotSelectedIndex}"/>
+                </Core:EventTriggerBehavior>
+            </Interactivity:Interaction.Behaviors>
             <Pivot.Items>
-                <PivotItem Header="Основные">
+                <PivotItem>
+                    <PivotItem.Header>
+                        <TextBlock Text="Основные" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                    </PivotItem.Header>
                     <StackPanel>
-                        <CheckBox x:Name="AutoUpdateCheckBox" Content="Автоматически обновлять ленту новостей при старте" Margin="5" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
-                        <CheckBox x:Name="LoadImageCheckBox" Content="Загружать изображения" Margin="5" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                        <CheckBox x:Name="AutoUpdateCheckBox"
+                                  Content="Автоматически обновлять ленту новостей при старте"
+                                  Margin="5" 
+                                  Command="{Binding CheckUncheckAutoLoadnewsCommand}"
+                                  CommandParameter="{Binding ElementName=AutoUpdateCheckBox, Path=Name}"
+                                  IsChecked="{Binding AutoUpdateCheked}" 
+                                  Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}">
+
+                        </CheckBox>
+                        <!--<CheckBox x:Name="LoadImageCheckBox"
+                                  Content="Загружать изображения" 
+                                  Margin="5"
+                                  IsChecked="{Binding LoadImage}"
+                                  Command="{Binding CheckUncheckAutoLoadnewsCommand}"
+                                  CommandParameter="{Binding ElementName=LoadImageCheckBox, Path=Name}"
+                                  Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>-->
                     </StackPanel>
                 </PivotItem>
-                <PivotItem Header="Оформление">
+                <PivotItem>
+                    <PivotItem.Header>
+                        <TextBlock Text="Оформление" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                    </PivotItem.Header>
                     <StackPanel>
-                        <ComboBox Header="Фон" SelectedIndex="0" Margin="5" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}">
+                        <ComboBox x:Name="ThemeAppStyle" Header="Фон" Margin="5" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" SelectedIndex="{Binding ThemeAppIndex}">
                             <ComboBoxItem Content="светлый"/>
                             <ComboBoxItem Content="темный"/>
+                            <Interactivity:Interaction.Behaviors>
+                                <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                    <Core:InvokeCommandAction Command="{Binding ChangedThemeAppCommand}" CommandParameter="{Binding ElementName=ThemeAppStyle, Path=SelectedIndex}"/>
+                                </Core:EventTriggerBehavior>
+                            </Interactivity:Interaction.Behaviors>
                         </ComboBox>
-                        <Button Content="Set dark theme" Width="100" Height="50" Margin="5" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Click="Button_Click"/>
                     </StackPanel>
                 </PivotItem>
-                <PivotItem Header="Контент">
+                <PivotItem>
+                    <PivotItem.Header>
+                    <TextBlock Text="Контент" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                    </PivotItem.Header>
                     <StackPanel MaxWidth="600">
-                        <ComboBox Header="Количество новостей, сохраняемых в кэш" SelectedIndex="0" Margin="5" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}">
+                        <ComboBox x:Name="NumberNewsCacheCbox" Header="Количество новостей, сохраняемых в кэш" SelectedIndex="{Binding NewsItemloadIndex, Mode=TwoWay}" Margin="5" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}">
                             <ComboBoxItem Content="50"/>
                             <ComboBoxItem Content="100"/>
                             <ComboBoxItem Content="150"/>
+                            <Interactivity:Interaction.Behaviors>
+                                <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                    <Core:InvokeCommandAction Command="{Binding ChangedNumberNewsCacheCommand}"/>
+                                </Core:EventTriggerBehavior>
+                            </Interactivity:Interaction.Behaviors>
                         </ComboBox>
                         <Grid MaxWidth="500" HorizontalAlignment="Stretch" Margin="5">
                             <Grid.RowDefinitions>
@@ -52,18 +94,17 @@
                                 <RowDefinition Height="auto"/>
                                 <RowDefinition Height="auto"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Text=" Лента новостей сохраняется в кэш, для дальнейшей загрузки их без интернета" 
+                            <TextBlock Text="Лента новостей сохраняется в кэш, для дальнейшей загрузки ее без интернета" 
                                        MaxWidth="600" 
                                        HorizontalAlignment="Left" 
                                        TextWrapping="Wrap" 
                                        Grid.Row="0"
                                        Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                             <Grid Grid.Row="1" Margin="5">
-                                <mytoolkit:RingSlice StartAngle="0" EndAngle="359" Fill="LightGray" Radius="50" InnerRadius="40"/>
-                                <mytoolkit:RingSlice Name="RingSlice" StartAngle="0" EndAngle="100" Fill="Gray" Radius="50" InnerRadius="40"/>
-                                <TextBlock x:Name="Size" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+
+                                <TextBlock x:Name="Size" Text="{Binding CacheSize, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                             </Grid>
-                            <Button x:Name="ClearDB" Content="Очистить кэш" Grid.Row="2" Margin="5" HorizontalAlignment="Center" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Click="ClearDB_Click"/>
+                            <Button x:Name="ClearDB" Content="Очистить кэш" Grid.Row="2" Margin="5" HorizontalAlignment="Center" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Command="{Binding ClearCacheCommand}"/>
 
                         </Grid>
                     </StackPanel>

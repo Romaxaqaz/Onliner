@@ -13,22 +13,40 @@ using Onliner.Http;
 using Onliner.Model.OpinionsModel;
 using static Onliner.SQLiteDataBase.SQLiteDB;
 using Onliner.SQLiteDataBase;
+using System.Net;
 
 namespace Onliner.ParsingHtml
 {
     public class ParsingNewsSection : IEnumerable
     {
+        #region Classes
         private ObservableCollection<ItemsNews> myItems;
         private HtmlDocument resultat = new HtmlDocument();
         private CategoryNews _categoryNews = new CategoryNews();
         private HttpRequest HttpRequest = new HttpRequest();
         private ItemsNews _itemNews;
         private OpinionModel opinionModel;
-        private ObservableCollection<OpinionModel> _opinionsItems = new ObservableCollection<OpinionModel>();
-        private string ResultHtmlPage = string.Empty;
         private HttpClient client = new HttpClient();
-        public ParsingNewsSection() { }
+        #endregion
 
+        #region Collections
+        private ObservableCollection<OpinionModel> _opinionsItems = new ObservableCollection<OpinionModel>();
+        private ObservableCollection<ItemsNews> bufferNews;
+        private List<string> ls = new List<string>();
+
+        public ObservableCollection<ItemsNews> OldNewsForUpdate
+        {
+            get { return bufferNews; }
+        }
+        #endregion
+
+        #region Variables
+        private string ResultHtmlPage = string.Empty;
+        string urlNewsView = string.Empty;
+        #endregion
+
+        #region Constructor
+        public ParsingNewsSection() { }
         /// <summary>
         /// parsing list news
         /// </summary>
@@ -37,65 +55,144 @@ namespace Onliner.ParsingHtml
         {
 
         }
+        #endregion
 
+        #region Methods
+        /// <summary>
+        /// Parsing news section page
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="section"></param>
+        /// <returns></returns>
         public async Task<ObservableCollection<ItemsNews>> NewsItemList(string path, SectionNewsDB section)
         {
             if (!HttpRequest.HasInternet()) return null;
             myItems = new ObservableCollection<ItemsNews>();
-            await Task.Run(async() =>
+            await Task.Run(async () =>
             {
                 HttpClient httpClient = new HttpClient();
+                bufferNews = new ObservableCollection<ItemsNews>();
                 ResultHtmlPage = await HttpRequest.GetRequestOnlinerAsync(path);
                 resultat.LoadHtml(ResultHtmlPage);
 
                 List<HtmlNode> titleList = resultat.DocumentNode.Descendants().Where
-                (x => (x.Name == "article" && x.Attributes["class"] != null && x.Attributes["class"].Value.Contains("b-posts-1-item b-content-posts-1-item news_for_copy"))).ToList();
+                (x => (x.Name == "article" && x.Attributes["class"] != null && x.Attributes["class"].Value.Contains
+                ("b-posts-1-item b-content-posts-1-item news_for_copy"))).ToList();
 
+                //db news collections
                 var DBlist = await GetNeedList(section);
 
                 foreach (var item in titleList)
                 {
                     _itemNews = new ItemsNews();
-                    _itemNews.LinkNews = item.Descendants("h3").Where(div => div.GetAttributeValue("class", string.Empty) == "b-posts-1-item__title").FirstOrDefault().Descendants("a").FirstOrDefault().Attributes["href"].Value;
-                    var containItem = DBlist.Where(x => x.LinkNews.Contains(_itemNews.LinkNews)).Any(); if (containItem) continue;
-                    _itemNews.CountViews = item.Descendants("a").FirstOrDefault().Descendants("span").FirstOrDefault().InnerText.Trim();
-                    _itemNews.Themes = item.Descendants("div").FirstOrDefault().Descendants("strong").FirstOrDefault().InnerText.Trim();
-                    _itemNews.Title = item.Descendants("h3").FirstOrDefault().Descendants("a").FirstOrDefault().Descendants("span").FirstOrDefault().InnerText.Trim();
-                    string clearLink = ClearImageLink(item.Descendants("figure").FirstOrDefault().Descendants("a").FirstOrDefault().InnerHtml.Trim());
+
+                    //data for update
+                    _itemNews.LinkNews = item.Descendants("h3").
+                             Where(div => div.GetAttributeValue("class", string.Empty) == "b-posts-1-item__title").FirstOrDefault().Descendants("a").FirstOrDefault().Attributes["href"].Value;
+                    _itemNews.CountViews = GetFirstOrDefaultTwoTagInARowHtmlInnerText(item, "a", "span");
+                    _itemNews.Footer = Regex.Replace(item.Descendants("span").
+                           Where(div => div.GetAttributeValue("class", string.Empty) == "right-side").LastOrDefault().InnerText.Replace("\n", "").Trim(), @"\s+", " ");
+
+                    var m = item?.Descendants("span").Where(div => div.GetAttributeValue("class", string.Empty) == "popular-count").FirstOrDefault();
+                    if (m != null)
+                        _itemNews.Popularcount = m.InnerText;
+
+                    if (DBlist != null)
+                    {
+                        var containItem = DBlist.FirstOrDefault(x => x.LinkNews.Contains(_itemNews.LinkNews));
+                        if (containItem != null)
+                        {
+                            bufferNews.Add(_itemNews);
+                            continue;
+                        }
+                    }
+
+                    _itemNews.Themes = GetFirstOrDefaultTwoTagInARowHtmlInnerText(item, "div", "strong");
+                    _itemNews.Title = GetFirstOrDefaultThreeTagInARowHtmlInnerText(item, "h3", "a", "span");
+
+                    string clearLink = ClearImageLink(GetFirstOrDefaultTwoTagInARowHtmlInnerHtml(item, "figure", "a"));
                     _itemNews.Image = await client.GetByteArrayAsync(clearLink);
                     _itemNews.Description = ScrubHtml(item.Descendants("div").LastOrDefault().Descendants("p").First().InnerText.Trim());
-                    _itemNews.Footer = Regex.Replace(item.Descendants("span").Where(div => div.GetAttributeValue("class", string.Empty) == "right-side").LastOrDefault().InnerText.Replace("\n", "").Trim(), @"\s+", " ");
 
- 
-                    //watch
-                    if (item.Descendants("span").
-                   Where(div => div.GetAttributeValue("class", string.Empty) == "b-mediaicon").
-                   FirstOrDefault() != null)
-                    {
-                        _itemNews.Bmediaicon = item.Descendants("span").
-                   Where(div => div.GetAttributeValue("class", string.Empty) == "b-mediaicon").
-                   FirstOrDefault().InnerText;
-                    }
-                    //video
-                    if (item.Descendants("span").Where(div => div.GetAttributeValue("class", string.Empty) == "b-mediaicon gray").FirstOrDefault() != null)
-                    {
-                        _itemNews.Mediaicongray = item.Descendants("span").Where(div => div.GetAttributeValue("class", string.Empty) == "b-mediaicon gray").
-                   FirstOrDefault().InnerText;
-                    }
-                    //comments
-                    if (item.Descendants("span").
-                     Where(div => div.GetAttributeValue("class", string.Empty) == "popular-count").
-                     FirstOrDefault() != null)
-                    {
-                        _itemNews.Popularcount = item?.Descendants("span").Where(div => div.GetAttributeValue("class", string.Empty) == "popular-count").FirstOrDefault().InnerText;
-                    }
+                    _itemNews.Bmediaicon = GetFirstOrDefaultTagHtmlInnerText(item, "span", "class", "mediaicon");
+                    _itemNews.Mediaicongray = GetFirstOrDefaultTagHtmlInnerText(item, "span", "class", "b-mediaicon gray");
+
                     myItems.Add(_itemNews);
                 }
+              //  await SQLiteDB.UpdateItemDB(bufferNews, section);
             });
             return myItems;
 
         }
 
+        /// <summary>
+        /// Parsing html linq one tag.
+        /// Example: item.Descendants("tag").Where(div => div.GetAttributeValue("attributeType", string.Empty) == "attributeValue").FirstOrDefault();
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="tag"></param>
+        /// <param name="attributeType"></param>
+        /// <param name="attributeValue"></param>
+        /// <returns></returns>
+        private string GetFirstOrDefaultTagHtmlInnerText(HtmlNode node, string tag, string attributeType, string attributeValue)
+        {
+            var value = node.Descendants(tag).Where(div => div.GetAttributeValue(tag, string.Empty) == attributeValue).FirstOrDefault();
+            if (value != null)
+                return value.InnerText;
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Parsing two tag in a row
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="firstTag"></param>
+        /// <param name="secondTag"></param>
+        /// <returns>html string</returns>
+        private string GetFirstOrDefaultTwoTagInARowHtmlInnerText(HtmlNode node, string firstTag, string secondTag)
+        {
+            var value = node.Descendants(firstTag).FirstOrDefault().Descendants(secondTag).FirstOrDefault();
+            if (value != null)
+                return value.InnerText.Trim();
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Parsing two tag in a row
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="firstTag"></param>
+        /// <param name="secondTag"></param>
+        /// <returns>text string</returns>
+        private string GetFirstOrDefaultTwoTagInARowHtmlInnerHtml(HtmlNode node, string firstTag, string secondTag)
+        {
+            var value = node.Descendants(firstTag).FirstOrDefault().Descendants(secondTag).FirstOrDefault();
+            if (value != null)
+                return value.InnerHtml.Trim();
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Parsing trhee tag in a row
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="firstTag"></param>
+        /// <param name="secondTag"></param>
+        /// <param name="thirdTag"></param>
+        /// <returns>text string</returns>
+        private string GetFirstOrDefaultThreeTagInARowHtmlInnerText(HtmlNode node, string firstTag, string secondTag, string thirdTag)
+        {
+            var value = node.Descendants(firstTag).FirstOrDefault().Descendants(secondTag).FirstOrDefault().Descendants(thirdTag).FirstOrDefault();
+            if (value != null)
+                return value.InnerText.Trim();
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Gets the collection of data base
+        /// </summary>
+        /// <param name="section"></param>
+        /// <returns></returns>
         private async Task<IEnumerable<ItemsNews>> GetNeedList(SectionNewsDB section)
         {
             IEnumerable<ItemsNews> resultItems = new ObservableCollection<ItemsNews>();
@@ -120,6 +217,11 @@ namespace Onliner.ParsingHtml
             return resultItems;
         }
 
+        /// <summary>
+        /// Parsing section opinions
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public ObservableCollection<OpinionModel> OpinionList(string path)
         {
             HttpRequest.GetRequestOnliner(path);
@@ -163,6 +265,11 @@ namespace Onliner.ParsingHtml
 
         }
 
+        /// <summary>
+        /// Clear the text from tags
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         private static string ScrubHtml(string value)
         {
             var step1 = Regex.Replace(value, @"<[^>]+>|&nbsp;|Дальше…", "").Trim();
@@ -170,6 +277,11 @@ namespace Onliner.ParsingHtml
             return step2;
         }
 
+        /// <summary>
+        /// Clear the image link
+        /// </summary>
+        /// <param name="html"></param>
+        /// <returns></returns>
         private string ClearImageLink(string html)
         {
             string pattern = @"https?://[\w./]+\/[\w./]+\.(bmp|png|jpg|gif|jpeg)";
@@ -192,5 +304,12 @@ namespace Onliner.ParsingHtml
             return bytes;
         }
 
+        private string QueryString(string newsID)
+        {
+            var strings = $"news[]:{newsID}";
+            var s = WebUtility.UrlEncode(strings);
+            return s + "&";
+        }
+        #endregion
     }
 }

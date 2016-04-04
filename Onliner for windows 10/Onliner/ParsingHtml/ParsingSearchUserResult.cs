@@ -4,17 +4,18 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using Onliner.Model.ProfileModel;
+using System.Collections.ObjectModel;
 
 namespace Onliner.ParsingHtml
 {
     public class ParsingSearchUserResult
     {
         private HtmlDocument htmlDoc = new HtmlDocument();
-        private List<ProfileSearchModel> listUsers;
+        private ObservableCollection<ProfileSearchModel> listUsers;
 
         public string AllUsers { get; set; }
 
-        public IEnumerable<ProfileSearchModel> GetResultList(string htmlPage)
+        public ObservableCollection<ProfileSearchModel> GetResultList(string htmlPage)
         {
             htmlDoc.LoadHtml(htmlPage);
             try
@@ -35,7 +36,7 @@ namespace Onliner.ParsingHtml
 
             AllUsers = PagesResult(AllUsers);
 
-                listUsers = new List<ProfileSearchModel>();
+                listUsers = new ObservableCollection<ProfileSearchModel>();
                 foreach (var item in userList)
                 {
                     listUsers.Add(new ProfileSearchModel(

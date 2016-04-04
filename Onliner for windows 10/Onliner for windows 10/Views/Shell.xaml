@@ -15,7 +15,8 @@
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:converter="using:Onliner.Converters"
-    xmlns:controls="using:Template10.Controls"  
+    xmlns:controls="using:Template10.Controls"
+     xmlns:viewModel="using:Onliner_for_windows_10.View_Model"  
     mc:Ignorable="d">
     <Page.Resources>
         <converter:UpdateLogoImage x:Key="UpdateImage"/>
@@ -55,8 +56,8 @@
                     <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="Новости" />
                 </StackPanel>
             </controls:HamburgerButtonInfo>
-            <!--  Catalog page  --><!--
-            <controls:HamburgerButtonInfo PageType="local2:WeatherPage">
+
+           <!-- <controls:HamburgerButtonInfo PageType="local:MainPage">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Width="48" Height="48" Symbol="Shop" />
                     <Grid Margin="12,0,0,0" VerticalAlignment="Center" Width="200">
@@ -68,9 +69,9 @@
                         <TextBlock Text="1" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="1"/>
                     </Grid>
                 </StackPanel>
-            </controls:HamburgerButtonInfo>-->
+            </controls:HamburgerButtonInfo> -->
             <!--  Weather page  -->
-            <controls:HamburgerButtonInfo PageType="local2:WeatherPage">
+            <controls:HamburgerButtonInfo>
                 <StackPanel Name="WeatherStackpanel" Orientation="Horizontal">
                     <SymbolIcon Width="48" Height="48" Symbol="World"  />
                     <Grid Margin="12,0,0,0" VerticalAlignment="Center" Width="200">
@@ -103,7 +104,7 @@
                 </controls:HamburgerButtonInfo.Content>
             </controls:HamburgerButtonInfo>
             <!--  Current page  -->
-            <controls:HamburgerButtonInfo x:Name="CurrentButton" PageType="local:MainPage">
+            <controls:HamburgerButtonInfo x:Name="CurrentButton">
                 <StackPanel Name="CurrentStackpanel" Orientation="Horizontal">
                     <SymbolIcon Width="48" Height="48" Symbol="Tag" />
                     <Grid Margin="12,0,0,0" VerticalAlignment="Center" Width="200">
@@ -113,20 +114,18 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="Курсы валют"/>
                         <TextBlock Text="{Binding Current}" Margin="2" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="1">
-                            <TextBlock.DataContext>
-                                <VM:ShellViewModel/>
-                            </TextBlock.DataContext>
+             
                         </TextBlock>
                     </Grid>
                 </StackPanel>
             </controls:HamburgerButtonInfo>
             <!--  Test page  -->
-            <!--<controls:HamburgerButtonInfo PageType="local:testpage">
+           <!-- <controls:HamburgerButtonInfo PageType="local:testpage">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Width="48" Height="48" Symbol="Page" />
                     <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="тест" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                 </StackPanel>
-            </controls:HamburgerButtonInfo>-->
+            </controls:HamburgerButtonInfo> -->
         </controls:HamburgerMenu.PrimaryButtons>
         
         

@@ -4,14 +4,13 @@ using Template10.Mvvm;
 using Windows.System;
 using MyToolkit.Command;
 using Onliner.Http;
-using Onliner.Model.LocalSetteing;
+using static Onliner.Setting.SettingParams;
 
 namespace Onliner_for_windows_10.View_Model
 {
     public class MainPageViewModel : ViewModelBase
     {
         private HttpRequest HttpRequestToApi = new HttpRequest();
-
         private readonly string AutorizationUrl = "https://www.onliner.by/#registration";
 
         #region Properties
@@ -100,6 +99,7 @@ namespace Onliner_for_windows_10.View_Model
                 bool Status = await HttpRequestToApi.PostRequestUserApi(Login, Password);
                 if (Status)
                 {
+                    SetParamsSetting(AuthorizationKey, "true");
                     NavigationService.Navigate(typeof(ProfilePage.ProfilePage));
                 }
                 else
@@ -118,8 +118,7 @@ namespace Onliner_for_windows_10.View_Model
 
         private void AuthorizationLater()
         {
-            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            localSettings.Values[LocalSettingParams.Autorization] = "false";
+            SetParamsSetting(AuthorizationKey, "false");
             NavigationService.Navigate(typeof(Views.NewsPage));
         }
 

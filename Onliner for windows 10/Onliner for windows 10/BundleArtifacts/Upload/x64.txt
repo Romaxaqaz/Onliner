@@ -1,0 +1,2 @@
+MainPackage=F:\Проекты\MyRepository\Onliner\Onliner for windows 10\Onliner for windows 10\bin\x64\Release\Upload\Onliner for windows 10_1.1.3.0_x64.appx
+SymbolPackage=F:\universal app\ReleaseOnliner\Onliner for windows 10_1.1.3.0\Onliner for windows 10_1.1.3.0_x64.appxsym

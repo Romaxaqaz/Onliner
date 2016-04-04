@@ -7,7 +7,7 @@
     <!--Background color default-->
     <SolidColorBrush x:Key="BackGroundCustomColorBrush" Color="White"/>
     <!--Background color news-->
-    <SolidColorBrush x:Key="BackGroundCustomNewsColorBrush" Color="LightCyan"/>
+    <SolidColorBrush x:Key="BackGroundCustomNewsColorBrush" Color="Gainsboro"/>
     <!--Background color newsitem-->
     <SolidColorBrush x:Key="BackGroundCustomNewsItemColorBrush" Color="White"/>
     <!--Background header newsitem-->

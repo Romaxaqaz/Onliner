@@ -1,9 +1,11 @@
 ﻿using Onliner.Interface.News;
 using SQLite.Net.Attributes;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Onliner.Model.News
 {
-    public class ItemsNews : INewsItems
+    public class ItemsNews : INewsItems, INotifyPropertyChanged
     {
         private string _countViews = string.Empty;
         private string _themes = string.Empty;
@@ -15,6 +17,8 @@ namespace Onliner.Model.News
         private string _mediaicongray = string.Empty;
         private string _popularcount = string.Empty;
         private string _bmediaicon = string.Empty;
+
+        public string NewsID { get; set; }
 
         public string Bmediaicon
         {
@@ -39,6 +43,7 @@ namespace Onliner.Model.News
             set
             {
                 _countViews = value;
+                NotifyPropertyChanged();
             }
         }
 
@@ -65,6 +70,7 @@ namespace Onliner.Model.News
             set
             {
                 _footer = value;
+                NotifyPropertyChanged();
             }
         }
 
@@ -104,6 +110,7 @@ namespace Onliner.Model.News
             set
             {
                 _popularcount = value;
+                NotifyPropertyChanged();
             }
         }
 
@@ -148,6 +155,16 @@ namespace Onliner.Model.News
 
         [PrimaryKey]
         public string LinkNews { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void NotifyPropertyChanged([CallerMemberName]string propertyName = null)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
 
     }
 }

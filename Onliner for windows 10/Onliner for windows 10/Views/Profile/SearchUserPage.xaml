@@ -5,6 +5,8 @@
     xmlns:local="using:Onliner_for_windows_10.Views.Profile"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core" 
     xmlns:controls="using:Template10.Controls"
     mc:Ignorable="d">
 
@@ -44,7 +46,8 @@
             <RowDefinition Height="auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Найти пользователя" FontWeight="Bold"
+        <controls:PageHeader Text="Найти пользователя" 
+                             FontWeight="Bold"
                              Frame="{x:Bind Frame}"
                              Background="{ThemeResource BackGroundCustomHeaderColorBrush}"
                              Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
@@ -59,18 +62,30 @@
             <AutoSuggestBox Name="AutoSuggestBox" 
                         BorderBrush="Yellow"
                         PlaceholderText="Введите никнейм пользователя.."
+                        Text="{Binding SearchBoxContent, Mode=TwoWay}"
                         MaxWidth="500" Margin="10"
                         IsTapEnabled="True"
-                        Foreground="{ThemeResource ForegroundCustomBlackBrush}"
-                        KeyUp="AutoSuggestBox_KeyUp"/>
+                        QueryIcon="Accept"
+                        Foreground="{ThemeResource ForegroundCustomBlackBrush}">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="QuerySubmitted">
+                        <Core:InvokeCommandAction Command="{Binding SearchCommand}"/>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+            </AutoSuggestBox>
             <TextBlock Name="PageCountTextBox"  Grid.Row="1" Visibility="Collapsed"/>
             <ListView Name="ListviewUserResult"
                   Grid.Row="2" 
                   Margin="0,6,0,0"
                   HorizontalAlignment="Stretch" 
                   MaxWidth="500"
-                  ItemTemplate="{StaticResource UsersListviewItem}" 
-                  SelectionChanged="ListviewUserResult_SelectionChanged">
+                  ItemsSource="{Binding UsersCollection}"
+                  ItemTemplate="{StaticResource UsersListviewItem}" >
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="SelectionChanged">
+                        <Core:InvokeCommandAction Command="{Binding SelectedItemCommand}" CommandParameter="{Binding ElementName=ListviewUserResult, Path=SelectedItem}"/>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />

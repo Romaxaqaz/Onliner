@@ -5,11 +5,16 @@
     xmlns:local="using:Onliner_for_windows_10.Views.Profile"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core" 
     xmlns:controls="using:Template10.Controls"
+    xmlns:converters="using:Onliner.Converters.DateTimeConverter"
     mc:Ignorable="d">
+    <Page.Resources>
+        <converters:DateTimeToDateTimeOffsetConverter x:Key="DatePickerTimeConverter"/>
+    </Page.Resources>
 
-
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition/>
@@ -20,49 +25,43 @@
                              Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
                              VisualStateNarrowMinWidth="1"
                              BackButtonVisibility="Collapsed"/>
-        <ScrollViewer Grid.Row="1">
-            <Pivot x:Name="DataProfilePivot" Background="White" SelectionChanged="DataProfilePivot_SelectionChanged">
+        <ScrollViewer Grid.Row="1" Background="{ThemeResource BackGroundCustomColorBrush}">
+            <Pivot x:Name="DataProfilePivot" Background="White" SelectedIndex="{Binding SelectedIndexPivot,Mode=TwoWay}">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="SelectionChanged">
+                        <Core:InvokeCommandAction Command="{Binding ChangePivotCommand}" CommandParameter="{Binding ElementName=DataProfilePivot, Path=SelectedIndex}"/>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
                 <PivotItem>
                     <PivotItem.Header>
                         <TextBlock Text="Личные данные" FontSize="14"/>
                     </PivotItem.Header>
                     <StackPanel>
                         <TextBlock Text="Город:"/>
-                        <TextBox Name="CityTextBox" MaxWidth="350" MinWidth="300" HorizontalAlignment="Left"/>
+                        <TextBox Name="CityTextBox" MaxWidth="350" MinWidth="300" HorizontalAlignment="Left" Text="{Binding CityText, Mode=TwoWay}"/>
                         <TextBlock Text="Род занятий:" Margin="0,10,0,0"/>
-                        <TextBox Name="OccupationTextBox" MaxWidth="350" MinWidth="300" HorizontalAlignment="Left"/>
+                        <TextBox Name="OccupationTextBox" MaxWidth="350" MinWidth="300" HorizontalAlignment="Left" Text="{Binding OccupationText, Mode=TwoWay}"/>
                         <TextBlock Text="Интересы:" Margin="0,10,0,0"/>
-                        <TextBox Name="InterestsTextBox" MaxWidth="350" MinWidth="300" HorizontalAlignment="Left"/>
+                        <TextBox Name="InterestsTextBox" MaxWidth="350" MinWidth="300" HorizontalAlignment="Left" Text="{Binding InterestsText, Mode=TwoWay}"/>
                         <TextBlock Text="День рождения:" Margin="0,10,0,0"/>
-                        <DatePicker Name="BirthdaDatePicker" MaxWidth="350" MinWidth="300"/>
+                        <DatePicker Name="BirthdaDatePicker" MaxWidth="350" MinWidth="300"  Date="{Binding BirthdaDatePicker, Mode=TwoWay, Converter={StaticResource DatePickerTimeConverter}}"/>
                         <TextBlock Text="Jabber:" Margin="0,10,0,0"/>
-                        <TextBox Name="JabberTextBox"  MaxWidth="350" MinWidth="300" HorizontalAlignment="Left"/>
+                        <TextBox Name="JabberTextBox"  MaxWidth="350" MinWidth="300" HorizontalAlignment="Left" Text="{Binding JabberText, Mode=TwoWay}"/>
                         <TextBlock Text="ICQ:" Margin="0,10,0,0"/>
-                        <TextBox Name="IcqTextBox" MaxWidth="350" MinWidth="300" HorizontalAlignment="Left"/>
+                        <TextBox Name="IcqTextBox" MaxWidth="350" MinWidth="300" HorizontalAlignment="Left" Text="{Binding IcqText, Mode=TwoWay}"/>
                         <TextBlock Text="Skype:" Margin="0,10,0,0"/>
-                        <TextBox Name="SkypeTextBox" MaxWidth="350" MinWidth="300" HorizontalAlignment="Left"/>
+                        <TextBox Name="SkypeTextBox" MaxWidth="350" MinWidth="300" HorizontalAlignment="Left" Text="{Binding SkypeText, Mode=TwoWay}"/>
                         <TextBlock Text="AIM:" Margin="0,10,0,0"/>
-                        <TextBox Name="AimTextBox" MaxWidth="350" MinWidth="300" HorizontalAlignment="Left"/>
+                        <TextBox Name="AimTextBox" MaxWidth="350" MinWidth="300" HorizontalAlignment="Left" Text="{Binding AimText, Mode=TwoWay}"/>
                         <TextBlock Text="Сайт:" Margin="0,10,0,0"/>
-                        <TextBox Name="WebsiteTextBox" MaxWidth="350" MinWidth="300" HorizontalAlignment="Left"/>
+                        <TextBox Name="WebsiteTextBox" MaxWidth="350" MinWidth="300" HorizontalAlignment="Left" Text="{Binding WebsiteText, Mode=TwoWay}"/>
                         <TextBlock Text="Блог:" Margin="0,10,0,0"/>
-                        <TextBox Name="BlogTextBox" MaxWidth="350" MinWidth="300" HorizontalAlignment="Left"/>
+                        <TextBox Name="BlogTextBox" MaxWidth="350" MinWidth="300" HorizontalAlignment="Left" Text="{Binding BlogText, Mode=TwoWay}"/>
                         <TextBlock Text="Моя техника:" Margin="0,10,0,0"/>
-                        <TextBox Name="DevicesTextBox" MaxWidth="350" MinWidth="300" HorizontalAlignment="Left"/>
+                        <TextBox Name="DevicesTextBox" MaxWidth="350" MinWidth="300" HorizontalAlignment="Left" Text="{Binding DevicesText, Mode=TwoWay}"/>
                         <TextBlock Text="Подпись:" Margin="0,10,0,0"/>
-                        <TextBox Name="SignatureTextBox" MaxWidth="350" MinWidth="300" HorizontalAlignment="Left" Margin="0,10,0,0"/>
-                        <Button Name="SaveData" Content="Сохранить" Margin="0,10,0,10" MaxWidth="350" MinWidth="300" Click="SaveData_Click"/>
-                    </StackPanel>
-                </PivotItem>
-
-                <PivotItem>
-                    <PivotItem.Header>
-                        <TextBlock Text="SMS-валидация" FontSize="14"/>
-                    </PivotItem.Header>
-                    <StackPanel>
-                        <TextBlock Text="{StaticResource SMS_VALIDATION}" TextWrapping="Wrap"/>
-                        <TextBox MinWidth="200" MaxWidth="300" HorizontalAlignment="Left"/>
-                        <Button Content="Подтвердить" Margin="0,10,0,0" Width="198"/>
+                        <TextBox Name="SignatureTextBox" MaxWidth="350" MinWidth="300" HorizontalAlignment="Left" Margin="0,10,0,0" Text="{Binding SignatureText, Mode=TwoWay}"/>
+                        <Button Name="SaveData" Content="Сохранить" Margin="0,10,0,10" MaxWidth="350" MinWidth="300" Command="{Binding SaveMainInforamtionCommand}"/>
                     </StackPanel>
                 </PivotItem>
 
@@ -71,16 +70,16 @@
                         <TextBlock Text="Настройки" FontSize="14"/>
                     </PivotItem.Header>
                     <StackPanel>
-                        <CheckBox Name="pmNotificationCheckBox" Content="Уведомлять меня о новых личных сообщениях"/>
-                        <CheckBox Name="hideOnlineStatusCheckBox" Content="Скрывать мое пребывание на сайте"/>
-                        <CheckBox Name="showEmailCheckBox" Content="Показывать эл. почту"/>
-                        <ComboBox Name="BirthDayComboBox" Header="Отображение дня рождения">
+                        <CheckBox Name="pmNotificationCheckBox" Content="Уведомлять меня о новых личных сообщениях" IsChecked="{Binding PmNotificationCheckBox, Mode=TwoWay}"/>
+                        <CheckBox Name="hideOnlineStatusCheckBox" Content="Скрывать мое пребывание на сайте" IsChecked="{Binding HideOnlineStatusCheckBox, Mode=TwoWay}"/>
+                        <CheckBox Name="showEmailCheckBox" Content="Показывать эл. почту" IsChecked="{Binding ShowEmailCheckBox, Mode=TwoWay}"/>
+                        <ComboBox Name="BirthDayComboBox" Header="Отображение дня рождения" SelectedIndex="{Binding BirthDayComboBox, Mode=TwoWay}">
                             <ComboBoxItem Content="полностью"/>
                             <ComboBoxItem Content="день и месяц"/>
                             <ComboBoxItem Content="только год"/>
                             <ComboBoxItem Content="не показывать"/>
                         </ComboBox>
-                        <Button Name="SaveDDayEdit" Content="Сохранить" Margin="0,10,0,0" Width="230" Click="SaveDDayEdit_Click"/>
+                        <Button Name="SaveDDayEdit" Content="Сохранить" Margin="0,10,0,0" Width="230" Command="{Binding SaveAdditionalInforamtionCommand}"/>
                     </StackPanel>
                 </PivotItem>
 
@@ -91,33 +90,12 @@
                     <StackPanel>
                         <TextBlock Text="Длинна пароля должна быть от 5 до 42 символов" FontSize="12" Margin="5"/>
                         <TextBlock Text="Старый пароль:"/>
-                        <TextBox Name="OldPassTextBox" MaxWidth="300" MinWidth="200" HorizontalAlignment="Left"/>
+                        <TextBox Name="OldPassTextBox" MaxWidth="300" MinWidth="200" HorizontalAlignment="Left" Text="{Binding OldPassword}"/>
                         <TextBlock Text="Новый пароль:"/>
-                        <TextBox Name="RepeatPassTextBox" MaxWidth="300" MinWidth="200" HorizontalAlignment="Left"/>
+                        <TextBox Name="RepeatPassTextBox" MaxWidth="300" MinWidth="200" HorizontalAlignment="Left" Text="{Binding NewPasswor}"/>
                         <TextBlock Text="Повторите пароль:"/>
-                        <TextBox Name="NewsPassTextBox" MaxWidth="300" MinWidth="200" HorizontalAlignment="Left"/>
-                        <Button Name="ChangePassButton" Content="Изменить пароль" Margin="0,10,0,0" Click="ChangePassButton_Click"/>
-                    </StackPanel>
-                </PivotItem>
-
-                <PivotItem>
-                    <PivotItem.Header>
-                        <TextBlock Text="Эл. почта" FontSize="14"/>
-                    </PivotItem.Header>
-                    <StackPanel>
-                        <TextBlock Text="Текущий адрес:"/>
-                        <TextBlock Text="Gmail" FontSize="16" FontWeight="Bold"/>
-                        <TextBlock Text="Новый адрес:"/>
-                        <TextBox MaxWidth="300" MinWidth="200" HorizontalAlignment="Left"/>
-                        <Button Content="Изменить адрес" Margin="0,10,0,0"/>
-                    </StackPanel>
-                </PivotItem>
-
-                <PivotItem>
-                    <PivotItem.Header>
-                        <TextBlock Text="Аватар" FontSize="14"/>
-                    </PivotItem.Header>
-                    <StackPanel>
+                        <TextBox Name="NewsPassTextBox" MaxWidth="300" MinWidth="200" HorizontalAlignment="Left" Text="{Binding NewPasswor}"/>
+                        <Button Name="ChangePassButton" Content="Изменить пароль" Margin="0,10,0,0" Command="{Binding ChangePasswordCommand}"/>
                     </StackPanel>
                 </PivotItem>
             </Pivot>

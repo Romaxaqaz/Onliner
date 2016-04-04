@@ -14,17 +14,25 @@ using Windows.Storage.Streams;
 using System.Threading.Tasks;
 using Onliner.ParsingHtml;
 using Onliner.Http;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using SQLite.Net;
+using SQLite.Net.Platform.WinRT;
+using Windows.Storage;
+using System.IO;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace Onliner_for_windows_10
 {
 
-    public sealed partial class testpage : Page
+    public sealed partial class testpage : Page, INotifyPropertyChanged
     {
         private ParsingNewsSection parsNewsSection = new ParsingNewsSection();
 
-       // private string imageURL = "https://content.onliner.by/news/2016/03/default/a0040ecfbf7f5662c8c916a34cd4ff61.jpeg";
-       // private readonly string PeoplehUrlNews = "http://people.onliner.by/";
-       // private readonly string TechUrlNews = "http://tech.onliner.by/";
+        // private string imageURL = "https://content.onliner.by/news/2016/03/default/a0040ecfbf7f5662c8c916a34cd4ff61.jpeg";
+        // private readonly string PeoplehUrlNews = "http://people.onliner.by/";
+        // private readonly string TechUrlNews = "http://tech.onliner.by/";
 
         public class CommentsContent
         {
@@ -53,16 +61,18 @@ namespace Onliner_for_windows_10
         {
             this.InitializeComponent();
             Loaded += Testpage_Loaded;
+        //    TestListView.ItemsSource = testListview;
+//TestListview = testListview;
         }
 
-        private async void Testpage_Loaded(object sender, RoutedEventArgs e)
+        private void Testpage_Loaded(object sender, RoutedEventArgs e)
         {
-           //var PeopleNewsList = await parsNewsSection.NewsItemList(PeoplehUrlNews);
+            //var PeopleNewsList = await parsNewsSection.NewsItemList(PeoplehUrlNews);
             //var PeopleNewsList2 = await parsNewsSection.NewsItemList(TechUrlNews);
         }
 
 
-        public async  Task<byte[]> GetBytesFromStream(IRandomAccessStream randomStream)
+        public async Task<byte[]> GetBytesFromStream(IRandomAccessStream randomStream)
         {
             var reader = new DataReader(randomStream.GetInputStreamAt(0));
             var bytes = new byte[randomStream.Size];
@@ -76,7 +86,7 @@ namespace Onliner_for_windows_10
             BitmapImage bmp = new BitmapImage();
             await bmp.SetSourceAsync(stream);
             return bmp;
-        } 
+        }
 
         internal static async Task<InMemoryRandomAccessStream> ConvertTo(byte[] arr)
         {
@@ -90,15 +100,15 @@ namespace Onliner_for_windows_10
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
 
-            
+
         }
 
         private Border ReturnBorderComplete(string s)
         {
             Border mainBorder = new Border();
             Border buff = new Border();
-            Grid grid = new Grid(); 
-           
+            Grid grid = new Grid();
+
             if (countStep < countBlock)
             {
                 countStep++;
@@ -145,7 +155,7 @@ namespace Onliner_for_windows_10
                     Grid.SetRow(buff, 1);
                     grid.Children.Add(buff);
                 }
-                catch(NullReferenceException)
+                catch (NullReferenceException)
                 {
                     ReturnBorderComplete("");
                 }
@@ -159,6 +169,94 @@ namespace Onliner_for_windows_10
         {
 
         }
+
+
+        private ObservableCollection<Test> testListview = new ObservableCollection<Test>()
+        {  new Test("last1"), new Test("last1"),new Test("last1"),new Test("last1"),new Test("last1")};
+        public ObservableCollection<Test> testListview2 = new ObservableCollection<Test>()
+        { new Test("first"), new Test("first2"),new Test("first3"),new Test("first4"),new Test("first5")};
+        public ObservableCollection<Test> TestListview
+        {
+            get { return testListview; }
+            set
+            {
+                testListview = value;
+                OnPropertyChanged("TestListview");
+            }
+        }
+
+        private async void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+
+            string urll = "https://people.onliner.by/sdapi/news.api/people/posts/379944/likes";
+            var strings = await HttpRequest.GetTypeRequestOnlinerAsync(urll);
+
+            string fileContent;
+            var fileStream = File.OpenRead("Files/" + "likeTest.txt");
+            using (StreamReader reader = new StreamReader(fileStream))
+            {
+                fileContent = reader.ReadToEnd();
+            }
+
+            var m_res = JsonConvert.DeserializeObject<YourJsonClass>(strings);
+            foreach (dynamic numb in m_res.comments)
+            {
+
+                string m_name = numb.Name; 
+                string h = numb.Value.ToString();
+                var m_value = JsonConvert.DeserializeObject<Item>(h);
+                CommetsLike com = new CommetsLike();
+                com.ID = int.Parse(m_name);
+                com.Item = m_value;
+                listItem.Add(com);
+            }
+
+        }
+
+        List<CommetsLike> listItem = new List<CommetsLike>();
+
+      
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(string Property)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(Property));
+            }
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+       
+        }
     }
+
+    public class Test
+    {
+        public string Text { get; set; }
+        public Test(string text)
+        {
+            this.Text = text;
+        }
+    }
+
+    public class YourJsonClass
+    {
+        public dynamic comments { get; set; }
+    }
+
+    public class Item
+    {
+        public string counter { get; set; }
+        public string best { get; set; }
+    }
+
+    public class CommetsLike
+    {
+        public int ID { get; set; }
+        public Item Item { get; set; }
+    }
+
 }
 

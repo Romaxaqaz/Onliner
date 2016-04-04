@@ -18,7 +18,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>Onliner for windows 10_StoreKey.pfx</PackageCertificateKeyFile>
-    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxPackageDir>F:\universal app\ReleaseOnliner\</AppxPackageDir>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <AppxBundle>Always</AppxBundle>
@@ -99,6 +99,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Files\likeTest.txt" />
     <Content Include="Files\Weather\townWeather.txt" />
     <None Include="Onliner for windows 10_StoreKey.pfx" />
     <None Include="project.json" />
@@ -134,7 +135,12 @@
     <Compile Include="View-Model\MessagePageViewModel.cs" />
     <Compile Include="View-Model\NewsSectionPageViewModel.cs" />
     <Compile Include="View-Model\OpinionsViewModel.cs" />
+    <Compile Include="View-Model\ProfileViewModel.cs" />
+    <Compile Include="View-Model\ProfileViewModels\EditProfileViewModel.cs" />
+    <Compile Include="View-Model\ProfileViewModels\SearchUserViewModel.cs" />
     <Compile Include="View-Model\SettigPageViewModel.cs" />
+    <Compile Include="View-Model\Settings\ObsevableCollection.cs" />
+    <Compile Include="View-Model\Settings\SettingViewModel.cs" />
     <Compile Include="View-Model\ShellViewModel.cs" />
     <Compile Include="View-Model\ViewNewsPageViewModel.cs" />
     <Compile Include="View-Model\WeatherViewModel.cs" />
@@ -388,6 +394,7 @@
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
