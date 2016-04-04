@@ -5,9 +5,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Behaviors="using:Template10.Behaviors"
-      xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
-      xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
-     xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
     xmlns:controls="using:Template10.Controls"
     xmlns:conver="using:Onliner.Converters"
     xmlns:Selector="using:Onliner.Model.DataTemplateSelector"
@@ -172,9 +172,9 @@
 
         <conver:BooleanToVisibilityConverter x:Key="BooleToVisible"/>
     </Page.Resources>
-    
+
     <RelativePanel>
-        
+
         <!--#region Visual State Manager-->
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="FullNewsVisualStateGroup">
@@ -208,7 +208,7 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <!--#endregion-->
-        
+
         <!--#region Page Header-->
         <controls:PageHeader x:Name="pageHeader" 
                              Frame="{x:Bind Frame}"
@@ -229,7 +229,7 @@
             </controls:PageHeader.SecondaryCommands>
         </controls:PageHeader>
         <!--#endregion-->
-        
+
         <!--#region MainGrid-->
         <Grid Background="{ThemeResource BackGroundCustomColorBrush}">
             <RelativePanel.Below>pageHeader</RelativePanel.Below>
@@ -250,7 +250,7 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    
+
                     <!--#region NewsSection-->
                     <Grid x:Name="MainNewsData"
                       Grid.Row="0" 
@@ -355,7 +355,7 @@
                         </Grid>
                     </Grid>
                     <!--#endregion-->
-                
+
                 </Grid>
             </Grid>
             <ProgressRing Name="NewsProgressRing" 
@@ -367,9 +367,9 @@
                       IsActive="{Binding ProgressRing}"/>
         </Grid>
         <!--#endregion-->
-        
+
     </RelativePanel>
-    
+
     <Page.Transitions>
         <TransitionCollection>
             <PaneThemeTransition Edge="Top"/>

@@ -5,7 +5,7 @@
     xmlns:local="using:Onliner_for_windows_10.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:categoryList="using:Onliner_for_windows_10.Model.Catalog"
+    xmlns:categoryList="using:Onliner.Model.Catalog"
     mc:Ignorable="d">
 
     <Page.Resources>

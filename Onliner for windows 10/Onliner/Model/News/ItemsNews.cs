@@ -39,7 +39,6 @@ namespace Onliner.Model.News
             {
                 return _countViews;
             }
-
             set
             {
                 _countViews = value;
@@ -66,7 +65,6 @@ namespace Onliner.Model.News
             {
                 return _footer;
             }
-
             set
             {
                 _footer = value;
@@ -106,7 +104,6 @@ namespace Onliner.Model.News
             {
                 return _popularcount;
             }
-
             set
             {
                 _popularcount = value;
@@ -146,7 +143,6 @@ namespace Onliner.Model.News
             {
                 return _title;
             }
-
             set
             {
                 _title = value;

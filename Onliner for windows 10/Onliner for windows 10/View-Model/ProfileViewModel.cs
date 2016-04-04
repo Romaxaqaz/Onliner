@@ -43,6 +43,7 @@ namespace Onliner_for_windows_10.View_Model
         }
         #endregion
 
+        #region Constructor
         public ProfileViewModel()
         {
             ActionWithMessageCommand = new RelayCommand(() => ActionWithMessage());
@@ -50,8 +51,14 @@ namespace Onliner_for_windows_10.View_Model
             ExitProfileCommand = new RelayCommand(() => ExitProfile());
             SearchUsersCommand = new RelayCommand(() => SearchUsers());
         }
+        #endregion
 
         #region Methods
+        /// <summary>
+        /// Load the profile information
+        /// </summary>
+        /// <param name="updateShell"></param>
+        /// <param name="profileUrl"></param>
         public async void LoadProfileInfo(bool updateShell, string profileUrl = DefaultProfileUrl)
         {
             ProgressRingIsActive = true;
@@ -82,6 +89,10 @@ namespace Onliner_for_windows_10.View_Model
             }
         }
 
+        /// <summary>
+        /// Additional informaton
+        /// </summary>
+        /// <param name="document"></param>
         private void SetProfileDataCollection(HtmlDocument document)
         {
             List<HtmlNode> titleList = document.DocumentNode.Descendants().Where
@@ -101,6 +112,9 @@ namespace Onliner_for_windows_10.View_Model
             }
         }
 
+        /// <summary>
+        /// Exip profile. Remove cookie
+        /// </summary>
         private async void ExitProfile()
         {
 

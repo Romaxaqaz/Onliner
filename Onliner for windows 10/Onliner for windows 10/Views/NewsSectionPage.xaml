@@ -29,6 +29,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         
+        <!--#region Page Header-->
         <controls:PageHeader x:Name="pageHeader" 
                              Text="Новости"
                              FontWeight="Bold"
@@ -47,7 +48,8 @@
 
             </controls:PageHeader.PrimaryCommands>
         </controls:PageHeader>
-
+<!--#endregion-->
+        
         <Grid Grid.Row="1"
               Background="{ThemeResource BackGroundCustomNewsHeaderColorBrush}"
               RelativePanel.AlignBottomWithPanel="True"

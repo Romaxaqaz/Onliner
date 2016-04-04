@@ -10,7 +10,6 @@ namespace Onliner_for_windows_10.View_Model
 {
     public sealed class ShellViewModel : ViewModelBase
     {
-
         private static ShellViewModel _instance = new ShellViewModel();
         public static ShellViewModel Instance
         {
@@ -19,6 +18,7 @@ namespace Onliner_for_windows_10.View_Model
         }
         private HttpRequest HttpRequest = new HttpRequest();
 
+        #region Constructor
         private ShellViewModel()
         {
             SetAutoLoadNews();
@@ -28,6 +28,75 @@ namespace Onliner_for_windows_10.View_Model
                     async () => await GetMessage()
                     );
         }
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Set automatically load new after run app
+        /// </summary>
+        private void SetAutoLoadNews()
+        {
+            var boolValue = Convert.ToBoolean(GetParamsSetting(AutoLoadNewsAtStartUpAppKey));
+            TechSectionNewsFirstLoad = boolValue;
+            PeopleSectionNewsFirstLoad = boolValue;
+            HomeSectionNewsFirstLoad = boolValue;
+            AutoSectionNewsFirstLoad = boolValue;
+        }
+
+        private bool GetBoolAutoLoadNews()
+        {
+            var boolValue = GetParamsSetting(AutoLoadNewsAtStartUpAppKey);
+            if (boolValue == null) boolValue = true;
+            return Convert.ToBoolean(boolValue);
+        }
+
+        /// <summary>
+        /// Get weather
+        /// </summary>
+        /// <returns></returns>
+        private async Task GetWeatherNow()
+        {
+            var weather = await HttpRequest.Weather();       
+            Weather = weather == null ? (string)GetParamsSetting(LastWeatherKey) : weather.now.temperature;
+            await Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Get current
+        /// </summary>
+        /// <returns></returns>
+        private async Task GetCurrent()
+        {
+            var current = await HttpRequest.Bestrate();
+            Current = current == null ? (string)GetParamsSetting(LastCurrentKey) : current.amount;
+            await Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Get message
+        /// </summary>
+        /// <returns></returns>
+        private async Task GetMessage()
+        {
+            var msg = await HttpRequest.MessageUnread();
+            Message = msg == null ? (string)GetParamsSetting(LastMessageKey) : msg;
+            await Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Get shop count
+        /// </summary>
+        private void GetCartCount()
+        {
+          // Shop = await HttpRequest.ShopCount("543687");
+        }
+
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)
+        {
+            await Task.CompletedTask;
+        }
+        #endregion
 
         #region Properties
         private string shop = "0";
@@ -41,7 +110,8 @@ namespace Onliner_for_windows_10.View_Model
         public string Weather
         {
             get { return weather; }
-            set {
+            set
+            {
                 Set(ref weather, value);
                 SetParamsSetting(LastWeatherKey, value);
             }
@@ -51,7 +121,8 @@ namespace Onliner_for_windows_10.View_Model
         public string Message
         {
             get { return message; }
-            set {
+            set
+            {
                 Set(ref message, value);
                 SetParamsSetting(LastMessageKey, value);
             }
@@ -61,7 +132,8 @@ namespace Onliner_for_windows_10.View_Model
         public string Current
         {
             get { return current; }
-            set {
+            set
+            {
                 Set(ref current, value);
                 SetParamsSetting(LastCurrentKey, value);
             }
@@ -115,20 +187,25 @@ namespace Onliner_for_windows_10.View_Model
         private bool techSectionNewsFirstLoad = true;
         public bool TechSectionNewsFirstLoad
         {
-            get {
+            get
+            {
                 return techSectionNewsFirstLoad;
             }
-            set {
-                techSectionNewsFirstLoad = value; }
+            set
+            {
+                techSectionNewsFirstLoad = value;
+            }
         }
 
         private bool peopleSectionNewsFirstLoad = true;
         public bool PeopleSectionNewsFirstLoad
         {
-            get {
+            get
+            {
                 return peopleSectionNewsFirstLoad;
             }
-            set {
+            set
+            {
                 peopleSectionNewsFirstLoad = value;
             }
         }
@@ -136,71 +213,27 @@ namespace Onliner_for_windows_10.View_Model
         private bool homeSectionNewsFirstLoad = true;
         public bool HomeSectionNewsFirstLoad
         {
-            get {
+            get
+            {
                 return homeSectionNewsFirstLoad;
             }
-            set {
-                homeSectionNewsFirstLoad = value; }
+            set
+            {
+                homeSectionNewsFirstLoad = value;
+            }
         }
 
         private bool autoSectionNewsFirstLoad = true;
         public bool AutoSectionNewsFirstLoad
         {
-            get {
+            get
+            {
                 return autoSectionNewsFirstLoad;
             }
-            set {
-                autoSectionNewsFirstLoad = value; }
-        }
-        #endregion
-
-        #region Methods
-
-        private void SetAutoLoadNews()
-        {
-            var boolValue = Convert.ToBoolean(GetParamsSetting(AutoLoadNewsAtStartUpAppKey));
-            TechSectionNewsFirstLoad = boolValue;
-            PeopleSectionNewsFirstLoad = boolValue;
-            HomeSectionNewsFirstLoad = boolValue;
-            AutoSectionNewsFirstLoad = boolValue;
-        }
-
-        private bool GetBoolAutoLoadNews()
-        {
-            var boolValue = GetParamsSetting(AutoLoadNewsAtStartUpAppKey);
-            if (boolValue == null) boolValue = true;
-            return Convert.ToBoolean(boolValue);
-        }
-
-        private async Task GetWeatherNow()
-        {
-            var weather = await HttpRequest.Weather();       
-            Weather = weather == null ? (string)GetParamsSetting(LastWeatherKey) : weather.now.temperature;
-            await Task.CompletedTask;
-        }
-
-        private async Task GetCurrent()
-        {
-            var current = await HttpRequest.Bestrate();
-            Current = current == null ? (string)GetParamsSetting(LastCurrentKey) : current.amount;
-            await Task.CompletedTask;
-        }
-
-        private async Task GetMessage()
-        {
-            var msg = await HttpRequest.MessageUnread();
-            Message = msg == null ? (string)GetParamsSetting(LastMessageKey) : msg;
-            await Task.CompletedTask;
-        }
-
-        private void GetCartCount()
-        {
-          // Shop = await HttpRequest.ShopCount("543687");
-        }
-
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)
-        {
-            await Task.CompletedTask;
+            set
+            {
+                autoSectionNewsFirstLoad = value;
+            }
         }
         #endregion
     }

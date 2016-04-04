@@ -23,74 +23,7 @@ namespace Onliner_for_windows_10.View_Model
         private string loaderPage = string.Empty;
         private string NewsID = string.Empty;
 
-        #region Collections
-        private ObservableCollection<ListViewItemSelectorModel> newsItem;
-        private ObservableCollection<CommentsItem> commentsItem;
-
-        public ObservableCollection<ListViewItemSelectorModel> NewsItemContent
-        {
-            get { return newsItem; }
-            set { Set(ref newsItem, value); }
-        }
-        public ObservableCollection<CommentsItem> CommentsItem
-        {
-            get { return commentsItem; }
-            set { Set(ref commentsItem, value); }
-        }
-        #endregion
-
-        #region Properties
-        private string _Value = "Default";
-        public string LinkNews { get { return _Value; } set { Set(ref _Value, value); } }
-
-        private bool progressRing = true;
-        public bool ProgressRing
-        {
-            get
-            {
-                return this.progressRing;
-            }
-            set
-            {
-                Set(ref progressRing, value);
-            }
-        }
-
-        private bool sendButton = false;
-        public bool SendButton
-        {
-            get
-            {
-                return this.sendButton;
-            }
-            set
-            {
-                Set(ref sendButton, value);
-            }
-        }
-
-        private bool commentsVisible = false;
-        public bool CommentsVisible
-        {
-            get
-            {
-                return this.commentsVisible;
-            }
-            set
-            {
-                Set(ref commentsVisible, value);
-            }
-        }
-        #endregion
-
-        #region Commands
-        public RelayCommand<object> CommentsAdd { get; private set; }
-        public RelayCommand<object> OpenNewsInBrowser { get; private set; }
-        public RelayCommand<object> SaveNewsInDB { get; private set; }
-        public RelayCommand SendButtonActive { get; private set; }
-        public RelayCommand ChangeCommetnsGridVisible { get; private set; }
-        #endregion
-
+        #region Constructor
         public ViewNewsPageViewModel()
         {
             CommentsAdd = new RelayCommand<object>((obj) => AddComments(obj));
@@ -99,11 +32,20 @@ namespace Onliner_for_windows_10.View_Model
             OpenNewsInBrowser = new RelayCommand<object>(async(obj) => await OpenLink(obj));
             SaveNewsInDB = new RelayCommand<object>((obj) => SaveNewsDB(obj));
         }
+        #endregion
 
+        #region Methods
+        /// <summary>
+        /// Load all news data
+        /// </summary>
+        /// <param name="urlPage"></param>
+        /// <returns></returns>
         private async Task LoadNewsData(string urlPage)
         {
             fullPagePars = new ParsingFullNewsPage(urlPage);
+            //news data
             NewsItemContent = new ObservableCollection<ListViewItemSelectorModel>(await fullPagePars.NewsMainInfo());
+            //comments data
             CommentsItem = new ObservableCollection<CommentsItem>(await fullPagePars.CommentsMainInfo());
             
         }
@@ -184,9 +126,78 @@ namespace Onliner_for_windows_10.View_Model
             }
             else
             {
-                HttpRequest.Message("Упс, вы не подключены к интернету :(");
+               await HttpRequest.Message("Упс, вы не подключены к интернету :(");
             }
             await Task.CompletedTask;
         }
+        #endregion
+
+        #region Collections
+        private ObservableCollection<ListViewItemSelectorModel> newsItem;
+        private ObservableCollection<CommentsItem> commentsItem;
+
+        public ObservableCollection<ListViewItemSelectorModel> NewsItemContent
+        {
+            get { return newsItem; }
+            set { Set(ref newsItem, value); }
+        }
+        public ObservableCollection<CommentsItem> CommentsItem
+        {
+            get { return commentsItem; }
+            set { Set(ref commentsItem, value); }
+        }
+        #endregion
+
+        #region Properties
+        private string _Value = "Default";
+        public string LinkNews { get { return _Value; } set { Set(ref _Value, value); } }
+
+        private bool progressRing = true;
+        public bool ProgressRing
+        {
+            get
+            {
+                return this.progressRing;
+            }
+            set
+            {
+                Set(ref progressRing, value);
+            }
+        }
+
+        private bool sendButton = false;
+        public bool SendButton
+        {
+            get
+            {
+                return this.sendButton;
+            }
+            set
+            {
+                Set(ref sendButton, value);
+            }
+        }
+
+        private bool commentsVisible = false;
+        public bool CommentsVisible
+        {
+            get
+            {
+                return this.commentsVisible;
+            }
+            set
+            {
+                Set(ref commentsVisible, value);
+            }
+        }
+        #endregion
+
+        #region Commands
+        public RelayCommand<object> CommentsAdd { get; private set; }
+        public RelayCommand<object> OpenNewsInBrowser { get; private set; }
+        public RelayCommand<object> SaveNewsInDB { get; private set; }
+        public RelayCommand SendButtonActive { get; private set; }
+        public RelayCommand ChangeCommetnsGridVisible { get; private set; }
+        #endregion
     }
 }

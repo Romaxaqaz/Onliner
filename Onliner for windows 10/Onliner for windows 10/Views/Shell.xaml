@@ -16,7 +16,7 @@
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:converter="using:Onliner.Converters"
     xmlns:controls="using:Template10.Controls"
-     xmlns:viewModel="using:Onliner_for_windows_10.View_Model"  
+    xmlns:viewModel="using:Onliner_for_windows_10.View_Model"  
     mc:Ignorable="d">
     <Page.Resources>
         <converter:UpdateLogoImage x:Key="UpdateImage"/>
@@ -127,8 +127,7 @@
                 </StackPanel>
             </controls:HamburgerButtonInfo> -->
         </controls:HamburgerMenu.PrimaryButtons>
-        
-        
+
         <controls:HamburgerMenu.SecondaryButtons>
             <!--  Setting page  -->
             <controls:HamburgerButtonInfo x:Name="SettingsButton" PageType="SettingPage:SettingPage">
@@ -141,6 +140,5 @@
                 </StackPanel>
             </controls:HamburgerButtonInfo>
         </controls:HamburgerMenu.SecondaryButtons>
-
     </controls:HamburgerMenu>
 </Page>

@@ -18,6 +18,7 @@ namespace Onliner_for_windows_10.View_Model.Settings
 {
     public class SettingViewModel : ViewModelBase
     {
+        #region Constructor
         public SettingViewModel()
         {
             CheckUncheckAutoLoadnewsCommand = new RelayCommand<object>((obj) => CheckUncheckAutoLoadnews(obj));
@@ -26,7 +27,9 @@ namespace Onliner_for_windows_10.View_Model.Settings
             ChangedNumberNewsCacheCommand = new RelayCommand(() => ChangedNumberNewsCache());
             ClearCacheCommand = new RelayCommand(() => CleadCache());
         }
+        #endregion
 
+        #region Methods
         private void PivotSelectedIndexEvent(object obj)
         {
             var index = (int)obj;
@@ -40,6 +43,9 @@ namespace Onliner_for_windows_10.View_Model.Settings
             }
         }
 
+        /// <summary>
+        /// Clear cache news
+        /// </summary>
         private void CleadCache()
         {
             foreach (var item in SQLiteDB.FileNameCollection)
@@ -49,6 +55,10 @@ namespace Onliner_for_windows_10.View_Model.Settings
             CacheSize = BytesToDouble(SQLiteDB.GetSizeByteDB()).ToString();
         }
 
+        /// <summary>
+        /// Remove files DB
+        /// </summary>
+        /// <param name="filename"></param>
         public async void RemoveFile(string filename)
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
@@ -56,6 +66,11 @@ namespace Onliner_for_windows_10.View_Model.Settings
             await sampleFile.DeleteAsync();
         }
 
+        /// <summary>
+        /// Conver byte to string data
+        /// </summary>
+        /// <param name="byteCount"></param>
+        /// <returns></returns>
         private string BytesToDouble(long byteCount)
         {
             string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
@@ -77,6 +92,7 @@ namespace Onliner_for_windows_10.View_Model.Settings
             var index = NumberNewsCache[NewsItemloadIndex];
             SetParamsSetting(NumberOfNewsitemsToTheCacheKey, index);
         }
+        #endregion
 
         #region Theme App
 
@@ -313,7 +329,5 @@ namespace Onliner_for_windows_10.View_Model.Settings
             get { return numberNewsCache; }
         }
         #endregion
-
-
     }
 }

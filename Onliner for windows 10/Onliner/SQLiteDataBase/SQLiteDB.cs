@@ -119,7 +119,6 @@ namespace Onliner.SQLiteDataBase
 
                 var items = (from p in db.Table<ItemsNews>()
                              select p).ToList();
-
                 var itemsCount = items.Count;
 
                 if (itemsCount == 0)
@@ -129,26 +128,14 @@ namespace Onliner.SQLiteDataBase
                         resultItems.Add(item);
                     }
                 }
-                if (itemsCount > 0 && itemsCount < maxCountNews)
-                {
-                    foreach (var item in items)
-                    {
-                        itemsNews.Add(item);
-                    }
-                    resultItems = itemsNews;
-                }
+
                 if (itemsCount >= maxCountNews && itemsCount != 0)
                 {
-                    var last = items.Last();
-                    items.Remove(last);
+                    var last = itemsNews.Last();
+                    itemsNews.Remove(last);
                     db.Delete(last);
-                    foreach (var item in items)
-                    {
-                        resultItems.Add(item);
-                    }
                 }
-                db.InsertOrReplaceAll(resultItems);
-
+                db.InsertOrReplaceAll(itemsNews);
             }
             await Task.CompletedTask;
             return await GetAllNews(path);

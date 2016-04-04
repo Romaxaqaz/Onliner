@@ -80,6 +80,10 @@ namespace Onliner_for_windows_10.View_Model
             AuthorizationCommand = new RelayCommand(async() => await Authorization());
         }
 
+        /// <summary>
+        /// Authorization
+        /// </summary>
+        /// <returns></returns>
         private async Task Authorization()
         {
             ControlEnable = false;

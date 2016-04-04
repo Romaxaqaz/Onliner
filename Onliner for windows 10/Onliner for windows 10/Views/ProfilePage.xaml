@@ -355,6 +355,8 @@
             <RowDefinition Height="auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
+        
+        <!--#region Visual State Manage-->
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
                 <VisualState x:Name="VisualStateMobile">
@@ -383,6 +385,9 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
+        <!--#endregion-->
+        
+        <!--#region Page Header-->
         <controls:PageHeader x:Name="pageHeader" 
                              Text="Личный кабинет"
                              FontWeight="Bold"
@@ -398,6 +403,9 @@
                 <AppBarButton Name="ExitProfile" Label="Выход" Icon="Remove" Foreground="Black" Command="{Binding ExitProfileCommand}" Visibility="{Binding CommandButtonVisibility, Converter={StaticResource BoolToVisibility}}"/>
             </controls:PageHeader.SecondaryCommands>
         </controls:PageHeader>
+        <!--#endregion-->
+
+        <!--#region Main Grid-->
         <Grid Background="{ThemeResource BackGroundCustomColorBrush}" Grid.Row="1">
             <ScrollViewer>
                 <Grid>
@@ -499,5 +507,6 @@
                       HorizontalAlignment="Center"
                       VerticalAlignment="Center"
                       Grid.RowSpan="2"/>
+        <!--#endregion-->
     </Grid>
 </Page>

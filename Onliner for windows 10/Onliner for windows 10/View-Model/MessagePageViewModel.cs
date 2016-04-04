@@ -35,8 +35,8 @@ namespace Onliner_for_windows_10.View_Model
             ListMessageSelectionChange = new RelayCommand<object>(async (obj) => await ShowMessageContent(obj));
             CheckListItemChecked = new RelayCommand<object>((obj) => ChekcListItemAdd(obj));
             CheckListItemUnChecked = new RelayCommand<object>((obj) => ChekcListItemRemove(obj));
-            SendMessageCommand = new RelayCommand(async() => await SendMessage());
-            AnswerSendMessageCommand = new RelayCommand(() =>  AnswerSendMessage());
+            SendMessageCommand = new RelayCommand(async () => await SendMessage());
+            AnswerSendMessageCommand = new RelayCommand(() => AnswerSendMessage());
             NewMessageCreate = new RelayCommand(() => CreateMessage());
             MarkReadMessageCommand = new RelayCommand(async () => await MarkReadMessage());
             SaveMarkMessageCommand = new RelayCommand(async () => await SaveMarkMessage());
@@ -46,6 +46,10 @@ namespace Onliner_for_windows_10.View_Model
             DeleteMarkMessageCommand = new RelayCommand(async () => await DeleteMarkMessage());
         }
 
+        /// <summary>
+        /// Delete selected messages
+        /// </summary>
+        /// <returns></returns>
         private async Task DeleteMarkMessage()
         {
             await HttpRequest.PostRequestFormData(DeleteMessage, HostMessage, Origin, await GeneratePostDataMessageIdList());
@@ -53,6 +57,10 @@ namespace Onliner_for_windows_10.View_Model
             await UpdateItemSourceList(SelectedIndex);
         }
 
+        /// <summary>
+        /// Delete read message
+        /// </summary>
+        /// <returns></returns>
         private async Task DeleteOneMessage()
         {
             await HttpRequest.PostRequestFormData(DeleteMessage, HostMessage, Origin, GeneratePostDataMessageId(messageListforRawText.id));
@@ -60,30 +68,49 @@ namespace Onliner_for_windows_10.View_Model
             await UpdateItemSourceList(SelectedIndex);
         }
 
+        /// <summary>
+        /// Save read message
+        /// </summary>
+        /// <returns></returns>
         private async Task SaveOneMessage()
         {
             await HttpRequest.PostRequestFormData(SaveMessageUrl, HostMessage, Origin, GeneratePostDataMessageId(messageListforRawText.id));
-             await UpdateItemSourceList(SelectedIndex);
+            await UpdateItemSourceList(SelectedIndex);
         }
 
+        /// <summary>
+        /// Mark as spam
+        /// </summary>
+        /// <returns></returns>
         private async Task SpamMarkMessage()
         {
             await HttpRequest.PostRequestFormData(MarkSpamUrl, HostMessage, Origin, GeneratePostDataMessageId(messageListforRawText.id));
             await UpdateItemSourceList(SelectedIndex);
         }
 
+        /// <summary>
+        /// Save read message
+        /// </summary>
+        /// <returns></returns>
         private async Task SaveMarkMessage()
         {
             await HttpRequest.PostRequestFormData(SaveMessageUrl, HostMessage, Origin, await GeneratePostDataMessageIdList());
             await UpdateItemSourceList(SelectedIndex);
         }
 
+        /// <summary>
+        /// Mark as read
+        /// </summary>
+        /// <returns></returns>
         private async Task MarkReadMessage()
         {
             await HttpRequest.PostRequestFormData(MessageMaskReadUrl, HostMessage, Origin, await GeneratePostDataMessageIdList());
             await UpdateItemSourceList(SelectedIndex);
         }
 
+        /// <summary>
+        /// Answer on read message
+        /// </summary>
         private void AnswerSendMessage()
         {
             if (!PopUpSender)
@@ -97,12 +124,20 @@ namespace Onliner_for_windows_10.View_Model
             }
         }
 
+        /// <summary>
+        /// Send message
+        /// </summary>
+        /// <returns></returns>
         private async Task SendMessage()
         {
             PopUpSender = false;
             await HttpRequest.PostRequestFormData(ComposeMessageUrl, HostMessage, Origin, DataForAnswer().ToString());
         }
 
+        /// <summary>
+        /// Set the params messsage for send
+        /// </summary>
+        /// <param name="rawText"></param>
         private void SetParamsMessage(bool rawText)
         {
             UserNameRecipient = messageListforRawText.authorName;
@@ -131,6 +166,11 @@ namespace Onliner_for_windows_10.View_Model
             return postData;
         }
 
+        /// <summary>
+        /// Show for more detailed message
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         private async Task ShowMessageContent(object obj)
         {
             var item = (MessageList)obj;
@@ -143,6 +183,11 @@ namespace Onliner_for_windows_10.View_Model
             ShowListViewItemContent(item);
         }
 
+        /// <summary>
+        /// Get message type lsit
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
         private async Task UpdateItemSourceList(int index)
         {
             switch (index)
@@ -226,8 +271,6 @@ namespace Onliner_for_windows_10.View_Model
 
         private void CreateMessage() =>
             PopUpSender = PopUpSender == true ? false : true;
-        
-           
 
         private void ChekcListItemRemove(object obj) =>
             MessageIdList.Remove(obj.ToString());

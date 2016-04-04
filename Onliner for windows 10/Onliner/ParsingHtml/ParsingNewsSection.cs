@@ -114,7 +114,9 @@ namespace Onliner.ParsingHtml
                     _itemNews.Image = await client.GetByteArrayAsync(clearLink);
                     _itemNews.Description = ScrubHtml(item.Descendants("div").LastOrDefault().Descendants("p").First().InnerText.Trim());
 
-                    _itemNews.Bmediaicon = GetFirstOrDefaultTagHtmlInnerText(item, "span", "class", "mediaicon");
+                    //photo
+                    _itemNews.Bmediaicon = GetFirstOrDefaultTagHtmlInnerText(item, "span", "class", "b-mediaicon");
+                    //video
                     _itemNews.Mediaicongray = GetFirstOrDefaultTagHtmlInnerText(item, "span", "class", "b-mediaicon gray");
 
                     myItems.Add(_itemNews);
@@ -136,7 +138,7 @@ namespace Onliner.ParsingHtml
         /// <returns></returns>
         private string GetFirstOrDefaultTagHtmlInnerText(HtmlNode node, string tag, string attributeType, string attributeValue)
         {
-            var value = node.Descendants(tag).Where(div => div.GetAttributeValue(tag, string.Empty) == attributeValue).FirstOrDefault();
+            var value = node.Descendants(tag).Where(div => div.GetAttributeValue(attributeType, string.Empty) == attributeValue).FirstOrDefault();
             if (value != null)
                 return value.InnerText;
             return string.Empty;

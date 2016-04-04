@@ -22,8 +22,6 @@ namespace Onliner_for_windows_10.View_Model
         private readonly string UrlApiOpinions = "http://people.onliner.by/category/opinions";
         private string ResultHtmlPage = string.Empty;
 
-
-
         public ObservableCollection<OpinionModel> IpinionsItems
         {
             get { return _opinionsItems; }
