@@ -64,7 +64,7 @@ namespace Onliner.ParsingHtml
         /// <param name="path"></param>
         /// <param name="section"></param>
         /// <returns></returns>
-        public async Task<ObservableCollection<ItemsNews>> NewsItemList(string path, SectionNewsDB section)
+        public async Task<ObservableCollection<ItemsNews>> NewsItemList(string path, string pathDB)
         {
             if (!HttpRequest.HasInternet()) return null;
             myItems = new ObservableCollection<ItemsNews>();
@@ -80,7 +80,7 @@ namespace Onliner.ParsingHtml
                 ("b-posts-1-item b-content-posts-1-item news_for_copy"))).ToList();
 
                 //db news collections
-                var DBlist = await GetNeedList(section);
+                var DBlist = await GetNeedList(pathDB);
 
                 foreach (var item in titleList)
                 {
@@ -99,7 +99,7 @@ namespace Onliner.ParsingHtml
 
                     if (DBlist != null)
                     {
-                        var containItem = DBlist.FirstOrDefault(x => x.LinkNews.Contains(_itemNews.LinkNews));
+                        var containItem = DBlist.FirstOrDefault(x => x.LinkNews == _itemNews.LinkNews);
                         if (containItem != null)
                         {
                             bufferNews.Add(_itemNews);
@@ -195,27 +195,10 @@ namespace Onliner.ParsingHtml
         /// </summary>
         /// <param name="section"></param>
         /// <returns></returns>
-        private async Task<IEnumerable<ItemsNews>> GetNeedList(SectionNewsDB section)
+        private async Task<IEnumerable<ItemsNews>> GetNeedList(string pathDB)
         {
             IEnumerable<ItemsNews> resultItems = new ObservableCollection<ItemsNews>();
-            switch (section)
-            {
-                case SectionNewsDB.Tech:
-                    resultItems = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_TECH);
-                    break;
-                case SectionNewsDB.People:
-                    resultItems = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_PEOPLE);
-                    break;
-                case SectionNewsDB.Auto:
-                    resultItems = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_AUTO);
-                    break;
-                case SectionNewsDB.House:
-                    resultItems = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_HOUSE);
-                    break;
-                case SectionNewsDB.Opinion:
-                    resultItems = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_OPINIONS);
-                    break;
-            }
+            resultItems = await SQLiteDB.GetAllNews(pathDB);
             return resultItems;
         }
 
@@ -312,6 +295,7 @@ namespace Onliner.ParsingHtml
             var s = WebUtility.UrlEncode(strings);
             return s + "&";
         }
+
         #endregion
     }
 }

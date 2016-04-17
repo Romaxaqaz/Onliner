@@ -10,13 +10,12 @@ namespace Onliner_for_windows_10.Views
     {
         public static Shell Instance { get; set; }
         public static HamburgerMenu HamburgerMenu => Instance.MyHamburgerMenu;
-       
 
         public Shell()
         {
             this.InitializeComponent();
             Instance = this;
-            Loaded += Shell_Loaded;    
+            Loaded += Shell_Loaded;
         }
 
         private void Shell_Loaded(object sender, RoutedEventArgs e)

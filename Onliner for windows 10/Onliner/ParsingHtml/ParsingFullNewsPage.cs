@@ -14,6 +14,9 @@ using MyToolkit.Controls;
 using Newtonsoft.Json.Linq;
 using System.IO;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
+using System.Collections.ObjectModel;
+using Windows.UI.Popups;
 
 namespace Onliner.ParsingHtml
 {
@@ -33,7 +36,6 @@ namespace Onliner.ParsingHtml
         /// <summary>
         /// <value> Background color listview item</value>
         /// </summary>
-        private readonly string BackGroundColorListItem = "#FFF7F7F7";
         private string urlPageNews = string.Empty;
         private string loadePage = string.Empty;
         private string newsID = string.Empty;
@@ -41,13 +43,13 @@ namespace Onliner.ParsingHtml
         private HttpRequest HttpRequest = new HttpRequest();
         private HtmlDocument htmlDoc = new HtmlDocument();
         private List<FullItemNews> listNews = new List<FullItemNews>();
-        private List<CommentsItem> listComments = new List<CommentsItem>();
+        private ObservableCollection<CommentsItem> listComments = new ObservableCollection<CommentsItem>();
         private List<string> listDataContent = new List<string>();
         private List<UIElement> controlList = new List<UIElement>();
 
         List<CommetsLike> listItem = new List<CommetsLike>();
 
-        private List<ListViewItemSelectorModel> NewsListItem = new List<ListViewItemSelectorModel>();
+        private ObservableCollection<ListViewItemSelectorModel> NewsListItem = new ObservableCollection<ListViewItemSelectorModel>();
         ListViewItemSelectorModel listViewMode = new ListViewItemSelectorModel();
         private int countNews = 0;
         public int CountPTag { get { return countNews; } }
@@ -75,7 +77,7 @@ namespace Onliner.ParsingHtml
         /// News information
         /// </summary>
         /// <returns>news item object</returns>
-        public async Task<List<ListViewItemSelectorModel>> NewsMainInfo()
+        public async Task<ObservableCollection<ListViewItemSelectorModel>> NewsMainInfo()
         {
             FullItemNews fullNews = new FullItemNews();
             htmlDoc.LoadHtml(loadePage);
@@ -123,14 +125,23 @@ namespace Onliner.ParsingHtml
                         string url = item.Descendants("img").FirstOrDefault().Attributes["src"].Value;
                         NewsListItem.Add(new ListViewItemSelectorModel("image", url));
                     }
-                    else if (item.InnerHtml.Contains("iframe"))
+                    else 
+                    if (item.InnerHtml.Contains("iframe"))
                     {
                         if (item.InnerHtml.Contains("https://www.youtube.com/embed/"))
                         {
+                            YouTubeUri uri = new YouTubeUri();
                             string linkVideo = item.Descendants("iframe").FirstOrDefault().Attributes["src"].Value;
-                            string path = linkVideo.Replace("https://www.youtube.com/embed/", "");
-                            var pathUri = await YouTube.GetVideoUriAsync(path, YouTubeQuality.Quality480P);
-                            NewsListItem.Add(new ListViewItemSelectorModel("video", pathUri.Uri));
+                            try
+                            {
+                                uri = await GetYouTubeYriForControl(linkVideo);
+                                NewsListItem.Add(new ListViewItemSelectorModel("video", uri.Uri));
+                            }
+                            catch(YouTubeUriNotFoundException)
+                            {
+                                NewsListItem.Add(new ListViewItemSelectorModel("web", item.InnerHtml));
+                            }
+                           
                         }
                         else
                         {
@@ -162,12 +173,21 @@ namespace Onliner.ParsingHtml
 
 
 
+        private async Task<YouTubeUri> GetYouTubeYriForControl(string url)
+        {
+            string pattern = @"(embed\/[-A-Za-z0-9]+)";
+            var regex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.Multiline);
+            var clearUrl = regex.Match(url);
+            string path = clearUrl.ToString().Replace("embed/", "");
+            var pathUri = await YouTube.GetVideoUriAsync(path, YouTubeQuality.Quality360P);
+            return pathUri;
+        }
 
         /// <summary>
         /// Comments data
         /// </summary>
         /// <returns></returns>
-        public async Task<List<CommentsItem>> CommentsMainInfo()
+        public async Task<ObservableCollection<CommentsItem>> CommentsMainInfo()
         {
             CommentsItem commentsParams;
             htmlDoc.LoadHtml(loadePage);
@@ -201,7 +221,6 @@ namespace Onliner.ParsingHtml
             textBlock.Margin = new Thickness(10);
             return textBlock;
         }
-
 
         private string UrlLikeApi(string url, string newsId)
         {

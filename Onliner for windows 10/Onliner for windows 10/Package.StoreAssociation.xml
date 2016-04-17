@@ -361,6 +361,8 @@
     <MainPackageIdentityName>56651RomanPanteleev.onliner.by</MainPackageIdentityName>
     <ReservedNames>
       <ReservedName>onliner.by</ReservedName>
+      <ReservedName>onliner BETA</ReservedName>
+      <ReservedName>onliner helper</ReservedName>
     </ReservedNames>
   </ProductReservedInfo>
   <AccountPackageIdentityNames />

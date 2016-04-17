@@ -79,8 +79,129 @@
     </Page.Resources>
 
 
-    <Grid Background="Aqua">
-       
+    <Grid Background="Aqua" Width="350" >
+        <!--<Button Width="200" Height="100" Content="Test" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Button_Click"/>--> 
+
+        <Grid x:Name="ActualWidthStack"  
+        		Margin="0" 
+        		Background="{ThemeResource BackGroundCustomNewsItemColorBrush}" 
+        		BorderThickness="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="15"/>
+                <RowDefinition Height="23"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="100"/>
+                <RowDefinition Height="20"/>
+            </Grid.RowDefinitions>
+            <Grid.ChildrenTransitions>
+                <TransitionCollection>
+                    <EdgeUIThemeTransition Edge="Bottom"/>
+                </TransitionCollection>
+            </Grid.ChildrenTransitions>
+            <TextBlock x:Name="ThemeTextBlock" 
+        			Text="Социум / Таможня, Граница, Деньги" 
+        			Foreground="#107fdc" Margin="3,0,0,0"
+        			FontSize="12" Grid.Row="0" Style="{ThemeResource CaptionTextBlockStyle}"/>
+            <TextBlock x:Name="titleTextBlock"
+        			Text="Первый пошел: при пересечении границы у белоруса изъяли 130 тысяч незадекларированных евро. Теперь брестчанину грозит тюремный срок" 
+        			Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
+                    TextWrapping="WrapWholeWords"
+                    TextTrimming="WordEllipsis"
+        			FontSize="16" Margin="3,0,0,3"
+                    ContinuumNavigationTransitionInfo.IsEntranceElement="True" Grid.Row="1" Style="{ThemeResource BodyTextBlockStyle}"/>
+            <Grid Grid.Row="2">
+                <Image Name="ImageListSectionNews" Opacity="100" Source="ms-appx:///Assets/SplashScreen.png">
+                </Image>
+                <Grid Visibility="{Binding InDataBase}">
+                    <Polygon Points="0,0 20,0 0,20" Stroke="Yellow" Fill="Yellow"/>
+                    <TextBlock Text="&#xE0B4;" Foreground="White" FontSize="10" FontFamily="Segoe MDL2 Assets"/>
+                </Grid>
+         
+            </Grid>
+            <Grid HorizontalAlignment="Stretch" Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" 
+        				Orientation="Horizontal" 
+        				Margin="10" 
+        				VerticalAlignment="Center" 
+        				HorizontalAlignment="Center">
+                    <TextBlock FontSize="16" 
+        					Text="&#xE890;" 
+        					FontFamily="Segoe MDL2 Assets"
+                                   Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                    <TextBlock Text="{Binding Popularcount, Converter={StaticResource TextIcoNewsConverter}}" 
+        					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
+        					TextWrapping="Wrap" 
+        					FontSize="12" 
+        					Margin="3,0,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" 
+        				Orientation="Horizontal" 
+        				Margin="5" 
+        				VerticalAlignment="Center" 
+        				HorizontalAlignment="Center">
+                    <TextBlock FontSize="16" 
+        					Text="&#xE8F2;" 
+        					FontFamily="Segoe MDL2 Assets" 
+        					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                    <TextBlock Text="{Binding CountViews}" 
+        					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
+        					TextWrapping="Wrap" 
+        					FontSize="12" 
+        					Margin="3,0,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2" 
+        				Orientation="Horizontal" 
+        				Margin="5" 
+        				VerticalAlignment="Center" 
+        				HorizontalAlignment="Center">
+                    <TextBlock FontSize="16" 
+        					Text="&#xE114;" 
+        					FontFamily="Segoe MDL2 Assets"
+                                   Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                    <TextBlock Text="{Binding Bmediaicon}" 
+        					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
+        					TextWrapping="Wrap" 
+        					FontSize="12" 
+        					Margin="3,0,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="3" 
+        				Orientation="Horizontal" 
+        				Margin="5" 
+        				VerticalAlignment="Center" 
+        				HorizontalAlignment="Center">
+                    <TextBlock FontSize="16" 
+        					Text="&#xE116;" 
+        					FontFamily="Segoe MDL2 Assets"
+                                   Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                    <TextBlock Text="{Binding Mediaicongray}" 
+        					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
+        					TextWrapping="Wrap" 
+        					FontSize="12" Margin="3,0,0,0"/>
+                </StackPanel>
+
+            </Grid>
+            <TextBlock x:Name="subtitleTextBlock" 
+        			Text="4 апреля вступили в силу изменения и дополнения в Уголовный и Уголовно-процессуальный кодексы Республики Беларусь. Теперь при пересечении белорусского участка таможенной границы Евразийского экономического союза с незадекларированными наличными в размере, превышающем в эквиваленте 30 тысяч долларов, предусмотрена уголовная ответственность в виде штрафа, или ограничения свободы на срок от 2 до 5 лет, или лишения свободы на тот же срок. Уже 5 апреля на въезде в Беларусь в пункте пропуска «Домачево» деньги нашли у брестчанина." 
+        			Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
+        			TextWrapping="WrapWholeWords" 
+        			TextTrimming="WordEllipsis"
+        			Padding="5" 
+        			FontSize="12"  
+        			TextAlignment="Justify" Grid.Row="4"/>
+            <TextBlock x:Name="descriptionTextBlock" 
+        			Text="Сегодня в 13:16. Просмотров: 1860. Автор: Александр Владыко"  TextAlignment="Right"
+        			Foreground="Gray" Padding="2"
+        			TextWrapping="WrapWholeWords" FontSize="12" Grid.Row="5" Style="{ThemeResource BaseTextBlockStyle}"/>
+        </Grid>
+        <Button Height="100" Width="100" Background="red" Click="Button_Click"/>
     </Grid>
 
 </Page>

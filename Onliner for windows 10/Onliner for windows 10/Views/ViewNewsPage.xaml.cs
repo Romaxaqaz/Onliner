@@ -5,6 +5,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Onliner_for_windows_10.View_Model;
 using Onliner.Model.DataTemplateSelector;
+using Windows.UI.ViewManagement;
 
 namespace Onliner_for_windows_10.Views
 {
@@ -37,10 +38,6 @@ namespace Onliner_for_windows_10.Views
                     Frame.GoBack();
                 }
             }
-        }
-
-        private async void NewsListInfo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
         }
 
         private void DownListButton_Click(object sender, RoutedEventArgs e)

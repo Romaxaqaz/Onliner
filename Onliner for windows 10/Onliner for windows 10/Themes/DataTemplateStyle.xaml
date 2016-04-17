@@ -4,13 +4,15 @@
     xmlns:local="using:Onliner_for_windows_10.Themes"
     xmlns:converters="using:Onliner.Converters"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
-  xmlns:Core="using:Microsoft.Xaml.Interactions.Core" 
-    xmlns:Media="using:Microsoft.Xaml.Interactions.Media">
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core" 
+    xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
+    xmlns:ViewModel="using:Onliner.Model.News">
 
 
     <converters:ImageUrlConverters x:Key="ImageUrlConverter" />
     <converters:TextIcoNewsConverter x:Key="TextIcoNewsConverter"/>
     <converters:TextTrimmingConverter x:Key="TextTrimmingConverter"/>
+    <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
     <Storyboard x:Key="Storyboard1">
         <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="ImageListSectionNews">
@@ -18,112 +20,113 @@
             <EasingDoubleKeyFrame KeyTime="0:0:1" Value="100"/>
         </DoubleAnimationUsingKeyFrames>
     </Storyboard>
-   
+
+
+
 
     <DataTemplate x:Key="NewsThemeList">
-        <Grid x:Name="ActualWidthStack"  
+        <Grid x:Name="ActualWidthStack"
         		Margin="0" 
         		Background="{ThemeResource BackGroundCustomNewsItemColorBrush}" 
         		BorderThickness="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="15"/>
-                <RowDefinition Height="23"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="100"/>
-                <RowDefinition Height="20"/>
-            </Grid.RowDefinitions>
-            <Grid.ChildrenTransitions>
-                <TransitionCollection>
-                    <EdgeUIThemeTransition Edge="Bottom"/>
-                </TransitionCollection>
-            </Grid.ChildrenTransitions>
-            <TextBlock x:Name="ThemeTextBlock" 
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="15"/>
+                    <RowDefinition Height="23"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="100"/>
+                    <RowDefinition Height="20"/>
+                </Grid.RowDefinitions>
+                <Grid.ChildrenTransitions>
+                    <TransitionCollection>
+                        <EdgeUIThemeTransition Edge="Bottom"/>
+                    </TransitionCollection>
+                </Grid.ChildrenTransitions>
+                <TextBlock x:Name="ThemeTextBlock" 
         			Text="{Binding Themes}" 
         			Foreground="#107fdc" Margin="3,0,0,0"
         			FontSize="12" Grid.Row="0" Style="{ThemeResource CaptionTextBlockStyle}"/>
-            <TextBlock x:Name="titleTextBlock"
+                <TextBlock x:Name="titleTextBlock"
         			Text="{Binding Title}" 
         			Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
                     TextWrapping="WrapWholeWords"
                     TextTrimming="WordEllipsis"
         			FontSize="16" Margin="3,0,0,3"
                     ContinuumNavigationTransitionInfo.IsEntranceElement="True" Grid.Row="1" Style="{ThemeResource BodyTextBlockStyle}"/>
-            <Grid Grid.Row="2">
+                <Grid Grid.Row="2">
                 <Image Name="ImageListSectionNews" Opacity="100" Source="{Binding Image, Converter={StaticResource ImageUrlConverter}}">
-                  
                 </Image>
             </Grid>
-            <Grid HorizontalAlignment="Stretch" Grid.Row="3">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+                <Grid HorizontalAlignment="Stretch" Grid.Row="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Column="0" 
+                    <StackPanel Grid.Column="0" 
         				Orientation="Horizontal" 
         				Margin="10" 
         				VerticalAlignment="Center" 
         				HorizontalAlignment="Center">
-                    <TextBlock FontSize="16" 
+                        <TextBlock FontSize="16" 
         					Text="&#xE890;" 
         					FontFamily="Segoe MDL2 Assets"
                                    Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
-                    <TextBlock Text="{Binding Popularcount, Converter={StaticResource TextIcoNewsConverter}}" 
+                        <TextBlock Text="{Binding Popularcount, Converter={StaticResource TextIcoNewsConverter}}" 
         					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
         					TextWrapping="Wrap" 
         					FontSize="12" 
         					Margin="3,0,0,0"/>
-                </StackPanel>
-                <StackPanel Grid.Column="1" 
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" 
         				Orientation="Horizontal" 
         				Margin="5" 
         				VerticalAlignment="Center" 
         				HorizontalAlignment="Center">
-                    <TextBlock FontSize="16" 
+                        <TextBlock FontSize="16" 
         					Text="&#xE8F2;" 
         					FontFamily="Segoe MDL2 Assets" 
         					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
-                    <TextBlock Text="{Binding CountViews}" 
+                        <TextBlock Text="{Binding CountViews}" 
         					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
         					TextWrapping="Wrap" 
         					FontSize="12" 
         					Margin="3,0,0,0"/>
-                </StackPanel>
-                <StackPanel Grid.Column="2" 
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" 
         				Orientation="Horizontal" 
         				Margin="5" 
         				VerticalAlignment="Center" 
         				HorizontalAlignment="Center">
-                    <TextBlock FontSize="16" 
+                        <TextBlock FontSize="16" 
         					Text="&#xE114;" 
         					FontFamily="Segoe MDL2 Assets"
                                    Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
-                    <TextBlock Text="{Binding Bmediaicon}" 
+                        <TextBlock Text="{Binding Bmediaicon}" 
         					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
         					TextWrapping="Wrap" 
         					FontSize="12" 
         					Margin="3,0,0,0"/>
-                </StackPanel>
-                <StackPanel Grid.Column="3" 
+                    </StackPanel>
+                    <StackPanel Grid.Column="3" 
         				Orientation="Horizontal" 
         				Margin="5" 
         				VerticalAlignment="Center" 
         				HorizontalAlignment="Center">
-                    <TextBlock FontSize="16" 
+                        <TextBlock FontSize="16" 
         					Text="&#xE116;" 
         					FontFamily="Segoe MDL2 Assets"
                                    Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
-                    <TextBlock Text="{Binding Mediaicongray}" 
+                        <TextBlock Text="{Binding Mediaicongray}" 
         					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
         					TextWrapping="Wrap" 
         					FontSize="12" Margin="3,0,0,0"/>
-                </StackPanel>
+                    </StackPanel>
 
-            </Grid>
-            <TextBlock x:Name="subtitleTextBlock" 
+                </Grid>
+                <TextBlock x:Name="subtitleTextBlock" 
         			Text="{Binding Description}" 
         			Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
         			TextWrapping="WrapWholeWords" 
@@ -131,11 +134,12 @@
         			Padding="5" 
         			FontSize="12"  
         			TextAlignment="Justify" Grid.Row="4"/>
-            <TextBlock x:Name="descriptionTextBlock" 
+                <TextBlock x:Name="descriptionTextBlock" 
         			Text="{Binding Footer}"  TextAlignment="Right"
         			Foreground="Gray" Padding="2"
         			TextWrapping="WrapWholeWords" FontSize="12" Grid.Row="5" Style="{ThemeResource BaseTextBlockStyle}"/>
-        </Grid>
+            </Grid>
+          
     </DataTemplate>
 
     <DataTemplate x:Key="OpinionsList">

@@ -11,6 +11,7 @@ namespace Onliner_for_windows_10.View_Model
     public sealed class ShellViewModel : ViewModelBase
     {
         private static ShellViewModel _instance = new ShellViewModel();
+
         public static ShellViewModel Instance
         {
             set { _instance = value; }
@@ -37,7 +38,12 @@ namespace Onliner_for_windows_10.View_Model
         /// </summary>
         private void SetAutoLoadNews()
         {
-            var boolValue = Convert.ToBoolean(GetParamsSetting(AutoLoadNewsAtStartUpAppKey));
+            bool boolValue = true;
+            var resultKeyValue = GetParamsSetting(AutoLoadNewsAtStartUpAppKey);
+            if (resultKeyValue != null)
+                boolValue = Convert.ToBoolean(GetParamsSetting(AutoLoadNewsAtStartUpAppKey));
+
+            SetParamsSetting(AutoLoadNewsAtStartUpAppKey, boolValue.ToString());
             TechSectionNewsFirstLoad = boolValue;
             PeopleSectionNewsFirstLoad = boolValue;
             HomeSectionNewsFirstLoad = boolValue;
@@ -57,7 +63,7 @@ namespace Onliner_for_windows_10.View_Model
         /// <returns></returns>
         private async Task GetWeatherNow()
         {
-            var weather = await HttpRequest.Weather();       
+            var weather = await HttpRequest.Weather();
             Weather = weather == null ? (string)GetParamsSetting(LastWeatherKey) : weather.now.temperature;
             await Task.CompletedTask;
         }
@@ -89,11 +95,14 @@ namespace Onliner_for_windows_10.View_Model
         /// </summary>
         private void GetCartCount()
         {
-          // Shop = await HttpRequest.ShopCount("543687");
+            // Shop = await HttpRequest.ShopCount("543687");
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)
         {
+            //await GetWeatherNow();
+            //await GetCurrent();
+            //await GetMessage();
             await Task.CompletedTask;
         }
         #endregion
@@ -236,5 +245,6 @@ namespace Onliner_for_windows_10.View_Model
             }
         }
         #endregion
+
     }
 }

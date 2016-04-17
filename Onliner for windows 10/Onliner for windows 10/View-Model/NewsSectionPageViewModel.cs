@@ -10,14 +10,17 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Template10.Mvvm;
+using Windows.UI.Core;
 using Windows.UI.Xaml.Navigation;
 using static Onliner.SQLiteDataBase.SQLiteDB;
+using static Onliner.Setting.SettingParams;
 
 namespace Onliner_for_windows_10.View_Model
 {
     public class NewsSectionPageViewModel : ViewModelBase
     {
         private ParsingNewsSection parsNewsSection = new ParsingNewsSection();
+        CoreDispatcher dispatcher = Windows.UI.Core.CoreWindow.GetForCurrentThread().Dispatcher;
 
         #region url news
         private readonly string TechUrlNews = "http://tech.onliner.by/";
@@ -30,10 +33,17 @@ namespace Onliner_for_windows_10.View_Model
         #region Constructor
         public NewsSectionPageViewModel()
         {
+
             PivotOrFlipViewSelectionChange = new RelayCommand<object>((obj) => ChangeNewsSection(obj));
             OpenFullNewsCommandNav = new RelayCommand<object>(async (obj) => await DetailsPage(obj));
             FavoritePageCommand = new RelayCommand(() => FavoritePage());
             UpdateNewsSectionCommand = new RelayCommand(() => UpdateNewsSection());
+            AddToDataBaseCommand = new RelayCommand<object>((obj) => AddItemToDataBas(obj));
+        }
+
+        private void AddItemToDataBas(object obj)
+        {
+            object x = obj;
         }
         #endregion
 
@@ -50,7 +60,7 @@ namespace Onliner_for_windows_10.View_Model
                 SelectedIndex = (int)obj;
                 await LoadNews();
             }
-            catch (NullReferenceException)
+            catch (InvalidCastException)
             {
 
             }
@@ -65,41 +75,40 @@ namespace Onliner_for_windows_10.View_Model
             switch (SelectedIndex)
             {
                 case 0:
+                    TechNewsList = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_TECH);
                     if (ShellViewModel.Instance.TechSectionNewsFirstLoad)
                     {
                         await AddAndUpdateCollectionNews(TechNewsList, SQLiteDB.DB_PATH_TECH, TechUrlNews, SectionNewsDB.Tech);
                         ShellViewModel.Instance.TechSectionNewsFirstLoad = false;
                     }
-                    else { TechNewsList = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_TECH); }
                     break;
                 case 1:
+                    PeopleNewsList = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_PEOPLE);
                     if (ShellViewModel.Instance.PeopleSectionNewsFirstLoad)
                     {
                         await AddAndUpdateCollectionNews(PeopleNewsList, SQLiteDB.DB_PATH_PEOPLE, PeoplehUrlNews, SectionNewsDB.People);
                         ShellViewModel.Instance.PeopleSectionNewsFirstLoad = false;
                     }
-                    else { PeopleNewsList = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_PEOPLE); }
                     break;
                 case 2:
+                    AutoNewsList = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_AUTO);
                     if (ShellViewModel.Instance.AutoSectionNewsFirstLoad)
                     {
                         await AddAndUpdateCollectionNews(AutoNewsList, SQLiteDB.DB_PATH_AUTO, AutohUrlNews, SectionNewsDB.Auto);
                         ShellViewModel.Instance.AutoSectionNewsFirstLoad = false;
                     }
-                    else { AutoNewsList = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_AUTO); }
                     break;
                 case 3:
+                    HouseNewsList = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_HOUSE);
                     if (ShellViewModel.Instance.HomeSectionNewsFirstLoad)
                     {
                         await AddAndUpdateCollectionNews(HouseNewsList, SQLiteDB.DB_PATH_HOUSE, RealtUrlNews, SectionNewsDB.House);
                         ShellViewModel.Instance.HomeSectionNewsFirstLoad = false;
                     }
-                    else { HouseNewsList = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_HOUSE); }
                     break;
-                case 4:
-                    OpinionsNewsList = parsNewsSection.OpinionList(OpinionUrlNews);
-                    break;
+
             }
+            NewsSectionIndex = SelectedIndex;
             ProgressRing = false;
             await Task.CompletedTask;
         }
@@ -117,7 +126,7 @@ namespace Onliner_for_windows_10.View_Model
             if (mainCollection == null)
                 mainCollection = await SQLiteDB.GetAllNews(pathDB);
             //get new item news
-            var newItemsNews = await GetNewsCollection(mainCollection, urlNews, pathDB, section);
+            var newItemsNews = await GetNewsCollection(urlNews, pathDB);
             if (newItemsNews.Count != 0 && mainCollection.Count != 0)
             {
                 //Reverse to add at the beginning of the
@@ -130,13 +139,17 @@ namespace Onliner_for_windows_10.View_Model
             }
             else if (newItemsNews.Count != 0 && mainCollection.Count == 0)
             {
-                mainCollection = newItemsNews;
+                foreach (var item in newItemsNews)
+                {
+                    mainCollection.Add(item);
+                }
             }
+
             ProgressRing = false;
             //update item in collection and database
-            mainCollection = await UpdateOldItemInCollection(mainCollection);
+            mainCollection = await UpdateOldItemInCollection(mainCollection, pathDB);
             //save database collection
-            await SQLiteDB.UpdateAndRetuntCollection(mainCollection, section);
+            await SQLiteDB.UpdateAndCollectionInDB(mainCollection, pathDB);
         }
 
         /// <summary>
@@ -144,7 +157,7 @@ namespace Onliner_for_windows_10.View_Model
         /// </summary>
         /// <param name="items"></param>
         /// <returns></returns>
-        private async Task<ObservableCollection<ItemsNews>> UpdateOldItemInCollection(ObservableCollection<ItemsNews> items)
+        private async Task<ObservableCollection<ItemsNews>> UpdateOldItemInCollection(ObservableCollection<ItemsNews> items, string pathDB)
         {
             var oldCollection = parsNewsSection.OldNewsForUpdate;
             if (oldCollection.Count != 0)
@@ -152,11 +165,14 @@ namespace Onliner_for_windows_10.View_Model
                 foreach (var item in items)
                 {
                     var it = oldCollection.FirstOrDefault(x => x.LinkNews.Contains(item.LinkNews));
-                    item.CountViews = it.CountViews;
-                    item.Footer = it.Footer;
-                    item.Popularcount = it.Popularcount;
+                    if (it != null)
+                    {
+                        item.CountViews = it.CountViews;
+                        item.Footer = it.Footer;
+                        item.Popularcount = it.Popularcount;
+                    }
                 }
-                await SQLiteDB.UpdateItemDB(items, SectionNewsDB.Tech);
+                await SQLiteDB.UpdateItemDB(items, pathDB);
             }
             return items;
         }
@@ -193,9 +209,9 @@ namespace Onliner_for_windows_10.View_Model
         /// <param name="sqlDBPath"></param>
         /// <param name="sectionDB"></param>
         /// <returns></returns>
-        private async Task<ObservableCollection<ItemsNews>> GetNewsCollection(IEnumerable<ItemsNews> collection, string urlNews, string sqlDBPath, SectionNewsDB sectionDB)
+        private async Task<ObservableCollection<ItemsNews>> GetNewsCollection(string urlNews, string pathDB)
         {
-            return await parsNewsSection.NewsItemList(urlNews, sectionDB);
+            return await parsNewsSection.NewsItemList(urlNews, pathDB);
         }
 
         /// <summary>
@@ -206,8 +222,10 @@ namespace Onliner_for_windows_10.View_Model
         private async Task DetailsPage(object obj)
         {
             ItemsNews feedItem = obj as ItemsNews;
-            NavigationService.Navigate(typeof(ViewNewsPage), feedItem.LinkNews);
-            await Task.CompletedTask;
+            if (feedItem != null)
+            {
+                await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => NavigationService.Navigate(typeof(ViewNewsPage), feedItem.LinkNews));
+            }
         }
 
         private void FavoritePage() =>
@@ -216,6 +234,7 @@ namespace Onliner_for_windows_10.View_Model
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)
         {
             ProgressRing = true;
+            SelectedIndex = NewsSectionIndex;
             await LoadNews();
             await Task.CompletedTask;
         }
@@ -227,6 +246,7 @@ namespace Onliner_for_windows_10.View_Model
         public RelayCommand FavoritePageCommand { get; private set; }
         public RelayCommand TestCommand { get; private set; }
         public RelayCommand UpdateNewsSectionCommand { get; private set; }
+        public RelayCommand<object> AddToDataBaseCommand { get; private set; }
         #endregion
 
         #region List news

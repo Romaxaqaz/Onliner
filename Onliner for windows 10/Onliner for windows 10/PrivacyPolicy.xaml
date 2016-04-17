@@ -1,0 +1,76 @@
+﻿<Page
+    x:Class="Onliner_for_windows_10.PrivacyPolicy"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Onliner_for_windows_10"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Template10.Controls"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource BackGroundCustomColorBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        
+        <controls:PageHeader x:Name="pageHeader" 
+                             Text="Политика конфиденциальности"
+                             FontWeight="Bold"
+                             Frame="{x:Bind Frame}"
+                             Background="{ThemeResource BackGroundCustomHeaderColorBrush}"
+                             Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
+                             VisualStateNarrowMinWidth="1"
+                             BackButtonVisibility="Collapsed"/>
+        <ScrollViewer Background="{ThemeResource BackGroundCustomColorBrush}" Grid.Row="1">
+            <StackPanel Margin="10">
+                <RichTextBlock Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}">
+                    <Paragraph Margin="10">
+                        <Run Text="Политика конфиденциальности от 13.04.2016:" FontWeight="Bold" FontSize="18" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                    </Paragraph>
+                    <Paragraph Margin="10">
+                        <Run Text=" 1. ОБЩИЕ СВЕДЕНИЯ"/>
+                        <LineBreak/>
+                        <Run Text="1.1 Использование Пользователем Приложения означает согласие с настоящей Политикой конфиденциальности и условиями обработки персональных данных Пользователя."/>
+                        <LineBreak/>
+                        <Run Text="1.2 В случае несогласия с условиями Политики конфиденциальности Пользователь должен прекратить использование Приложения."/>
+                        <LineBreak/>
+                        <Run Text="1.3 Данная политика конфиденциальности может измениться с выходом новых версий (обновлений) приложения и введением новых функций, расширяющих привычный функционал."/>
+                    </Paragraph>
+
+                    <Paragraph Margin="10">
+                        <Run Text="2. ПРЕДМЕТ ПОЛИТИКИ КОНФИДЕНЦИАЛЬНОСТИ"/>
+                        <LineBreak/>
+                        <Run Text="2.1. Настоящая Политика конфиденциальности устанавливает обязательства разработчика Приложения по неразглашению и обеспечению режима защиты конфиденциальности персональных данных, которые Пользователь предоставляет по запросу Приложения при авторизации на Сайте или при совершении иных действий посредством Приложения."/>
+                        <LineBreak/>
+                        <Run Text="2.2. Персональные данные, разрешённые к обработке в рамках настоящей Политики конфиденциальности, предоставляются Пользователем путём заполнения формы авторизации, которая включает логин и пароль пользователя."/>
+                    </Paragraph>
+
+                    <Paragraph Margin="10">
+                        <Run Text="3. ЦЕЛИ СБОРА ПЕРСОНАЛЬНОЙ ИНФОРМАЦИИ ПОЛЬЗОВАТЕЛЯ"/>
+                        <LineBreak/>
+                        <Run Text="3.1. Персональные данные Пользователя Приложение может использовать в целях:"/>
+                        <LineBreak/>
+                        <Run Text="3.1.1. Идентификации Пользователя, зарегистрированного на Сайте "/>
+                        <Hyperlink NavigateUri="https://www.onliner.by/">onliner.by</Hyperlink> .
+                        <LineBreak/>
+                        <Run Text="3.1.2. Предоставления Пользователю доступа к персонализированным ресурсам Сайта через приложение."/>
+                        <LineBreak/>
+                        <Run Text="3.2 Разработчик не использует Персональные данные в личных целях. Разработчик не несет ответственность за действия третьих лиц, которым эти данные могут быть доступны."/>
+
+                    </Paragraph>
+
+                    <Paragraph Margin="10">
+                        <Run Text="4. COOKIES-ФАЙЛЫ"/>
+                        <LineBreak/>
+                        <Run Text="В то время, как вы пользуетесь приложением, приложения может использовать общеотраслевую технологию, называемую «куки» (cookies), которая позволяет сохранить определенную информацию на вашем устройстве. Cookies представляют собой небольшие текстовые файлы, которые могут использоваться только веб-сайтом, который их создал. Cookies позволяют выполнить автоматический вход  на сайт для пользования приложением: зарегистрированные пользователи будут идентифицированы автоматически."/>
+                        <LineBreak/>
+                    </Paragraph>
+                </RichTextBlock>
+                <HyperlinkButton NavigateUri="http://blog.onliner.by/privacy-policy/" Margin="10">
+                    Политика конфиденциальности сайта Onliner.by
+                </HyperlinkButton>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

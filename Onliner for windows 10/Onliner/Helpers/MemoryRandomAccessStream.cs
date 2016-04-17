@@ -63,6 +63,7 @@ namespace Onliner.Helpers
             this.m_InternalStream.Seek((long)position, 0);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]
         public void Dispose()
         {
             this.m_InternalStream.Dispose();

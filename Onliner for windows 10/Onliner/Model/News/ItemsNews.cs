@@ -17,6 +17,7 @@ namespace Onliner.Model.News
         private string _mediaicongray = string.Empty;
         private string _popularcount = string.Empty;
         private string _bmediaicon = string.Empty;
+     //   private bool inDataBase = false;
 
         public string NewsID { get; set; }
 
@@ -148,6 +149,19 @@ namespace Onliner.Model.News
                 _title = value;
             }
         }
+
+      ////  public bool InDataBase
+      //  {
+      //      get
+      //      {
+      //          return inDataBase;
+      //      }
+      //      set
+      //      {
+      //          inDataBase = value;
+      //          NotifyPropertyChanged();
+      //      }
+      //  }
 
         [PrimaryKey]
         public string LinkNews { get; set; }

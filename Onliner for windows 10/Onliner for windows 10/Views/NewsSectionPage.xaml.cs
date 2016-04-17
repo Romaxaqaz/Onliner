@@ -2,18 +2,22 @@
 using Windows.UI.Xaml.Controls;
 using Windows.Phone.UI.Input;
 using Onliner_for_windows_10.View_Model;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
+using Onliner.Model.News;
+using Windows.Foundation;
+using Windows.UI.Xaml.Media;
 
 namespace Onliner_for_windows_10.Views
 {
     public sealed partial class NewsPage : Page
     {
+        private NewsSectionPageViewModel newsModel = new NewsSectionPageViewModel();
         public NewsPage()
         {
             this.InitializeComponent();
-            NewsSectionPageViewModel newsModel = new NewsSectionPageViewModel();
             this.DataContext = newsModel;
             this.Loaded += MainOageLoaded;
-
         }
 
         private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
@@ -71,5 +75,6 @@ namespace Onliner_for_windows_10.Views
             //change datatemplate
             //  TechGridView.ItemTemplate = (DataTemplate)this.Resources["ListViewMobileTrigger"];
         }
+
     }
 }

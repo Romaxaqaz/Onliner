@@ -115,7 +115,7 @@ namespace Onliner_for_windows_10.View_Model.Settings
         {
             if (ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
             {
-                var statusBar = StatusBar.GetForCurrentView();
+                var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
                 statusBar.BackgroundColor = Windows.UI.Colors.Black;
                 statusBar.ForegroundColor = Windows.UI.Colors.White;
                 statusBar.BackgroundOpacity = 1;

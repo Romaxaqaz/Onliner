@@ -23,7 +23,7 @@ namespace Onliner.Setting
         public const string LoadImageKey = "LoadImage";
         public const string ThemeAppKey = "ThemeApp";
         public const string NumberOfNewsitemsToTheCacheKey = "NumberOfNewsitemsToTheCache";
-
+        public static int NewsSectionIndex { get; set; }
 
 
         public static void SetParamsSetting(string key, string value)

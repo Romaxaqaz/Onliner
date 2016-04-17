@@ -1,8 +1,8 @@
 ﻿<common:BootStrapper
     x:Class="Onliner_for_windows_10.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                     xmlns:common="using:Template10.Common"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="using:Template10.Common"
     RequestedTheme="Light">
 
 
@@ -15,7 +15,10 @@
                 <ResourceDictionary Source="Themes/ContolsStyle.xaml"/>
                 <ResourceDictionary Source="Themes/StringResource.xaml"/>
                 <ResourceDictionary Source="Themes/DataTemplateStyle.xaml"/>
+                <ResourceDictionary Source="Themes/SplitViewThemes.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+            
         </ResourceDictionary>
     </Application.Resources>
 </common:BootStrapper>

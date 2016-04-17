@@ -40,71 +40,20 @@ namespace Onliner.SQLiteDataBase
         #endregion
 
         #region Methods
-        public static async Task<ObservableCollection<ItemsNews>> UpdateAndRetuntCollection(ObservableCollection<ItemsNews> itemsNews, SectionNewsDB section)
+        public static async Task UpdateAndCollectionInDB(ObservableCollection<ItemsNews> itemsNews, string dbPath)
         {
-            ObservableCollection<ItemsNews> resultItems = new ObservableCollection<ItemsNews>();
-            switch (section)
-            {
-                case SectionNewsDB.Tech:
-                    resultItems = await CreateDatabase(itemsNews, DB_PATH_TECH);
-                    break;
-                case SectionNewsDB.People:
-                    resultItems = await CreateDatabase(itemsNews, DB_PATH_PEOPLE);
-                    break;
-                case SectionNewsDB.Auto:
-                    resultItems = await CreateDatabase(itemsNews, DB_PATH_AUTO);
-                    break;
-                case SectionNewsDB.House:
-                    resultItems = await CreateDatabase(itemsNews, DB_PATH_HOUSE);
-                    break;
-            }
-            return resultItems;
+            await CreateDatabase(itemsNews, dbPath);
         }
 
-        public static async Task UpdateItemDB(ObservableCollection<ItemsNews> itemsNews, SectionNewsDB section)
+        public static async Task UpdateItemDB(ObservableCollection<ItemsNews> itemsNews, string dbPath)
         {
-            switch (section)
+            using (var db = new SQLiteConnection(new SQLitePlatformWinRT(), dbPath))
             {
-                case SectionNewsDB.Tech:
-                    await UpdateItemDB(itemsNews, DB_PATH_TECH);
-                    break;
-                case SectionNewsDB.People:
-                    await UpdateItemDB(itemsNews, DB_PATH_PEOPLE);
-                    break;
-                case SectionNewsDB.Auto:
-                    await UpdateItemDB(itemsNews, DB_PATH_AUTO);
-                    break;
-                case SectionNewsDB.House:
-                    await UpdateItemDB(itemsNews, DB_PATH_HOUSE);
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Update elemets in db
-        /// </summary>
-        /// <param name="itemsNews">Elements that are present in the database</param>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        private static async Task UpdateItemDB(ObservableCollection<ItemsNews> itemsNews, string path)
-        {
-            using (var db = new SQLiteConnection(new SQLitePlatformWinRT(), path))
-            {
-                foreach (var item in itemsNews)
-                {
-                    var it = db.Table<ItemsNews>().FirstOrDefault(x => x.LinkNews.Contains(item.LinkNews));
-                    if (it != null)
-                    {
-                        it.Popularcount = item.Popularcount;
-                        it.Footer = item.Footer;
-                        it.CountViews = item.CountViews;
-                        db.Update(it);
-                    }
-                }
-
+                db.UpdateAll(itemsNews);
             }
             await Task.CompletedTask;
         }
+
 
         private async static Task<ObservableCollection<ItemsNews>> CreateDatabase(ObservableCollection<ItemsNews> itemsNews, string path)
         {
@@ -112,13 +61,13 @@ namespace Onliner.SQLiteDataBase
             if (!HttpRequest.HasInternet()) return await GetAllNews(path);
             using (var db = new SQLiteConnection(new SQLitePlatformWinRT(), path))
             {
-                var maxCountNews = Convert.ToInt32(GetParamsSetting(NumberOfNewsitemsToTheCacheKey));
-                if (maxCountNews == 0) maxCountNews = 50;
+                var maxCountNews = 25;
                 var c = db.CreateTable<ItemsNews>();
                 var info = db.GetMapping(typeof(ItemsNews));
 
                 var items = (from p in db.Table<ItemsNews>()
                              select p).ToList();
+
                 var itemsCount = items.Count;
 
                 if (itemsCount == 0)
@@ -129,21 +78,25 @@ namespace Onliner.SQLiteDataBase
                     }
                 }
 
-                if (itemsCount >= maxCountNews && itemsCount != 0)
+                if (itemsCount > maxCountNews && itemsCount != 0)
                 {
-                    var last = itemsNews.Last();
-                    itemsNews.Remove(last);
-                    db.Delete(last);
+                    for (int i = itemsNews.Count-1; i > maxCountNews; i--)
+                    {
+                        var lasts = itemsNews[i];
+                        itemsNews.Remove(lasts);
+                        db.Delete(lasts);
+                    }
                 }
                 db.InsertOrReplaceAll(itemsNews);
+                var resultColl = (from p in db.Table<ItemsNews>()
+                                  select p).ToList();
+                return new ObservableCollection<ItemsNews>(resultColl);
             }
-            await Task.CompletedTask;
-            return await GetAllNews(path);
         }
 
         public static async Task<ObservableCollection<ItemsNews>> GetAllNews(string path)
         {
-            ObservableCollection<ItemsNews> resultItems = null;
+            await Task.CompletedTask;
             // Create a new connection
             try
             {
@@ -158,8 +111,7 @@ namespace Onliner.SQLiteDataBase
             {
                 return new ObservableCollection<ItemsNews>();
             }
-            await Task.CompletedTask;
-            return resultItems;
+
         }
 
         public static long GetSizeByteDB()

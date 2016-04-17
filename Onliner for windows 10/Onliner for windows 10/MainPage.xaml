@@ -27,7 +27,7 @@
                 </VisualState>
                 <VisualState x:Name="VisualStateTablet">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="800" />
+                        <AdaptiveTrigger MinWindowWidth="1024" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="HelloStackPanel.(Grid.Column)" Value="0" />

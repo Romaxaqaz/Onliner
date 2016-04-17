@@ -36,6 +36,8 @@ namespace Onliner.Http
         private const string EdipProfile = "https://profile.onliner.by/edit";
         private const string EditPreferencesProfileApi = "https://profile.onliner.by/preferences";
         private const string ChangePassProfile = "https://profile.onliner.by/changepass";
+        private const string StatusProfileApi = "https://profile.onliner.by/gapi/user/usersonline/?";
+        private const string ViewNews = "https://people.onliner.by/viewcounter/view/";
         #endregion
 
         /// <summary>
@@ -48,7 +50,6 @@ namespace Onliner.Http
         private HttpResponseMessage response;
 
         public delegate void WebResponnceResult(string ok);
-        public event WebResponnceResult ResponceResult;
 
         private string JsonRequest = string.Empty;
         private string _resultPostRequest = string.Empty;
@@ -81,7 +82,7 @@ namespace Onliner.Http
             }
             catch (WebException)
             {
-                Message(InternerNotEnableMessage);
+                await Message(InternerNotEnableMessage);
                 return null;
             }
 
@@ -114,7 +115,7 @@ namespace Onliner.Http
                 var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
                 ResultGetRequsetString = await response.Content.ReadAsStringAsync();
             }
-            catch (WebException ex) {  await Message(ex.ToString()); }
+            catch (WebException ex) { await Message(ex.ToString()); }
         }
 
         public async Task<byte[]> GetRequestByteOnliner(string url)
@@ -127,7 +128,7 @@ namespace Onliner.Http
                 await Task.CompletedTask;
                 result = await httpClient.GetByteArrayAsync(new Uri(url));
             }
-            catch (WebException ex) {  await Message(ex.ToString()); }
+            catch (WebException ex) { await Message(ex.ToString()); }
             return result;
         }
 
@@ -277,7 +278,7 @@ namespace Onliner.Http
             }
             catch (WebException)
             {
-               return null;
+                return null;
             }
             return result;
         }
@@ -311,7 +312,7 @@ namespace Onliner.Http
                 var resultJson = await response.Content.ReadAsStringAsync();
                 bestrateResponse = JsonConvert.DeserializeObject<BestrateRespose>(resultJson);
             }
-            catch (WebException ex) {  await Message(ex.ToString()); }
+            catch (WebException ex) { await Message(ex.ToString()); }
             return bestrateResponse;
         }
 
@@ -333,7 +334,7 @@ namespace Onliner.Http
                 var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, urlPath)).Result;
                 result = await response.Content.ReadAsStringAsync();
             }
-            catch (WebException ex) { }
+            catch (WebException) { }
             return result;
 
         }
@@ -472,7 +473,7 @@ namespace Onliner.Http
                 string bufferToken = Regex.Match(responseBodyAsText, @"(token:(.*)')").Value;
                 token = bufferToken.Replace("token: '", "").Replace("'", "");
             }
-            catch (WebException ex) {  await Message(ex.ToString()); }
+            catch (WebException ex) { await Message(ex.ToString()); }
             return token;
         }
 
@@ -512,13 +513,52 @@ namespace Onliner.Http
             }
             catch (WebException ex)
             {
-                 await Message(ex.ToString());
+                await Message(ex.ToString());
             }
         }
 
         /// <summary>
         /// Save cookie after authorization
         /// </summary>
+
+        public async Task StatusSet(string userId)
+        {
+            string url = StatusProfileApi + userId;
+
+            StringBuilder postData = new StringBuilder();
+            postData.Append("usersIds[]=" + WebUtility.UrlEncode(userId));
+            await PostRequestFormData(url + ConvertToAjaxTime.ConvertToUnixTimestamp().ToString(),
+                 "profile.onliner.by",
+                 "https://profile.onliner.by",
+                 postData.ToString());
+        }
+
+        public async Task ViewNewsSet(string newsId)
+        {
+            string url = ViewNews;
+
+            StringBuilder postData = new StringBuilder();
+            postData.Append("news%5B%5D=" + WebUtility.UrlEncode(newsId));
+
+            HttpClientHandler handler = new HttpClientHandler();
+            if (CookieSession != null)
+            {
+                handler.CookieContainer = CookieSession;
+            }
+            HttpClient httpClient = new HttpClient(handler);
+            HttpRequestMessage postRequest = new HttpRequestMessage(HttpMethod.Post, url);
+            postRequest.Headers.Add("Accept", "application/json, text/javascript, */*; q=0.01");
+            postRequest.Headers.Add("Accept-Encoding", "gzip, deflate");
+            postRequest.Headers.Add("Accept-Language", "en-US,en;q=0.8,ru;q=0.6");
+            postRequest.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36");
+            postRequest.Content = new System.Net.Http.StringContent(postData.ToString(), UnicodeEncoding.UTF8, "application/x-www-form-urlencoded");
+            response = httpClient.SendAsync(postRequest).Result;
+            await Task.CompletedTask;
+
+        }
+
+
+
         private async void Savecookie(string filename, CookieContainer rcookie, Uri uri)
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
@@ -560,6 +600,7 @@ namespace Onliner.Http
             {
                 return;
             }
+            await Task.CompletedTask;
         }
 
         public bool HasInternet()

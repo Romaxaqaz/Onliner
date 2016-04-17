@@ -31,7 +31,10 @@ namespace Onliner_for_windows_10.View_Model
             ChangeCommetnsGridVisible = new RelayCommand(() => VisibleCommentsGrid());
             OpenNewsInBrowser = new RelayCommand<object>(async(obj) => await OpenLink(obj));
             SaveNewsInDB = new RelayCommand<object>((obj) => SaveNewsDB(obj));
+            UpdateCommentsList = new RelayCommand(async () => await UpdateCommets());
         }
+
+
         #endregion
 
         #region Methods
@@ -42,12 +45,14 @@ namespace Onliner_for_windows_10.View_Model
         /// <returns></returns>
         private async Task LoadNewsData(string urlPage)
         {
-            fullPagePars = new ParsingFullNewsPage(urlPage);
+            fullPagePars = new ParsingFullNewsPage(urlPage);    
             //news data
-            NewsItemContent = new ObservableCollection<ListViewItemSelectorModel>(await fullPagePars.NewsMainInfo());
+            NewsItemContent = await fullPagePars.NewsMainInfo();
             //comments data
-            CommentsItem = new ObservableCollection<CommentsItem>(await fullPagePars.CommentsMainInfo());
-            
+            CommentsItem = await fullPagePars.CommentsMainInfo();
+            CommentsProgressRing = false;
+
+            await HttpRequest.ViewNewsSet(fullPagePars.NewsID);
         }
 
         private void VisibleCommentsGrid()
@@ -62,6 +67,16 @@ namespace Onliner_for_windows_10.View_Model
             }
         }
 
+        private async Task UpdateCommets()
+        {
+            CommentsProgressRing = true;
+            fullPagePars = new ParsingFullNewsPage(LinkNews);
+            CommentsItem = await fullPagePars.CommentsMainInfo();
+            await Task.CompletedTask;
+            CommentsProgressRing = false;
+            await HttpRequest.ViewNewsSet(NewsID);
+        }
+
         private void ActiveSendButton() =>
              SendButton = true;
 
@@ -70,8 +85,12 @@ namespace Onliner_for_windows_10.View_Model
         /// </summary>
         /// <param name="obj">string url</param>
         /// <returns></returns>
-        private async Task OpenLink(object obj) =>
-            await Launcher.LaunchUriAsync(new Uri(obj.ToString()));
+        private async Task OpenLink(object obj)
+        {
+            string app = LinkNews;
+            var uri = new Uri(app);
+            var success = await Windows.System.Launcher.LaunchUriAsync(uri);
+        }
         
         /// <summary>
         /// Save item News in DB
@@ -99,6 +118,7 @@ namespace Onliner_for_windows_10.View_Model
                 comItem.Time = "Только что";
                 comItem.Data = obj.ToString();
                 CommentsItem.Add(comItem);
+                Message = string.Empty;
             }
             else
             {
@@ -165,6 +185,19 @@ namespace Onliner_for_windows_10.View_Model
             }
         }
 
+        private bool commentsProgressRing = true;
+        public bool CommentsProgressRing
+        {
+            get
+            {
+                return this.commentsProgressRing;
+            }
+            set
+            {
+                Set(ref commentsProgressRing, value);
+            }
+        }
+
         private bool sendButton = false;
         public bool SendButton
         {
@@ -190,6 +223,18 @@ namespace Onliner_for_windows_10.View_Model
                 Set(ref commentsVisible, value);
             }
         }
+
+
+        private string message;
+
+        public string Message
+        {
+            get { return message; }
+            set { Set(ref message, value); }
+        }
+
+
+
         #endregion
 
         #region Commands
@@ -198,6 +243,7 @@ namespace Onliner_for_windows_10.View_Model
         public RelayCommand<object> SaveNewsInDB { get; private set; }
         public RelayCommand SendButtonActive { get; private set; }
         public RelayCommand ChangeCommetnsGridVisible { get; private set; }
+        public RelayCommand UpdateCommentsList { get; private set; }
         #endregion
     }
 }

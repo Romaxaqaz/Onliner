@@ -13,6 +13,9 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:converter="using:Onliner.Converters"
     xmlns:controls="using:Template10.Controls"
+    xmlns:controlsWR="using:MyToolkit.Controls"
+    xmlns:pullToRefres="using:PullToRefresh.UWP"
+    xmlns:viewModelNews="using:Onliner.Model.News"
     mc:Ignorable="d">
     <Page.Resources>
         <converter:SelectionChangedConverter x:Key="SelectionChangedConverter" />
@@ -22,6 +25,10 @@
         <Style x:Key="GridViewItemStyle" TargetType="GridViewItem">
             <Setter Property="Margin" Value="3,3,0,0"/>
         </Style>
+
+
+
+ 
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -45,7 +52,6 @@
             <controls:PageHeader.PrimaryCommands>
              <!--   <AppBarButton Icon="Favorite" Label="Сохраненные" Command="{Binding FavoritePageCommand}" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>-->
                 <AppBarButton Icon="Refresh" Label="Обновить" Command="{Binding UpdateNewsSectionCommand}" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
-
             </controls:PageHeader.PrimaryCommands>
         </controls:PageHeader>
 <!--#endregion-->
@@ -60,7 +66,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-
+            
             <!--#region Visual State Manager-->
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup x:Name="VisualStateGroup">
@@ -136,106 +142,165 @@
                    Background="{ThemeResource BackGroundCustomNewsColorBrush}">
                 <!-- Tech section -->
                 <PivotItem Margin="0,-48,0,0">
-                    <GridView x:Name="TechGridView"
+                    <pullToRefres:PullToRefreshBox>
+                        <pullToRefres:PullToRefreshBox.TopIndicatorTemplate>
+                            <DataTemplate>
+                                <pullToRefres:PullRefreshProgressControl Progress="{Binding}"
+                                                                         PullToRefreshText="Потяните, чтобы обновить..."
+                                                                         ReleaseToRefreshText="Отпустите"/>
+                            </DataTemplate>
+                        </pullToRefres:PullToRefreshBox.TopIndicatorTemplate>
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="RefreshInvoked">
+                                <Core:InvokeCommandAction Command="{Binding UpdateNewsSectionCommand}"/>
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+                        <GridView x:Name="TechGridView"
                     ItemsSource="{Binding TechNewsList}"
 					ItemTemplate="{ThemeResource NewsThemeList}"  
                     ItemContainerStyle="{StaticResource GridViewItemStyle}"
-					SizeChanged="myGridView_SizeChanged" 
+					SizeChanged="myGridView_SizeChanged"
 					BorderThickness="0" Margin="0">
-                        <Interactivity:Interaction.Behaviors>
-                            <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                <Core:InvokeCommandAction Command="{Binding OpenFullNewsCommandNav}" CommandParameter="{Binding ElementName=TechGridView, Path=SelectedItem}"/>
-                            </Core:EventTriggerBehavior>
-                        </Interactivity:Interaction.Behaviors>
-                        <GridView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsWrapGrid Orientation="Horizontal"/>
-                            </ItemsPanelTemplate>
-                        </GridView.ItemsPanel>
-                        <GridView.ItemContainerTransitions>
-                            <TransitionCollection>
-                                <EntranceThemeTransition IsStaggeringEnabled="True" 
+                            <Interactivity:Interaction.Behaviors>
+                                <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                    <Core:InvokeCommandAction Command="{Binding OpenFullNewsCommandNav}" CommandParameter="{Binding ElementName=TechGridView, Path=SelectedItem}"/>
+                                </Core:EventTriggerBehavior>
+                            </Interactivity:Interaction.Behaviors>
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
+                            <GridView.ItemContainerTransitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition IsStaggeringEnabled="True" 
 								FromVerticalOffset="300" 
 								FromHorizontalOffset="0"/>
-                            </TransitionCollection>
-                        </GridView.ItemContainerTransitions>
-                    </GridView>
+                                </TransitionCollection>
+                            </GridView.ItemContainerTransitions>
+                            
+                        </GridView>
+                    </pullToRefres:PullToRefreshBox>
+                    
                 </PivotItem>
                 <!-- People section -->
                 <PivotItem Margin="0,-48,0,0">
-                    <GridView x:Name="PeopleGridView" 
-                          ItemsSource="{Binding PeopleNewsList}"
-                          ItemTemplate="{ThemeResource NewsThemeList}" 
-                              ItemContainerStyle="{StaticResource GridViewItemStyle}"
-                          SizeChanged="myGridView_SizeChanged" >
+                    <pullToRefres:PullToRefreshBox>
+                        <pullToRefres:PullToRefreshBox.TopIndicatorTemplate>
+                            <DataTemplate>
+                                <pullToRefres:PullRefreshProgressControl Progress="{Binding}"
+                                    PullToRefreshText="Потяните, чтобы обновить..."
+                                                                         ReleaseToRefreshText="Отпустите"/>
+                            </DataTemplate>
+                        </pullToRefres:PullToRefreshBox.TopIndicatorTemplate>
                         <Interactivity:Interaction.Behaviors>
-                            <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                <Core:InvokeCommandAction Command="{Binding OpenFullNewsCommandNav}" CommandParameter="{Binding ElementName=PeopleGridView, Path=SelectedItem}"/>
+                            <Core:EventTriggerBehavior EventName="RefreshInvoked">
+                                <Core:InvokeCommandAction Command="{Binding UpdateNewsSectionCommand}"/>
                             </Core:EventTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
-                        <GridView.ItemContainerTransitions>
-                            <TransitionCollection>
-                                <EntranceThemeTransition IsStaggeringEnabled="True" 
+                        <GridView x:Name="PeopleGridView" 
+                          ItemsSource="{Binding PeopleNewsList}"
+                          ItemTemplate="{ThemeResource NewsThemeList}" 
+                          ItemContainerStyle="{StaticResource GridViewItemStyle}"
+    
+                          SizeChanged="myGridView_SizeChanged" >
+                            <Interactivity:Interaction.Behaviors>
+                                <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                    <Core:InvokeCommandAction Command="{Binding OpenFullNewsCommandNav}" CommandParameter="{Binding ElementName=PeopleGridView, Path=SelectedItem}"/>
+                                </Core:EventTriggerBehavior>
+                            </Interactivity:Interaction.Behaviors>
+                            <GridView.ItemContainerTransitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition IsStaggeringEnabled="True" 
 								FromVerticalOffset="300" 
 								FromHorizontalOffset="0"/>
-                                <AddDeleteThemeTransition/>
-                                <NavigationThemeTransition/>
-                                <ContentThemeTransition/>
-                            </TransitionCollection>
-                        </GridView.ItemContainerTransitions>
-                    </GridView>
+                                    <AddDeleteThemeTransition/>
+                                    <NavigationThemeTransition/>
+                                    <ContentThemeTransition/>
+                                </TransitionCollection>
+                            </GridView.ItemContainerTransitions>
+                        </GridView>
+                    </pullToRefres:PullToRefreshBox>
                 </PivotItem>
                 <!-- Auto section -->
                 <PivotItem  Margin="0,-48,0,0">
-                    <GridView x:Name="AutoGridView" 
+                    <pullToRefres:PullToRefreshBox>
+                        <pullToRefres:PullToRefreshBox.TopIndicatorTemplate>
+                            <DataTemplate>
+                                <pullToRefres:PullRefreshProgressControl Progress="{Binding}"
+                                    PullToRefreshText="Потяните, чтобы обновить..."
+                                                                         ReleaseToRefreshText="Отпустите"/>
+                            </DataTemplate>
+                        </pullToRefres:PullToRefreshBox.TopIndicatorTemplate>
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="RefreshInvoked">
+                                <Core:InvokeCommandAction Command="{Binding UpdateNewsSectionCommand}"/>
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+                        <GridView x:Name="AutoGridView" 
                               ItemsSource="{Binding AutoNewsList}" 
                               ItemTemplate="{ThemeResource NewsThemeList}"  
                               ItemContainerStyle="{StaticResource GridViewItemStyle}"
                               SizeChanged="myGridView_SizeChanged">
-                        <Interactivity:Interaction.Behaviors>
-                            <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                <Core:InvokeCommandAction Command="{Binding OpenFullNewsCommandNav}" CommandParameter="{Binding ElementName=AutoGridView, Path=SelectedItem}"/>
-                            </Core:EventTriggerBehavior>
-                        </Interactivity:Interaction.Behaviors>
-                        <GridView.ItemContainerTransitions>
-                            <TransitionCollection>
-                                <EntranceThemeTransition IsStaggeringEnabled="True" 
+                            <Interactivity:Interaction.Behaviors>
+                                <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                    <Core:InvokeCommandAction Command="{Binding OpenFullNewsCommandNav}" CommandParameter="{Binding ElementName=AutoGridView, Path=SelectedItem}"/>
+                                </Core:EventTriggerBehavior>
+                            </Interactivity:Interaction.Behaviors>
+                            <GridView.ItemContainerTransitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition IsStaggeringEnabled="True" 
 								FromVerticalOffset="300" 
 								FromHorizontalOffset="0"/>
-                                <AddDeleteThemeTransition/>
-                                <NavigationThemeTransition/>
-                                <ContentThemeTransition/>
-                            </TransitionCollection>
-                        </GridView.ItemContainerTransitions>
-                    </GridView>
+                                    <AddDeleteThemeTransition/>
+                                    <NavigationThemeTransition/>
+                                    <ContentThemeTransition/>
+                                </TransitionCollection>
+                            </GridView.ItemContainerTransitions>
+                        </GridView>
+                    </pullToRefres:PullToRefreshBox>
                 </PivotItem>
                 <!-- House section -->
                 <PivotItem  Margin="0,-48,0,0">
-                    <GridView x:Name="HouseGridView"  
+                    <pullToRefres:PullToRefreshBox>
+                        <pullToRefres:PullToRefreshBox.TopIndicatorTemplate>
+                            <DataTemplate>
+                                <pullToRefres:PullRefreshProgressControl Progress="{Binding}"
+                                    PullToRefreshText="Потяните, чтобы обновить..."
+                                                                         ReleaseToRefreshText="Отпустите"/>
+                            </DataTemplate>
+                        </pullToRefres:PullToRefreshBox.TopIndicatorTemplate>
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="RefreshInvoked">
+                                <Core:InvokeCommandAction Command="{Binding UpdateNewsSectionCommand}"/>
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+                        <GridView x:Name="HouseGridView"  
                               ItemsSource="{Binding HouseNewsList}" 
                               ItemTemplate="{ThemeResource NewsThemeList}" 
                               ItemContainerStyle="{StaticResource GridViewItemStyle}"
                               SizeChanged="myGridView_SizeChanged">
-                        <Interactivity:Interaction.Behaviors>
-                            <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                <Core:InvokeCommandAction Command="{Binding OpenFullNewsCommandNav}" CommandParameter="{Binding ElementName=HouseGridView, Path=SelectedItem}"/>
-                            </Core:EventTriggerBehavior>
-                        </Interactivity:Interaction.Behaviors>
-                        <GridView.ItemContainerTransitions>
-                            <TransitionCollection>
-                                <EntranceThemeTransition IsStaggeringEnabled="True" 
+                            <Interactivity:Interaction.Behaviors>
+                                <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                    <Core:InvokeCommandAction Command="{Binding OpenFullNewsCommandNav}" CommandParameter="{Binding ElementName=HouseGridView, Path=SelectedItem}"/>
+                                </Core:EventTriggerBehavior>
+                            </Interactivity:Interaction.Behaviors>
+                            <GridView.ItemContainerTransitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition IsStaggeringEnabled="True" 
 								FromVerticalOffset="300" 
 								FromHorizontalOffset="0"/>
-                                <AddDeleteThemeTransition/>
-                                <NavigationThemeTransition/>
-                                <ContentThemeTransition/>
-                            </TransitionCollection>
-                        </GridView.ItemContainerTransitions>
-                    </GridView>
+                                    <AddDeleteThemeTransition/>
+                                    <NavigationThemeTransition/>
+                                    <ContentThemeTransition/>
+                                </TransitionCollection>
+                            </GridView.ItemContainerTransitions>
+                        </GridView>
+                    </pullToRefres:PullToRefreshBox>
                 </PivotItem>
             </Pivot>
             <!--#endregion-->
-            
+        
         </Grid>
     </Grid>
 </Page>

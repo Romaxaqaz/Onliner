@@ -129,6 +129,7 @@ namespace Onliner_for_windows_10.View_Model
             {
                 //remove the file with cookie
                 HttpRequest.Remoovecookie();
+                SetParamsSetting(AuthorizationKey, "false");
                 //reset splitview profile button content
                 ResetShellData();
                 NavigationService.Navigate(typeof(MainPage));
