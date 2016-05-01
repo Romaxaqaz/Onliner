@@ -14,6 +14,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml.Navigation;
 using static Onliner.SQLiteDataBase.SQLiteDB;
 using static Onliner.Setting.SettingParams;
+using Windows.UI.Xaml;
 
 namespace Onliner_for_windows_10.View_Model
 {
@@ -39,7 +40,9 @@ namespace Onliner_for_windows_10.View_Model
             FavoritePageCommand = new RelayCommand(() => FavoritePage());
             UpdateNewsSectionCommand = new RelayCommand(() => UpdateNewsSection());
             AddToDataBaseCommand = new RelayCommand<object>((obj) => AddItemToDataBas(obj));
+            ChangeDataTemplateNewsCommand = new RelayCommand(() => ChangeDataTemplateNews());
         }
+
 
         private void AddItemToDataBas(object obj)
         {
@@ -228,6 +231,27 @@ namespace Onliner_for_windows_10.View_Model
             }
         }
 
+
+        private void ChangeDataTemplateNews()
+        {
+            var defDataTemplate = GetParamsSetting(NewsDataTemplateKey);
+            if (defDataTemplate == null || defDataTemplate.Equals(TileDataTemplate))
+            {
+                SetParamsSetting(NewsDataTemplateKey, ListDataTemplate);
+                NewsDataTemplate = (DataTemplate)App.Current.Resources[ListDataTemplate];
+            }
+            if(defDataTemplate.Equals(ListDataTemplate))
+            {
+                SetParamsSetting(NewsDataTemplateKey, TileDataTemplate);
+                NewsDataTemplate = (DataTemplate)App.Current.Resources[TileDataTemplate];
+            }
+        }
+
+        private bool MobileType
+        {
+            get { return Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"); }
+        }
+
         private void FavoritePage() =>
             NavigationService.Navigate(typeof(Views.News.FavoriteNewsView));
 
@@ -247,6 +271,7 @@ namespace Onliner_for_windows_10.View_Model
         public RelayCommand TestCommand { get; private set; }
         public RelayCommand UpdateNewsSectionCommand { get; private set; }
         public RelayCommand<object> AddToDataBaseCommand { get; private set; }
+        public RelayCommand ChangeDataTemplateNewsCommand { get; private set; }
         #endregion
 
         #region List news
@@ -320,6 +345,45 @@ namespace Onliner_for_windows_10.View_Model
             {
                 Set(ref progressRing, value);
             }
+        }
+
+        private bool dataTemplateToggle = true;
+        public bool DataTemplateToggle
+        {
+            get
+            {
+                return this.dataTemplateToggle;
+            }
+            set
+            {
+                Set(ref dataTemplateToggle, value);
+            }
+        }
+
+        private DataTemplate newsDataTemplate;
+        public DataTemplate NewsDataTemplate
+        {
+            get {
+                var defDataTemplate = GetParamsSetting(NewsDataTemplateKey);
+                if (!MobileType)
+                {
+                    DataTemplateToggle = false;
+                    newsDataTemplate = (DataTemplate)App.Current.Resources[TileDataTemplate];
+                }
+                else
+                {
+                    if (defDataTemplate == null)
+                    {
+                        newsDataTemplate = (DataTemplate)App.Current.Resources[TileDataTemplate];
+                    }
+                    else
+                    {
+                        newsDataTemplate = (DataTemplate)App.Current.Resources[defDataTemplate];
+                    }
+                }
+                return newsDataTemplate;
+            }
+            set { Set(ref newsDataTemplate, value); }
         }
         #endregion
     }

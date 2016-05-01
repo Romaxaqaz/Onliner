@@ -159,7 +159,6 @@ namespace Onliner_for_windows_10.View_Model.ProfileViewModels
             return bDay;
         }
 
-
         private string GetListParams(List<HtmlNode> list)
         {
             string result = string.Empty;
@@ -234,16 +233,7 @@ namespace Onliner_for_windows_10.View_Model.ProfileViewModels
 
         private bool GetIsCheckValue(HtmlNode item, string checkParams)
         {
-            bool result = false;
-            if (item.InnerHtml.Contains(checkParams))
-            {
-                result = true;
-            }
-            else
-            {
-                result = false;
-            }
-            return result;
+            return item.InnerHtml.Contains(checkParams) == true ? true : false;
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)

@@ -7,6 +7,7 @@ using Onliner.Model.JsonModel.Message;
 using Onliner.Model.JsonModel.Weather;
 using Onliner.Model.LocalSetteing;
 using Onliner.Model.ProfileModel;
+using static Onliner.Setting.SettingParams;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -38,6 +39,7 @@ namespace Onliner.Http
         private const string ChangePassProfile = "https://profile.onliner.by/changepass";
         private const string StatusProfileApi = "https://profile.onliner.by/gapi/user/usersonline/?";
         private const string ViewNews = "https://people.onliner.by/viewcounter/view/";
+        private const string LikeApi = "https://tech.onliner.by/sdapi/news.api/tech/comments/";
         #endregion
 
         /// <summary>
@@ -51,6 +53,7 @@ namespace Onliner.Http
 
         public delegate void WebResponnceResult(string ok);
 
+        #region Properties
         private string JsonRequest = string.Empty;
         private string _resultPostRequest = string.Empty;
 
@@ -61,11 +64,14 @@ namespace Onliner.Http
             get { return _resultPostRequest; }
             set { _resultPostRequest = value; }
         }
+        #endregion
 
+        #region Constructor
         public HttpRequest()
         {
             Loadcookie("cookie");
         }
+        #endregion
 
         /// <summary>
         ///  sample GET requset
@@ -106,6 +112,10 @@ namespace Onliner.Http
             return output.ToString();
         }
 
+        /// <summary>
+        /// Get request
+        /// </summary>
+        /// <param name="url"></param>
         public async void GetRequestOnliner(string url)
         {
             try
@@ -118,6 +128,11 @@ namespace Onliner.Http
             catch (WebException ex) { await Message(ex.ToString()); }
         }
 
+        /// <summary>
+        /// Get byte array request
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
         public async Task<byte[]> GetRequestByteOnliner(string url)
         {
             byte[] result = null;
@@ -283,6 +298,11 @@ namespace Onliner.Http
             return result;
         }
 
+        /// <summary>
+        /// Shop counter
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<string> ShopCount(string userId)
         {
             if (!HasInternet()) throw new WebException();
@@ -316,6 +336,12 @@ namespace Onliner.Http
             return bestrateResponse;
         }
 
+        /// <summary>
+        /// Get request
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="qStringParam"></param>
+        /// <returns></returns>
         public async Task<string> GetRequest(string url, string qStringParam)
         {
             string result = string.Empty;
@@ -345,6 +371,8 @@ namespace Onliner.Http
         /// </summary>
         public async Task<WeatherJSon> Weather(string townID = "26850")
         {
+            var town = GetParamsSetting(TownWeatherIdKey);
+            if (town != null) townID = town.ToString();
             WeatherJSon weather = null;
             try
             {
@@ -505,11 +533,6 @@ namespace Onliner.Http
 
                 postRequest.Content = new System.Net.Http.StringContent(formdata, UnicodeEncoding.UTF8, "application/x-www-form-urlencoded");
                 response = httpClient.SendAsync(postRequest).Result;
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    MessageDialog sdasd = new MessageDialog("Save");
-                    await sdasd.ShowAsync();
-                }
             }
             catch (WebException ex)
             {
@@ -518,9 +541,10 @@ namespace Onliner.Http
         }
 
         /// <summary>
-        /// Save cookie after authorization
+        /// Status profile
         /// </summary>
-
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task StatusSet(string userId)
         {
             string url = StatusProfileApi + userId;
@@ -533,6 +557,11 @@ namespace Onliner.Http
                  postData.ToString());
         }
 
+        /// <summary>
+        /// News viewer
+        /// </summary>
+        /// <param name="newsId"></param>
+        /// <returns></returns>
         public async Task ViewNewsSet(string newsId)
         {
             string url = ViewNews;
@@ -557,8 +586,12 @@ namespace Onliner.Http
 
         }
 
-
-
+        /// <summary>
+        /// Clear cookie
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="rcookie"></param>
+        /// <param name="uri"></param>
         private async void Savecookie(string filename, CookieContainer rcookie, Uri uri)
         {
             StorageFolder localFolder = ApplicationData.Current.LocalFolder;
@@ -616,6 +649,26 @@ namespace Onliner.Http
             await msg.ShowAsync();
         }
 
+        /// <summary>
+        /// Like request
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <param name="method">POST like, DELETE unlike</param>
+        /// <returns></returns>
+        public async Task<string> LikeComment(string userID, HttpMethod method)
+        {
+            string UserApi = LikeApi + userID + "/like";
+            if (!HasInternet()) throw new WebException();
+            HttpClientHandler handler = new HttpClientHandler();
+            if (CookieSession != null)
+            {
+                handler.CookieContainer = CookieSession;
+            }
+            HttpClient httpClient = new HttpClient(handler);
+            var response = httpClient.SendAsync(new HttpRequestMessage(method, UserApi)).Result;
+            var resultJson = await response.Content.ReadAsStringAsync();
+            return resultJson;
+        }
 
         private string GetApionLinks(string link)
         {

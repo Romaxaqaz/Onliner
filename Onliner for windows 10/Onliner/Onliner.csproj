@@ -114,10 +114,12 @@
     <Compile Include="Converters\For Messages\UnreadVisibilityConverter.cs" />
     <Compile Include="Converters\ImageUrlConverter.cs" />
     <Compile Include="Converters\IndexImageTonameImageConverter.cs" />
+    <Compile Include="Converters\ScrubHtmlTag.cs" />
     <Compile Include="Converters\SelectionChanged\SelectionChangedConverter.cs" />
     <Compile Include="Converters\TextIcoNewsConverter.cs" />
     <Compile Include="Converters\TextTrimmingConverter.cs" />
     <Compile Include="Converters\UpdateLogoImage.cs" />
+    <Compile Include="Expansion\DeviceType.cs" />
     <Compile Include="Helpers\MemoryRandomAccessStream.cs" />
     <Compile Include="Helpers\WebViewHelper.cs" />
     <Compile Include="Http\HttpRequest.cs" />
@@ -137,6 +139,8 @@
     <Compile Include="Model\JsonModel\Profile\EditProfileData.cs" />
     <Compile Include="Model\JsonModel\Weather\WeatherJSon.cs" />
     <Compile Include="Model\LocalSetteing\LocalSettingParams.cs" />
+    <Compile Include="Model\Message\IMessageModel.cs" />
+    <Compile Include="Model\Message\MessageModel.cs" />
     <Compile Include="Model\News\CategoryNews.cs" />
     <Compile Include="Model\News\CommentsItem.cs" />
     <Compile Include="Model\News\FullItemNews.cs" />

@@ -22,7 +22,22 @@ namespace Onliner.Setting
         public const string AutoLoadNewsAtStartUpAppKey = "AutoLoadNewsAtStartUpApp";
         public const string LoadImageKey = "LoadImage";
         public const string ThemeAppKey = "ThemeApp";
+
+        //app menu
+        public const string TownWeatherIdKey = "TownWeatherId";
+        public const string CurrentTypeKey = "CurrentType";
+        public const string BankActionKey = "BankAction";
+
         public const string NumberOfNewsitemsToTheCacheKey = "NumberOfNewsitemsToTheCache";
+        public const string NewsDataTemplateKey = "NewsDataTemplate";
+
+        public const string ToggleSwitchNewsDataTemplateTypeKey = "ToggleSwitchNewsDataTemplateType";
+
+        //type news section
+        public const string TileDataTemplate = "NewsThemeList";
+        public const string ListDataTemplate = "CompactNewsDataTemplate";
+
+
         public static int NewsSectionIndex { get; set; }
 
 

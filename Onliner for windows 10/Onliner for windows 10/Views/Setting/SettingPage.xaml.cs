@@ -35,5 +35,6 @@ namespace Onliner_for_windows_10.Views.Setting
         {
             Frame.Navigate(typeof(PrivacyPolicy));
         }
+
     }
 }

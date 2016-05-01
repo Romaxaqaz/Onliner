@@ -10,6 +10,7 @@
     xmlns:VM="using:Onliner_for_windows_10.View_Model"
     xmlns:MessagePage="using:Onliner_for_windows_10.Model.Message"
     xmlns:SettingPage="using:Onliner_for_windows_10.Views.Setting"
+    xmlns:KursPage="using:Onliner_for_windows_10.Views.KursCurrent"
     xmlns:ProfilePage="using:Onliner_for_windows_10.ProfilePage"
     xmlns:UserControl="using:Onliner_for_windows_10.UserControls"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
@@ -29,16 +30,25 @@
                     NavButtonBackground="{ThemeResource BackGroundCustomHeaderColorBrush}"
                     HamburgerBackground="{ThemeResource BackGroundCustomHeaderColorBrush}"
                     SecondarySeparator="{ThemeResource ForegroundCustomBlackBrush}"
-                    NavButtonForeground="{ThemeResource ForegroundCustomOtherBlackBrush}"
-                    NavButtonCheckedBackground="Orange"
-                    NavButtonCheckedForeground="White"
-                    VisualStateNarrowMinWidth="0"
-                    VisualStateNormalMinWidth="800" IsOpen="True">
+                    NavButtonForeground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
+                    NavButtonHoverForeground="Black"
+                    NavButtonHoverBackground="Yellow"
+                    NavButtonPressedForeground="White"
+                    NavButtonPressedBackground="Yellow"
+                    NavButtonCheckedForeground="Black"
+                    NavButtonCheckedBackground="Yellow"
+                    OpenCloseMode="Swipe"
+                    VisualStateNarrowMinWidth="1"
+                    VisualStateNormalMinWidth="800">
         <controls:HamburgerMenu.PrimaryButtons>
             <!--  Profile page  -->
             <controls:HamburgerButtonInfo x:Name="Test" PageType="ProfilePage:ProfilePage">
-                <StackPanel Name="ProfileStackpanel" Orientation="Horizontal" VerticalAlignment="Center" BorderBrush="LightGray">
-                    <Ellipse Width="30" Height="30"  Margin="10,5,0,0" VerticalAlignment="Center">
+                <StackPanel Name="ProfileStackpanel" 
+                            Height="48"
+                            Orientation="Horizontal" 
+                            VerticalAlignment="Center" 
+                            BorderBrush="LightGray">
+                    <Ellipse Width="30" Height="30"  Margin="10,0,0,0" VerticalAlignment="Center">
                         <Ellipse.Fill>
                             <ImageBrush x:Name="ImageS" ImageSource="{Binding AvatarUrl}" />
                         </Ellipse.Fill>
@@ -56,22 +66,8 @@
                     <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="Новости" />
                 </StackPanel>
             </controls:HamburgerButtonInfo>
-
-            <!-- <controls:HamburgerButtonInfo PageType="local:MainPage">
-                <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Width="48" Height="48" Symbol="Shop" />
-                    <Grid Margin="12,0,0,0" VerticalAlignment="Center" Width="200">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="Каталог"/>
-                        <TextBlock Text="1" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Margin="2" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="1"/>
-                    </Grid>
-                </StackPanel>
-            </controls:HamburgerButtonInfo> -->
             <!--  Weather page  -->
-            <controls:HamburgerButtonInfo>
+            <controls:HamburgerButtonInfo ClearHistory="True" PageType="local2:WeatherPage">
                 <StackPanel Name="WeatherStackpanel" Orientation="Horizontal">
                     <SymbolIcon Width="48" Height="48" Symbol="World"  />
                     <Grid Margin="12,0,0,0" VerticalAlignment="Center" Width="200">
@@ -80,14 +76,17 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="Погода"/>
-                        <TextBlock Margin="2" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="1">
+                        <TextBlock Margin="2,2,5,2"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Right"
+                                   Grid.Column="1">
                        <Run Text="{Binding Weather}"/>
                         </TextBlock>
                     </Grid>
                 </StackPanel>
             </controls:HamburgerButtonInfo>
             <!--  Message page  -->
-            <controls:HamburgerButtonInfo>
+            <controls:HamburgerButtonInfo PageType="MessagePage:MessagePage">
                 <controls:HamburgerButtonInfo.Content>
                     <StackPanel Name="MessageStackpanel" Orientation="Horizontal">
                         <SymbolIcon Width="48" Height="48" Symbol="Mail" />
@@ -97,14 +96,18 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Text="Сообщения" Grid.Column="0"/>
-                            <TextBlock Text="{Binding Message}" Margin="2" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="1">
+                            <TextBlock Text="{Binding Message}"
+                                       Margin="2,2,5,2"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Right"
+                                       Grid.Column="1">
                             </TextBlock>
                         </Grid>
                     </StackPanel>
                 </controls:HamburgerButtonInfo.Content>
             </controls:HamburgerButtonInfo>
             <!--  Current page  -->
-            <controls:HamburgerButtonInfo x:Name="CurrentButton">
+            <controls:HamburgerButtonInfo x:Name="CurrentButton" ClearHistory="True" PageType="KursPage:KursPage">
                 <StackPanel Name="CurrentStackpanel" Orientation="Horizontal">
                     <SymbolIcon Width="48" Height="48" Symbol="Tag" />
                     <Grid Margin="12,0,0,0" VerticalAlignment="Center" Width="200">
@@ -113,7 +116,11 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="Курсы валют"/>
-                        <TextBlock Text="{Binding Current}" Margin="2" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="1">
+                        <TextBlock Text="{Binding Current}"
+                                   Margin="2,2,5,2"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Right" 
+                                   Grid.Column="1">
 
                         </TextBlock>
                     </Grid>
@@ -130,13 +137,13 @@
 
         <controls:HamburgerMenu.SecondaryButtons>
             <!--  Setting page  -->
-            <controls:HamburgerButtonInfo x:Name="SettingsButton" PageType="SettingPage:SettingPage">
+            <controls:HamburgerButtonInfo x:Name="SettingsButton" ClearHistory="True" PageType="SettingPage:SettingPage">
                 <controls:HamburgerButtonInfo.NavigationTransitionInfo>
                     <SuppressNavigationTransitionInfo />
                 </controls:HamburgerButtonInfo.NavigationTransitionInfo>
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Width="48" Height="48" Symbol="Setting" />
-                    <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="Settings" />
+                    <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="Настройки" />
                 </StackPanel>
             </controls:HamburgerButtonInfo>
         </controls:HamburgerMenu.SecondaryButtons>

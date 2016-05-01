@@ -350,7 +350,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid>
+    <Grid Background="{ThemeResource BackGroundCustomHeaderColorBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition/>
@@ -393,10 +393,8 @@
                              FontWeight="Bold"
                              Frame="{x:Bind Frame}"
                              Background="{ThemeResource BackGroundCustomHeaderColorBrush}"
-                             Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
-                             
-                             VisualStateNarrowMinWidth="1"
-                             BackButtonVisibility="Collapsed">
+                             Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"     
+                             VisualStateNarrowMinWidth="1">
             <controls:PageHeader.SecondaryCommands>
                 <AppBarButton Name="EditProfile" Label="Редактировать профиль" Foreground="Black" Icon="Setting" Command="{Binding EditProfileCommand}" Visibility="Collapsed"/>
                 <AppBarButton Name="PinWindow" Label="Найти пользователя" Icon="OtherUser" Foreground="Black" Command="{Binding SearchUsersCommand}" Visibility="Collapsed"/>

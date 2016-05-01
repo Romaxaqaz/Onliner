@@ -13,195 +13,127 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <Style x:Key="HeaderListViewItemContainerStyle"
-               TargetType="ListViewItem">
-            <Setter Property="Background"
-                    Value="Transparent" />
-            <Setter Property="Foreground"
-                    Value="White" />
-            <Setter Property="HorizontalContentAlignment"
-                    Value="Center" />
-            <Setter Property="VerticalContentAlignment"
-                    Value="Top" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListViewItem">
-                        <Grid x:Name="PART_LayoutRoot"
-                              HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                              VerticalAlignment="{TemplateBinding VerticalAlignment}">
+        <x:String x:Key="Header">Социум / ЧП</x:String>
+        <x:String x:Key="Title">На башенный кран стадиона «Динамо» забрался витебский рабочий. Он требует выплатить ему зарплату</x:String>
+        <x:String x:Key="Description">Около 13:00 на одном из башенных кранов возле стадиона «Динамо» заметили неизвестного человека. Оказалось, что это не рабочий со стройки. По предварительным данным, парень, который забрался на кран, — 25-летний строитель из Витебска. На место прибыли расчеты МЧС и сотрудники милиции. По словам очевидцев, намерений сброситься с крана у молодого человека нет и опасности для других он не представляет. По другой версии, он грозит сброситься.</x:String>
+        <x:String x:Key="Footer">Сегодня в 15:02. Источник: Настасья Занько, Александр Владыко</x:String>
+        <Storyboard x:Name="Storyboard1">
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Grid.BorderThickness)" Storyboard.TargetName="grid">
+                <DiscreteObjectKeyFrame KeyTime="0">
+                    <DiscreteObjectKeyFrame.Value>
+                        <Thickness>0</Thickness>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.5">
+                    <DiscreteObjectKeyFrame.Value>
+                        <Thickness>0</Thickness>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="0:0:1">
+                    <DiscreteObjectKeyFrame.Value>
+                        <Thickness>0</Thickness>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="grid">
+                <EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0.5"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="grid">
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.5">
+                    <DiscreteObjectKeyFrame.Value>
+                        <Visibility>Visible</Visibility>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="0:0:1">
+                    <DiscreteObjectKeyFrame.Value>
+                        <Visibility>Visible</Visibility>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Name="Storyboard2">
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(Control.BorderThickness)" Storyboard.TargetName="listView">
+                <DiscreteObjectKeyFrame KeyTime="0">
+                    <DiscreteObjectKeyFrame.Value>
+                        <Thickness>0,50,0,0</Thickness>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="0:0:0.5">
+                    <DiscreteObjectKeyFrame.Value>
+                        <Thickness>0,25,0,0</Thickness>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="0:0:1">
+                    <DiscreteObjectKeyFrame.Value>
+                        <Thickness>0</Thickness>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
+        </Storyboard>
 
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="SelectionStates">
-                                    <VisualState x:Name="Selected">
-                                        <VisualState.Setters>
-                                            <Setter Target="PivotIndicator.(UIElement.Opacity)" Value="1"/>
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                    <VisualState x:Name="SelectedUnfocused"/>
 
-                                    <VisualState x:Name="Unfocused">
-                                        <VisualState.Setters>
-                                            <Setter Target="PivotIndicator.(UIElement.Opacity)" Value="0"/>
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
 
-                            <Grid x:Name="PART_BackgroundGrid">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition Height="auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid x:Name="PART_AnimationGrid"
-                                      Background="Gray"
-                                      VerticalAlignment="Bottom"  Grid.Row="0"/>
-                                <ContentControl x:Name="PART_Content" Opacity="80"
-                                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                Content="{TemplateBinding Content}"
-                                                Background="{TemplateBinding Background}"
-                                                Foreground="{TemplateBinding Foreground}"
-                                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                VerticalAlignment="Center"
-                                                BorderBrush="{TemplateBinding BorderBrush}" Grid.Row="0"/>
-                                <Rectangle x:Name="PivotIndicator" Height="3" Grid.Row="1" Fill="Red" Opacity="0"/>
-                            </Grid>
 
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <DataTemplate x:Key="TestData">
-            <TextBlock Text="{Binding Text}"/>
-        </DataTemplate>
     </Page.Resources>
 
 
-    <Grid Background="Aqua" Width="350" >
-        <!--<Button Width="200" Height="100" Content="Test" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Button_Click"/>--> 
-
-        <Grid x:Name="ActualWidthStack"  
-        		Margin="0" 
-        		Background="{ThemeResource BackGroundCustomNewsItemColorBrush}" 
-        		BorderThickness="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="15"/>
-                <RowDefinition Height="23"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="100"/>
-                <RowDefinition Height="20"/>
-            </Grid.RowDefinitions>
-            <Grid.ChildrenTransitions>
-                <TransitionCollection>
-                    <EdgeUIThemeTransition Edge="Bottom"/>
-                </TransitionCollection>
-            </Grid.ChildrenTransitions>
-            <TextBlock x:Name="ThemeTextBlock" 
-        			Text="Социум / Таможня, Граница, Деньги" 
-        			Foreground="#107fdc" Margin="3,0,0,0"
-        			FontSize="12" Grid.Row="0" Style="{ThemeResource CaptionTextBlockStyle}"/>
-            <TextBlock x:Name="titleTextBlock"
-        			Text="Первый пошел: при пересечении границы у белоруса изъяли 130 тысяч незадекларированных евро. Теперь брестчанину грозит тюремный срок" 
-        			Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
-                    TextWrapping="WrapWholeWords"
-                    TextTrimming="WordEllipsis"
-        			FontSize="16" Margin="3,0,0,3"
-                    ContinuumNavigationTransitionInfo.IsEntranceElement="True" Grid.Row="1" Style="{ThemeResource BodyTextBlockStyle}"/>
-            <Grid Grid.Row="2">
-                <Image Name="ImageListSectionNews" Opacity="100" Source="ms-appx:///Assets/SplashScreen.png">
-                </Image>
-                <Grid Visibility="{Binding InDataBase}">
-                    <Polygon Points="0,0 20,0 0,20" Stroke="Yellow" Fill="Yellow"/>
-                    <TextBlock Text="&#xE0B4;" Foreground="White" FontSize="10" FontFamily="Segoe MDL2 Assets"/>
+    <Grid Background="White">
+        <ListView>
+            <ListView.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Валюта" FontWeight="Bold" Margin="5" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Покупка" FontWeight="Bold" Grid.Column="1" Margin="5" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Продажа" FontWeight="Bold" Grid.Column="2" Margin="5" HorizontalAlignment="Center"/>
+                    <TextBlock Text="НБРБ" FontWeight="Bold" Grid.Column="3" Margin="5" HorizontalAlignment="Center"/>
                 </Grid>
-         
-            </Grid>
-            <Grid HorizontalAlignment="Stretch" Grid.Row="3">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <StackPanel Grid.Column="0" 
-        				Orientation="Horizontal" 
-        				Margin="10" 
-        				VerticalAlignment="Center" 
-        				HorizontalAlignment="Center">
-                    <TextBlock FontSize="16" 
-        					Text="&#xE890;" 
-        					FontFamily="Segoe MDL2 Assets"
-                                   Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
-                    <TextBlock Text="{Binding Popularcount, Converter={StaticResource TextIcoNewsConverter}}" 
-        					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
-        					TextWrapping="Wrap" 
-        					FontSize="12" 
-        					Margin="3,0,0,0"/>
-                </StackPanel>
-                <StackPanel Grid.Column="1" 
-        				Orientation="Horizontal" 
-        				Margin="5" 
-        				VerticalAlignment="Center" 
-        				HorizontalAlignment="Center">
-                    <TextBlock FontSize="16" 
-        					Text="&#xE8F2;" 
-        					FontFamily="Segoe MDL2 Assets" 
-        					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
-                    <TextBlock Text="{Binding CountViews}" 
-        					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
-        					TextWrapping="Wrap" 
-        					FontSize="12" 
-        					Margin="3,0,0,0"/>
-                </StackPanel>
-                <StackPanel Grid.Column="2" 
-        				Orientation="Horizontal" 
-        				Margin="5" 
-        				VerticalAlignment="Center" 
-        				HorizontalAlignment="Center">
-                    <TextBlock FontSize="16" 
-        					Text="&#xE114;" 
-        					FontFamily="Segoe MDL2 Assets"
-                                   Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
-                    <TextBlock Text="{Binding Bmediaicon}" 
-        					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
-        					TextWrapping="Wrap" 
-        					FontSize="12" 
-        					Margin="3,0,0,0"/>
-                </StackPanel>
-                <StackPanel Grid.Column="3" 
-        				Orientation="Horizontal" 
-        				Margin="5" 
-        				VerticalAlignment="Center" 
-        				HorizontalAlignment="Center">
-                    <TextBlock FontSize="16" 
-        					Text="&#xE116;" 
-        					FontFamily="Segoe MDL2 Assets"
-                                   Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
-                    <TextBlock Text="{Binding Mediaicongray}" 
-        					Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" 
-        					TextWrapping="Wrap" 
-        					FontSize="12" Margin="3,0,0,0"/>
-                </StackPanel>
-
-            </Grid>
-            <TextBlock x:Name="subtitleTextBlock" 
-        			Text="4 апреля вступили в силу изменения и дополнения в Уголовный и Уголовно-процессуальный кодексы Республики Беларусь. Теперь при пересечении белорусского участка таможенной границы Евразийского экономического союза с незадекларированными наличными в размере, превышающем в эквиваленте 30 тысяч долларов, предусмотрена уголовная ответственность в виде штрафа, или ограничения свободы на срок от 2 до 5 лет, или лишения свободы на тот же срок. Уже 5 апреля на въезде в Беларусь в пункте пропуска «Домачево» деньги нашли у брестчанина." 
-        			Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
-        			TextWrapping="WrapWholeWords" 
-        			TextTrimming="WordEllipsis"
-        			Padding="5" 
-        			FontSize="12"  
-        			TextAlignment="Justify" Grid.Row="4"/>
-            <TextBlock x:Name="descriptionTextBlock" 
-        			Text="Сегодня в 13:16. Просмотров: 1860. Автор: Александр Владыко"  TextAlignment="Right"
-        			Foreground="Gray" Padding="2"
-        			TextWrapping="WrapWholeWords" FontSize="12" Grid.Row="5" Style="{ThemeResource BaseTextBlockStyle}"/>
-        </Grid>
-        <Button Height="100" Width="100" Background="red" Click="Button_Click"/>
+            </ListView.Header>
+            <ListView.Items>
+                <Border BorderThickness="0,0,0,1" BorderBrush="Gray">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="USD" FontWeight="Bold" Margin="5" HorizontalAlignment="Center"/>
+                        <TextBlock Text="19000 BYR" Grid.Column="1" Margin="5" HorizontalAlignment="Center"/>
+                    <TextBlock Text="20000 BYR" Grid.Column="2" Margin="5" HorizontalAlignment="Center"/>
+                    <TextBlock Text="20000 BYR" Grid.Column="3" Margin="5" HorizontalAlignment="Center"/>
+                </Grid>
+                </Border>
+                <Border BorderThickness="0,0,0,1" BorderBrush="Gray">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="RUB" FontWeight="Bold" Margin="5" HorizontalAlignment="Center"/>
+                        <TextBlock Text="190 BYR" Grid.Column="1" Margin="5" HorizontalAlignment="Center"/>
+                        <TextBlock Text="200 BYR" Grid.Column="2" Margin="5" HorizontalAlignment="Center"/>
+                        <TextBlock Text="200 BYR" Grid.Column="3" Margin="5" HorizontalAlignment="Center"/>
+                    </Grid>
+                </Border>
+            </ListView.Items>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Padding" Value="0"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            
+        </ListView>
+        
     </Grid>
 
 </Page>

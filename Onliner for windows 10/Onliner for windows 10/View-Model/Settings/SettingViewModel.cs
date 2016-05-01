@@ -1,8 +1,11 @@
 ﻿using MyToolkit.Command;
+using Newtonsoft.Json;
+using Onliner.Expansion;
 using Onliner.SQLiteDataBase;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using Template10.Mvvm;
 using Windows.Foundation.Metadata;
@@ -13,11 +16,35 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using static Onliner.Setting.SettingParams;
+using System.Threading.Tasks;
+using Onliner.Http;
+using System.Reflection;
+using System.Collections;
 
 namespace Onliner_for_windows_10.View_Model.Settings
 {
     public class SettingViewModel : ViewModelBase
     {
+        private Dictionary<string, string> bankActionDictionary = new Dictionary<string, string>
+        {
+            ["НБРБ"] = "nbrb",
+            ["Продажа"] = "sale",
+            ["Покупка"] = "buy"
+        };
+
+        public Dictionary<string, string> BankActionDictionary
+        {
+            get { return bankActionDictionary; }
+        }
+
+        private List<string> currentTypeList = new List<string> { "USD", "EUR", "RUB" };
+        public List<string> CurrentTypeList
+        {
+            get { return currentTypeList; }
+        }
+
+        private HttpRequest requset = new HttpRequest();
+
         #region Constructor
         public SettingViewModel()
         {
@@ -26,14 +53,46 @@ namespace Onliner_for_windows_10.View_Model.Settings
             PivotSelectedIndexCommand = new RelayCommand<object>((obj) => PivotSelectedIndexEvent(obj));
             ChangedNumberNewsCacheCommand = new RelayCommand(() => ChangedNumberNewsCache());
             ClearCacheCommand = new RelayCommand(() => CleadCache());
+            ChangeTown = new RelayCommand<object>((obj) => SetTownIDWeather(obj));
+            CurrentTypeCommand = new RelayCommand<object>((obj) => CurrentTypeChanged(obj));
+            BankActionCommand = new RelayCommand<object>((obj) => BankActionChanged(obj));
         }
+
+        private void CurrentTypeChanged(object obj)
+        {
+            var current = obj.ToString();
+            SetParamsSetting(CurrentTypeKey, current);
+            CurrentType = current;
+            UpdateCurrent();
+        }
+
+        private void BankActionChanged(object obj)
+        {
+            var type = obj.GetType();
+            var key = type.GetProperty("Key");
+            var value = type.GetProperty("Value");
+            var keyObj = key.GetValue(obj, null);
+            var valueObj = value.GetValue(obj, null);
+
+            SetParamsSetting(BankActionKey, valueObj.ToString());
+            BankAction = valueObj.ToString();
+            UpdateCurrent();
+        }
+
+        private async void UpdateCurrent()
+        {
+            var newCurent = await requset.Bestrate(CurrentType, BankAction);
+            NewCurrent = newCurent.amount;
+            ShellViewModel.Instance.Current = newCurent.amount;
+        }
+
         #endregion
 
         #region Methods
         private void PivotSelectedIndexEvent(object obj)
         {
             var index = (int)obj;
-            switch(index)
+            switch (index)
             {
                 case 0:
                     break;
@@ -91,6 +150,28 @@ namespace Onliner_for_windows_10.View_Model.Settings
         {
             var index = NumberNewsCache[NewsItemloadIndex];
             SetParamsSetting(NumberOfNewsitemsToTheCacheKey, index);
+        }
+
+        private async void SetTownIDWeather(object obj)
+        {
+            TownWeatherID town = obj as TownWeatherID;
+            SetParamsSetting(TownWeatherIdKey, town.ID);
+            var weather = await requset.Weather(town.ID);
+            ShellViewModel.Instance.Weather = weather == null ? (string)GetParamsSetting(LastWeatherKey) : weather.now.temperature;
+        }
+
+        private int GetIndex(string townid)
+        {
+            int id = 0;
+            foreach (var item in TownList)
+            {
+                if (item.ID.Equals(townid))
+                {
+                    return id;
+                }
+                id++;
+            }
+            return id;
         }
         #endregion
 
@@ -205,13 +286,8 @@ namespace Onliner_for_windows_10.View_Model.Settings
         private void CheckUncheckAutoLoadnews(object obj)
         {
             object boolValue = null;
-
             switch ((string)obj)
             {
-                case "AutoUpdateCheckBox":
-                    boolValue = GetParamsSetting(AutoLoadNewsAtStartUpAppKey);
-                    AutoUpdateCheked = ChangeBool(boolValue);
-                    break;
                 case "LoadImageCheckBox":
                     boolValue = GetParamsSetting(LoadImageKey);
                     LoadImage = ChangeBool(boolValue);
@@ -233,7 +309,7 @@ namespace Onliner_for_windows_10.View_Model.Settings
             get
             {
                 var boolValue = GetParamsSetting(AutoLoadNewsAtStartUpAppKey);
-                if (boolValue == null) boolValue = false;
+                if (boolValue == null) boolValue = true;
                 autoUpdateCheked = Convert.ToBoolean(boolValue);
                 return autoUpdateCheked;
             }
@@ -303,13 +379,140 @@ namespace Onliner_for_windows_10.View_Model.Settings
             set { Set(ref cacheSize, value); }
         }
 
-        private int pivotSelectedIndex=0;
+        private int pivotSelectedIndex = 0;
         public int PivotSelectedIndex
         {
             get { return pivotSelectedIndex; }
             set { Set(ref pivotSelectedIndex, value); }
         }
 
+        private int townWeatherIdindex;
+        public int TownWeatherIdindex
+        {
+            get
+            {
+                var town = GetParamsSetting(TownWeatherIdKey);
+                if (town == null) return 0;
+                townWeatherIdindex = GetIndex(town.ToString());
+                return townWeatherIdindex;
+            }
+            set
+            {
+                Set(ref townWeatherIdindex, value);
+            }
+        }
+
+        private bool toggleSwitchNewsDataTemplateType = true;
+        public bool ToggleSwitchNewsDataTemplateType
+        {
+            get
+            {
+                var toggle = GetParamsSetting(ToggleSwitchNewsDataTemplateTypeKey);
+                if (toggle == null) return true;
+                toggleSwitchNewsDataTemplateType = Convert.ToBoolean(toggle);
+                return toggleSwitchNewsDataTemplateType;
+            }
+            set
+            {
+                SetDataTemplateType(value);
+                SetParamsSetting(ToggleSwitchNewsDataTemplateTypeKey, value.ToString());
+                Set(ref toggleSwitchNewsDataTemplateType, value);
+            }
+        }
+
+        private void SetDataTemplateType(bool value)
+        {
+            if (value == true)
+            {
+                SetParamsSetting(NewsDataTemplateKey, TileDataTemplate);
+            }
+            else
+            {
+                SetParamsSetting(NewsDataTemplateKey, ListDataTemplate);
+            }
+        }
+
+        public bool ToggleSwitchNewsDataTemplateTypeIsEnable
+        {
+            get
+            {
+                if (DeviceType.IsMobile)
+                    return true;
+                return false;
+            }
+        }
+
+        private string currentType;
+        public string CurrentType
+        {
+            get
+            {
+                var current = GetParamsSetting(CurrentTypeKey);
+                if (current == null) return "USD";
+                return current.ToString();
+            }
+            set { Set(ref currentType, value); }
+        }
+
+        private string bankAction;
+        public string BankAction
+        {
+            get
+            {
+                var bankAction = GetParamsSetting(BankActionKey);
+                if (bankAction == null) return "nbrb";
+                return bankAction.ToString();
+            }
+            set { Set(ref bankAction, value); }
+        }
+
+        private string newCurrent;
+        public string NewCurrent
+        {
+            get { return newCurrent; }
+            set { Set(ref newCurrent, value); }
+        }
+
+
+        private int currentIndex;
+        public int CurrentIndex
+        {
+            get
+            {
+                var town = GetParamsSetting(CurrentTypeKey);
+                if (town == null) return 0;
+                currentIndex = currentTypeList.IndexOf(town.ToString());
+                return currentIndex;
+            }
+            set
+            {
+                Set(ref currentIndex, value);
+            }
+        }
+
+        private int bankActionIndex;
+        public int BankActionIndex
+        {
+            get
+            {
+                int index = 0;
+                var town = GetParamsSetting(BankActionKey);
+                if (town == null) return 0;
+                foreach (var item in BankActionDictionary)
+                {
+                    if (item.Value.Equals(town.ToString()))
+                    {
+                        return index;
+                    }
+                    index++;
+                }
+                return bankActionIndex;
+            }
+            set
+            {
+                Set(ref bankActionIndex, value);
+            }
+        }
 
         #endregion
 
@@ -319,6 +522,9 @@ namespace Onliner_for_windows_10.View_Model.Settings
         public RelayCommand ChangedNumberNewsCacheCommand { get; private set; }
         public RelayCommand<object> PivotSelectedIndexCommand { get; private set; }
         public RelayCommand ClearCacheCommand { get; private set; }
+        public RelayCommand<object> ChangeTown { get; private set; }
+        public RelayCommand<object> CurrentTypeCommand { get; private set; }
+        public RelayCommand<object> BankActionCommand { get; private set; }
         #endregion
 
         #region Collections
@@ -327,6 +533,20 @@ namespace Onliner_for_windows_10.View_Model.Settings
         public ObservableCollection<string> NumberNewsCache
         {
             get { return numberNewsCache; }
+        }
+
+        public ObservableCollection<TownWeatherID> TownList
+        {
+            get
+            {
+                string fileContent;
+                var fileStream = File.OpenRead("Files/Weather/" + "townWeather.txt");
+                using (StreamReader reader = new StreamReader(fileStream))
+                {
+                    fileContent = reader.ReadToEnd();
+                }
+                return JsonConvert.DeserializeObject<ObservableCollection<TownWeatherID>>(fileContent);
+            }
         }
         #endregion
     }

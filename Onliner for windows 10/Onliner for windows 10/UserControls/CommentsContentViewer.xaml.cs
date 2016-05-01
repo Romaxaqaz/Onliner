@@ -136,7 +136,15 @@ namespace Onliner_for_windows_10.UserControls
 
                 foreach (var item in liststring)
                 {
-                    if (item.Tag.Equals("blockquote"))
+                    if (item.Tag.Equals("p"))
+                    {
+                        HtmlView htmlViewr = new HtmlView();
+                        htmlViewr.Html = item.Content;
+                        htmlViewr.FontSize = 14;
+                        htmlViewr.Foreground = (Brush)(Application.Current.Resources["ForegroundCustomOtherBlackBrush"]);
+                        gridC.Children.Add(htmlViewr);
+                    }
+                    else if (item.Tag.Equals("blockquote"))
                     {
                         htmlDoc.LoadHtml(item.Content);
                         List<HtmlNode> countBlo = htmlDoc.DocumentNode.Descendants("blockquote").ToList();
@@ -144,14 +152,6 @@ namespace Onliner_for_windows_10.UserControls
                         var bordres = ReturnBorderComplete(item.Content);
                         gridC.Children.Add(bordres);
                         countStep = 0;
-                    }
-                    else if (item.Tag.Equals("p"))
-                    {
-                        HtmlView htmlViewr = new HtmlView();
-                        htmlViewr.Html = item.Content;
-                        htmlViewr.FontSize = 14;
-                        htmlViewr.Foreground = (Brush)(Application.Current.Resources["ForegroundCustomOtherBlackBrush"]);
-                        gridC.Children.Add(htmlViewr);
                     }
 
                 }
@@ -201,8 +201,11 @@ namespace Onliner_for_windows_10.UserControls
                     var htmlVewerPost = GetHtmlControl(sss);
                     stackPanel.Children.Add(htmlVewerPost);
 
-                    var buff = ReturnBorderComplete(htmlDoc.DocumentNode.Descendants("div").FirstOrDefault().Descendants("blockquote").FirstOrDefault().InnerHtml);
-                    stackPanel.Children.Add(buff);
+
+                    var block = htmlDoc.DocumentNode.Descendants("div").FirstOrDefault().Descendants("blockquote").FirstOrDefault();
+
+                    if(block!=null)
+                    stackPanel.Children.Add(ReturnBorderComplete(block.InnerHtml));
                 }
 
 

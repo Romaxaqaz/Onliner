@@ -1,10 +1,11 @@
 ﻿{
   "dependencies": {
     "HtmlAgilityPack": "1.4.9",
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
+    "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0",
     "MyToolkit.Extended": "2.5.12",
     "Newtonsoft.Json": "8.0.3",
-    "SQLite.Net-PCL": "3.1.1"
+    "SQLite.Net-PCL": "3.1.1",
+    "Template10": "1.1.10"
   },
   "frameworks": {
     "uap10.0": {}

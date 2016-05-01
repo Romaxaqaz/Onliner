@@ -32,6 +32,26 @@ namespace Onliner_for_windows_10.View_Model
             OpenNewsInBrowser = new RelayCommand<object>(async(obj) => await OpenLink(obj));
             SaveNewsInDB = new RelayCommand<object>((obj) => SaveNewsDB(obj));
             UpdateCommentsList = new RelayCommand(async () => await UpdateCommets());
+            AnswerCommentCommand = new RelayCommand<object>((obj) => AnswerComment(obj));
+            AnswerQuoteCommentCommand = new RelayCommand<object>((obj) => AnswerQuoteComment(obj));
+            LikeCommentsCommand = new RelayCommand<object>((obj) => LikeComments(obj));
+        }
+
+        private void LikeComments(object obj)
+        {
+            var s = obj as CommentsItem;
+           // var ss = HttpRequest.LikeComment(s.ID);
+        }
+
+        private void AnswerQuoteComment(object obj)
+        {
+            var s = obj.ToString();
+        }
+
+        private void AnswerComment(object obj)
+        {
+            var anwerUser = obj.ToString();
+            Message = $"[b]{anwerUser}[/b], ";
         }
 
 
@@ -244,6 +264,9 @@ namespace Onliner_for_windows_10.View_Model
         public RelayCommand SendButtonActive { get; private set; }
         public RelayCommand ChangeCommetnsGridVisible { get; private set; }
         public RelayCommand UpdateCommentsList { get; private set; }
-        #endregion
-    }
+        public RelayCommand<object> AnswerCommentCommand { get; private set; }
+        public RelayCommand<object> AnswerQuoteCommentCommand { get; private set; }
+        public RelayCommand<object> LikeCommentsCommand{ get; private set; }
+    #endregion
+}
 }

@@ -13,11 +13,11 @@ namespace Onliner.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             string result = string.Empty;
-            if (value!=null)
+            var content = value.ToString();
+            if (!string.IsNullOrEmpty(content))
             {
-                string s = value.ToString().Trim();
                 Regex htmlreg = new Regex(@"([0-9]+)");
-                result = htmlreg.Match(s).ToString();
+                result = htmlreg.Match(content).ToString();
             }
             else
             {

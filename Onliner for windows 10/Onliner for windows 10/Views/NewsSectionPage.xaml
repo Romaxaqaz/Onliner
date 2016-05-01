@@ -24,38 +24,36 @@
         <converter:TextTrimmingConverter x:Key="TextTrimmingConverter"/>
         <Style x:Key="GridViewItemStyle" TargetType="GridViewItem">
             <Setter Property="Margin" Value="3,3,0,0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="IsSelected" Value="true"/>
         </Style>
 
-
-
- 
     </Page.Resources>
-    <Grid>
+    <Grid Background="{ThemeResource BackGroundCustomHeaderColorBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        
+
         <!--#region Page Header-->
-        <controls:PageHeader x:Name="pageHeader" 
+        <controls:PageHeader x:Name="pageHeader"                   
                              Text="Новости"
+                             BackButtonVisibility="Visible"
                              FontWeight="Bold"
                              Frame="{x:Bind Frame}"
                              Background="{ThemeResource BackGroundCustomHeaderColorBrush}"
                              Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
-                             VisualStateNarrowMinWidth="1"
-                             BackButtonVisibility="Collapsed"
-                             RelativePanel.AlignLeftWithPanel="True"
-                             RelativePanel.AlignRightWithPanel="True"
-                             RelativePanel.AlignTopWithPanel="True">
+                             VisualStateNormalMinWidth="800"
+                             VisualStateNarrowMinWidth="1">
 
             <controls:PageHeader.PrimaryCommands>
-             <!--   <AppBarButton Icon="Favorite" Label="Сохраненные" Command="{Binding FavoritePageCommand}" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>-->
-                <AppBarButton Icon="Refresh" Label="Обновить" Command="{Binding UpdateNewsSectionCommand}" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+
+                <AppBarButton x:Name="UpdateButton" Icon="Refresh" Visibility="Visible" Label="Обновить" Command="{Binding UpdateNewsSectionCommand}" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                <AppBarButton x:Name="ListDataTemplate" Icon="List" Command="{Binding ChangeDataTemplateNewsCommand}" Visibility="{Binding DataTemplateToggle, Converter={StaticResource BooleanToVisibilityConverter}}" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
             </controls:PageHeader.PrimaryCommands>
         </controls:PageHeader>
-<!--#endregion-->
-        
+
         <Grid Grid.Row="1"
               Background="{ThemeResource BackGroundCustomNewsHeaderColorBrush}"
               RelativePanel.AlignBottomWithPanel="True"
@@ -66,21 +64,22 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            
+
             <!--#region Visual State Manager-->
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup x:Name="VisualStateGroup">
-                    <VisualState x:Name="VisualStateMobile">
+                    <VisualState>
                         <VisualState.StateTriggers>
-                            <AdaptiveTrigger MinWindowWidth="350"/>
+                            <AdaptiveTrigger MinWindowWidth="500"/>
                         </VisualState.StateTriggers>
                         <VisualState.Setters>
                             <Setter Target="grid.(FrameworkElement.HorizontalAlignment)" Value="Stretch"/>
+                            <Setter Target="UpdateButton.(AppBarButton.Visibility)" Value="Collapsed"/>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="VisualStateTablet">
                         <VisualState.StateTriggers>
-                            <AdaptiveTrigger MinWindowWidth="600"/>
+                            <AdaptiveTrigger MinWindowWidth="800"/>
                         </VisualState.StateTriggers>
                         <VisualState.Setters>
                             <Setter Target="grid.(FrameworkElement.HorizontalAlignment)" Value="Stretch"/>
@@ -96,7 +95,7 @@
                     </VisualState>
                 </VisualStateGroup>
             </VisualStateManager.VisualStateGroups>
-            <!--#endregion-->       
+            <!--#endregion-->
 
             <!--#region Tab Header-->
             <Rectangle Height="1" VerticalAlignment="Bottom" Fill="LightGray" Grid.Row="0"/>
@@ -134,7 +133,7 @@
             </ListView>
             <ProgressBar Foreground="Blue" Grid.Row="0" Grid.ColumnSpan="5" Background="Transparent" IsIndeterminate="{Binding ProgressRing}" VerticalAlignment="Top"/>
             <!--#endregion-->
-            
+
             <!--#region Pivot Control-->
             <Pivot x:Name="FlipNews"
                     Grid.Row="1"
@@ -157,7 +156,7 @@
                         </Interactivity:Interaction.Behaviors>
                         <GridView x:Name="TechGridView"
                     ItemsSource="{Binding TechNewsList}"
-					ItemTemplate="{ThemeResource NewsThemeList}"  
+					ItemTemplate="{Binding NewsDataTemplate}"  
                     ItemContainerStyle="{StaticResource GridViewItemStyle}"
 					SizeChanged="myGridView_SizeChanged"
 					BorderThickness="0" Margin="0">
@@ -178,10 +177,8 @@
 								FromHorizontalOffset="0"/>
                                 </TransitionCollection>
                             </GridView.ItemContainerTransitions>
-                            
                         </GridView>
                     </pullToRefres:PullToRefreshBox>
-                    
                 </PivotItem>
                 <!-- People section -->
                 <PivotItem Margin="0,-48,0,0">
@@ -200,7 +197,7 @@
                         </Interactivity:Interaction.Behaviors>
                         <GridView x:Name="PeopleGridView" 
                           ItemsSource="{Binding PeopleNewsList}"
-                          ItemTemplate="{ThemeResource NewsThemeList}" 
+                          ItemTemplate="{Binding NewsDataTemplate}"   
                           ItemContainerStyle="{StaticResource GridViewItemStyle}"
     
                           SizeChanged="myGridView_SizeChanged" >
@@ -239,7 +236,7 @@
                         </Interactivity:Interaction.Behaviors>
                         <GridView x:Name="AutoGridView" 
                               ItemsSource="{Binding AutoNewsList}" 
-                              ItemTemplate="{ThemeResource NewsThemeList}"  
+                              ItemTemplate="{Binding NewsDataTemplate}"   
                               ItemContainerStyle="{StaticResource GridViewItemStyle}"
                               SizeChanged="myGridView_SizeChanged">
                             <Interactivity:Interaction.Behaviors>
@@ -277,7 +274,7 @@
                         </Interactivity:Interaction.Behaviors>
                         <GridView x:Name="HouseGridView"  
                               ItemsSource="{Binding HouseNewsList}" 
-                              ItemTemplate="{ThemeResource NewsThemeList}" 
+                              ItemTemplate="{Binding NewsDataTemplate}"  
                               ItemContainerStyle="{StaticResource GridViewItemStyle}"
                               SizeChanged="myGridView_SizeChanged">
                             <Interactivity:Interaction.Behaviors>
@@ -300,7 +297,7 @@
                 </PivotItem>
             </Pivot>
             <!--#endregion-->
-        
+
         </Grid>
     </Grid>
 </Page>

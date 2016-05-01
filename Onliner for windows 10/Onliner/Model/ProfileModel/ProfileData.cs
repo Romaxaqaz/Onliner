@@ -14,7 +14,6 @@ namespace Onliner.Model.ProfileModel
         public string Money { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             var eventHandler = this.PropertyChanged;

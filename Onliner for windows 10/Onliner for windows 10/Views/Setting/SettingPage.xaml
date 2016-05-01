@@ -271,7 +271,7 @@
     </Page.Resources>
 
 
-    <Grid>
+    <Grid Background="{ThemeResource BackGroundCustomHeaderColorBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition/>
@@ -302,17 +302,97 @@
                     <PivotItem.Header>
                         <TextBlock Text="Основные" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                     </PivotItem.Header>
+                    <ScrollViewer>
+  
                     <StackPanel>
-                        <CheckBox x:Name="AutoUpdateCheckBox"
-                                  Content="Автоматически обновлять ленту новостей при старте"
-                                  Margin="5" 
-                                  Command="{Binding CheckUncheckAutoLoadnewsCommand}"
-                                  CommandParameter="{Binding ElementName=AutoUpdateCheckBox, Path=Name}"
-                                  IsChecked="{Binding AutoUpdateCheked}" 
-                                  Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Style="{StaticResource SettingCheckBoxStyle}">
+                        <ToggleSwitch x:Name="ToggleSwitchNewsDataTemplateType"
+                                      OnContent="Плитки" 
+                                      OffContent="Список" 
+                                      HorizontalAlignment="Stretch"
+                                      Margin="5"
+                                      IsOn="{Binding ToggleSwitchNewsDataTemplateType, Mode=TwoWay}"
+                                      IsEnabled="{Binding ToggleSwitchNewsDataTemplateTypeIsEnable, Mode=TwoWay}"
+                                      Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}">
+                            <ToggleSwitch.Header>
+                                <TextBlock Text="Отображение ленты новостей (только для мобильных устройств)" TextWrapping="Wrap" FontSize="14"/>
+                            </ToggleSwitch.Header>
+                        </ToggleSwitch>
+                            <ToggleSwitch x:Name="AutoUpdateToggleSwith"                                  
+                                      Margin="5"
+                                      HorizontalAlignment="Stretch"
+                                       Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
+                                      IsOn="{Binding AutoUpdateCheked, Mode=TwoWay}">
+                                <ToggleSwitch.Header>
+                                    <TextBlock Text="Автоматически обновлять ленту новостей при старте" TextWrapping="Wrap" FontSize="14"/>
+                                </ToggleSwitch.Header>
+                            </ToggleSwitch>
+                            <TextBlock Text="Меню приложения" Margin="5,0,0,3"/>
+                            <Rectangle Height="1" Fill="Gray" Margin="5,0,0,5" MaxWidth="500"/>
+                            <StackPanel Margin="5" MaxWidth="500">
+                             
+                            <ComboBox x:Name="TownChoise" 
+                                      Header="Город для отображения погоды"
+                                      HorizontalAlignment="Stretch"
+                                      ItemsSource="{Binding TownList}"
+                                      SelectedIndex="{Binding TownWeatherIdindex, Mode=TwoWay}">
+                                <Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                        <Core:InvokeCommandAction Command="{Binding ChangeTown}" CommandParameter="{Binding ElementName=TownChoise, Path=SelectedItem}"/>
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                            <StackPanel Margin="5" MaxWidth="500">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.ColumnSpan="2">
+                                        <Run Text="Курс: "/>
+                                        <Run Text="{Binding NewCurrent, Mode=TwoWay}"/>
+                                    </TextBlock>
+                                    <ComboBox x:Name="CurrentTypeComboBox" Header="Валюта" Grid.Row="1"
+                                              ItemsSource="{Binding CurrentTypeList}" SelectedIndex="{Binding CurrentIndex, Mode=TwoWay}">
+                                        <Interactivity:Interaction.Behaviors>
+                                            <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                                <Core:InvokeCommandAction Command="{Binding CurrentTypeCommand}" CommandParameter="{Binding ElementName=CurrentTypeComboBox, Path=SelectedItem}"/>
+                                            </Core:EventTriggerBehavior>
+                                        </Interactivity:Interaction.Behaviors>
+                                    </ComboBox>
+                                    <ComboBox x:Name="BankActionComboBox" Header="Действие банка"
+                                              Grid.Column="1" Grid.Row="1"
+                                              HorizontalAlignment="Stretch"
+                                              ItemsSource="{Binding BankActionDictionary}"
+                                              SelectedIndex="{Binding BankActionIndex, Mode=TwoWay}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Key}"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                        <Interactivity:Interaction.Behaviors>
+                                            <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                                <Core:InvokeCommandAction Command="{Binding BankActionCommand}" CommandParameter="{Binding ElementName=BankActionComboBox, Path=SelectedItem}"/>
+                                            </Core:EventTriggerBehavior>
+                                        </Interactivity:Interaction.Behaviors>
+                                    </ComboBox>
+                                </Grid>
+                            </StackPanel>
 
-                        </CheckBox>
-                        <!--<CheckBox x:Name="LoadImageCheckBox"
+                            <!--<CheckBox x:Name="LoadImageCheckBox"
                                   Content="Загружать изображения" 
                                   Margin="5"
                                   IsChecked="{Binding LoadImage}"
@@ -320,17 +400,18 @@
                                   CommandParameter="{Binding ElementName=LoadImageCheckBox, Path=Name}"
                                   Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>-->
 
-                      
+
                     </StackPanel>
+                    </ScrollViewer>
                 </PivotItem>
                 <PivotItem>
                     <PivotItem.Header>
                         <TextBlock Text="Оформление" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                     </PivotItem.Header>
                     <StackPanel>
-                        <ComboBox x:Name="ThemeAppStyle" Header="Фон" Margin="5" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" SelectedIndex="{Binding ThemeAppIndex}">
-                            <ComboBoxItem Content="светлый"/>
-                            <ComboBoxItem Content="темный"/>
+                        <ComboBox x:Name="ThemeAppStyle" Header="Тема оформления" Margin="5" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" SelectedIndex="{Binding ThemeAppIndex}">
+                            <ComboBoxItem Content="светлая"/>
+                            <ComboBoxItem Content="темная"/>
                             <Interactivity:Interaction.Behaviors>
                                 <Core:EventTriggerBehavior EventName="SelectionChanged">
                                     <Core:InvokeCommandAction Command="{Binding ChangedThemeAppCommand}" CommandParameter="{Binding ElementName=ThemeAppStyle, Path=SelectedIndex}"/>
@@ -347,7 +428,7 @@
                         <Grid HorizontalAlignment="Stretch" Background="LightCyan">
                             <Image Source="ms-appx:///ImageCollection/logoApp.png" HorizontalAlignment="Center" Width="200" Height="100"  Margin="10"/>
                         </Grid>
-                        
+
                         <TextBlock Text="Неофициальное приложение для сайта Onliner.by" TextWrapping="Wrap" Margin="10" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                         <Button x:Name="RecallButton" Content="Оценить, оставить отзыв" Margin="10" Width="220" Click="RecallButton_Click" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                         <Button x:Name="Developer" Content="Связаться с разработчиком" Margin="10" Width="220" Click="Developer_Click" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>

@@ -147,6 +147,7 @@
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Files\likeTest.txt" />
     <Content Include="Files\Weather\townWeather.txt" />
+    <Content Include="Assets\test.jpg" />
     <None Include="Onliner for windows 10_StoreKey.pfx" />
     <None Include="project.json" />
   </ItemGroup>
@@ -174,6 +175,9 @@
     <Compile Include="UserControls\CommentsContentViewer.xaml.cs">
       <DependentUpon>CommentsContentViewer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\Image\AnimatedImage.xaml.cs">
+      <DependentUpon>AnimatedImage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\MessegeSenderControl.xaml.cs">
       <DependentUpon>MessegeSenderControl.xaml</DependentUpon>
     </Compile>
@@ -184,8 +188,10 @@
     <Compile Include="UserControls\SwipeableSplitView.cs" />
     <Compile Include="UserControls\TabHeader\HeaderTab.cs" />
     <Compile Include="UserControls\TabHeader\HorizontalStretchPanel.cs" />
+    <Compile Include="View-Model\KursViewModel.cs" />
     <Compile Include="View-Model\MainPageViewModel.cs" />
     <Compile Include="View-Model\MessagePageViewModel.cs" />
+    <Compile Include="View-Model\Message\MessageSenderViewModel.cs" />
     <Compile Include="View-Model\NewsSectionPageViewModel.cs" />
     <Compile Include="View-Model\OpinionsViewModel.cs" />
     <Compile Include="View-Model\ProfileViewModel.cs" />
@@ -195,14 +201,17 @@
     <Compile Include="View-Model\ShellViewModel.cs" />
     <Compile Include="View-Model\ViewNewsPageViewModel.cs" />
     <Compile Include="View-Model\WeatherViewModel.cs" />
+    <Compile Include="Views\KursCurrent\KursPage.xaml.cs">
+      <DependentUpon>KursPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Message\MessagePage.xaml.cs">
       <DependentUpon>MessagePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Message\MessageSenderPage.xaml.cs">
+      <DependentUpon>MessageSenderPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\testpage.xaml.cs">
       <DependentUpon>testpage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\ImageLoader.xaml.cs">
-      <DependentUpon>ImageLoader.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\TabHeader.xaml.cs">
       <DependentUpon>TabHeader.xaml</DependentUpon>
@@ -312,11 +321,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\Image\AnimatedImage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\MessegeSenderControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\KursCurrent\KursPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Message\MessagePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Message\MessageSenderPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -327,10 +348,6 @@
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UserControls\ImageLoader.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\TabHeader.xaml">
       <SubType>Designer</SubType>

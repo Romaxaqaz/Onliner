@@ -76,5 +76,9 @@ namespace Onliner_for_windows_10.Views
             //  TechGridView.ItemTemplate = (DataTemplate)this.Resources["ListViewMobileTrigger"];
         }
 
+        private void AppBarButton_Click_1(object sender, RoutedEventArgs e)
+        {
+            TechGridView.ItemTemplate = (DataTemplate)this.Resources["CompactNewsDataTemplate"];
+        }
     }
 }

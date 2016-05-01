@@ -63,6 +63,12 @@ namespace Onliner_for_windows_10
             //  OAuthVk();
             Frame.Navigate(typeof(NewsPage));
         }
+
+        private void AppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            Storyboard1.Begin();
+            Storyboard2.Begin();
+        }
     }
 }
 

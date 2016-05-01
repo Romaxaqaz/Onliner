@@ -21,19 +21,13 @@ namespace Onliner_for_windows_10.Model.Message
         }
         private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
         {
-            if(PopupMessageSender.IsOpen)
-            {
-                PopupMessageSender.IsOpen = false;
-            }
-            else
-            {
+
                 Frame rootFrame = Window.Current.Content as Frame;
                 if (Frame.CanGoBack)
                 {
                     e.Handled = true;
                     Frame.GoBack();
                 }
-            }
         }
 
         private void UserHyperlinkButton_Click(object sender, RoutedEventArgs e)

@@ -16,6 +16,7 @@
     <!--°-->
     <Page.Resources>
         <converters:IndexImageTonameImageConverter x:Key="Convert"/>
+        <converters:ScrubHtmlTag x:Key="ScrubHtml"/>
 
         <DataTemplate x:Key="TodayWeather">
             <Grid Name="MorningTodayGrid">
@@ -35,9 +36,9 @@
                     </TextBlock>
                 </Grid>
                 <StackPanel Grid.Column="1" Grid.RowSpan="2" Width="80" Height="80">
-                    <Viewbox Name="TodayIcoWeather" Width="80" Height="80">
-                        <Path Fill="{ThemeResource FillIcoCustomColorBrush}" Data="{Binding falloutIcon, Converter={StaticResource Convert}}"/>
-                    </Viewbox>
+                    <Image Name="TodayIcoWeather" Width="80" Height="80" Source="{Binding falloutIcon, Converter={StaticResource Convert}}"/>
+
+
                 </StackPanel>
             </Grid>
         </DataTemplate>
@@ -60,11 +61,11 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding dateTextDayOfWeek}" FontSize="22" FontWeight="Bold" TextAlignment="Center" Margin="0,0,0,2" Grid.Row="0" Grid.ColumnSpan="2" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
-                <TextBlock Text="{Binding dayOfMonth}" FontSize="18"  TextAlignment="Center" Margin="0,5,0,2" Grid.Row="1" Grid.ColumnSpan="2" Foreground="{ThemeResource ForegroundCustomBlackBrush}"/>
+                <TextBlock Text="{Binding dayOfMonth,Converter={StaticResource ScrubHtml}}" FontSize="18"  TextAlignment="Center" Margin="0,5,0,2" Grid.Row="1" Grid.ColumnSpan="2" Foreground="{ThemeResource ForegroundCustomBlackBrush}"/>
 
-                <Viewbox Stretch="Uniform" Width="70" Height="70" Grid.Row="2" Grid.ColumnSpan="2" Margin="2" HorizontalAlignment="Center" VerticalAlignment="Center" >
-                    <Path Data="{Binding falloutIcon, Converter={StaticResource Convert}}" Fill="Yellow" />
-                </Viewbox>
+                <Image Stretch="Uniform" Width="70" Height="70" Grid.Row="2" Grid.ColumnSpan="2" Margin="2" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding falloutIcon, Converter={StaticResource Convert}}"/>
+
+
 
                 <Viewbox Stretch="Uniform" Width="20" Height="20" Grid.Row="3" Grid.Column="0" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Path Data="{StaticResource WeatherDaySVG}" Fill="{ThemeResource ForegroundCustomOtherBlackBrush}" />
@@ -117,7 +118,7 @@
 
     </Page.Resources>
 
-    <Grid>
+    <Grid Background="{ThemeResource BackGroundCustomHeaderColorBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition/>
@@ -192,16 +193,15 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Viewbox Name="MainIcoWeather"
+                            <Image Name="MainIcoWeather"
                                  Width="150"
                                  Height="150"
                                  VerticalAlignment="Top"
                                  Grid.Row="0"
-                                 Grid.Column="0" Margin="5">
-                                <Path Fill="White" Data="{Binding falloutIcon, Converter={StaticResource Convert}}"/>
-                            </Viewbox>
+                                 Grid.Column="0" Margin="5"
+                                Source="{Binding falloutIcon, Converter={StaticResource Convert}}"/>
                             <TextBlock Name="MainTemperatureWeather"
-                                   FontSize="85" 
+                                   FontSize="74" 
                                    FontWeight="Bold"
                                    Foreground="White" 
                                    Grid.Row="0" 
@@ -211,7 +211,7 @@
                            <Run Text="{Binding temperature, Mode=TwoWay}"/>°
                             </TextBlock>
 
-                            <Grid Name="NowWeatherMoreGrid" HorizontalAlignment="Stretch" Grid.Row="1" Grid.ColumnSpan="2">
+                            <Grid Name="NowWeatherMoreGrid" HorizontalAlignment="Center" Grid.Row="1" Grid.ColumnSpan="2">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="*"/>

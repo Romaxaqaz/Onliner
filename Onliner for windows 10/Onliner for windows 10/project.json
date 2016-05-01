@@ -3,15 +3,15 @@
     "HtmlAgilityPack": "1.4.9",
     "Intense": "0.5.0",
     "Microsoft.ApplicationInsights.WindowsApps": "1.1.1",
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
+    "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0",
     "MyToolkit": "2.5.12",
     "MyToolkit.Extended": "2.5.12",
     "Newtonsoft.Json": "8.0.3",
     "PullToRefresh.UWP": "0.3.4",
     "SQLite.Net-PCL": "3.1.1",
-    "Template10": "1.1.8",
-    "WinRTXamlToolkit.Controls.DataVisualization.UWP": "2.0.0",
-    "WriteableBitmapEx": "1.5.0"
+    "SwipeListView": "1.2.0",
+    "Template10": "1.1.10",
+    "WinRTXamlToolkit.Controls.DataVisualization.UWP": "2.0.0"
   },
   "frameworks": {
     "uap10.0": {}

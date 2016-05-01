@@ -11,6 +11,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Onliner.Http;
 using Onliner.Model.JsonModel.Weather;
+using static Onliner.Setting.SettingParams;
 
 namespace Onliner_for_windows_10.View_Model
 {
@@ -23,7 +24,15 @@ namespace Onliner_for_windows_10.View_Model
         public ObservableCollection<TownWeatherID> TownList { get; private set; }
         public Now now;
 
-        public int SelectedIndexItem { get { return 0; } }
+        public int SelectedIndexItem
+        {
+            get
+            {
+                var town = GetParamsSetting(TownWeatherIdKey);
+                if (town == null) return 0;
+                return GetIndex(town.ToString());
+            }
+        }
 
         /// <summary>
         /// Change town command
@@ -130,6 +139,20 @@ namespace Onliner_for_windows_10.View_Model
         {
             get { return _currentProgress; }
             set { Set(ref _currentProgress, value); }
+        }
+
+        private int GetIndex(string townid)
+        {
+            int id = 0;
+            foreach (var item in TownList)
+            {
+                if (item.ID.Equals(townid))
+                {
+                    return id;
+                }
+                id++;
+            }
+            return id;
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)
