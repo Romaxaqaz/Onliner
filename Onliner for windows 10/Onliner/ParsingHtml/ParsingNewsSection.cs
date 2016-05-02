@@ -14,6 +14,7 @@ using Onliner.Model.OpinionsModel;
 using static Onliner.SQLiteDataBase.SQLiteDB;
 using Onliner.SQLiteDataBase;
 using System.Net;
+using Newtonsoft.Json;
 
 namespace Onliner.ParsingHtml
 {
@@ -29,10 +30,13 @@ namespace Onliner.ParsingHtml
         private HttpClient client = new HttpClient();
         #endregion
 
+
+        Dictionary<string, string> com = new Dictionary<string, string>();
+
         #region Collections
         private ObservableCollection<OpinionModel> _opinionsItems = new ObservableCollection<OpinionModel>();
         private ObservableCollection<ItemsNews> bufferNews;
-        private List<string> ls = new List<string>();
+        private List<string> NewsListId = new List<string>();
 
         public ObservableCollection<ItemsNews> OldNewsForUpdate
         {
@@ -85,6 +89,10 @@ namespace Onliner.ParsingHtml
                 foreach (var item in titleList)
                 {
                     _itemNews = new ItemsNews();
+                    _itemNews.NewsID = item.Descendants("span").
+                             Where(div => div.GetAttributeValue("class", string.Empty) == "show_news_view_count").FirstOrDefault().Attributes["news_id"].Value;
+                    NewsListId.Add(QueryString(_itemNews.NewsID));
+
 
                     //data for update
                     _itemNews.LinkNews = item.Descendants("h3").
@@ -121,11 +129,24 @@ namespace Onliner.ParsingHtml
 
                     myItems.Add(_itemNews);
                 }
-              //  await SQLiteDB.UpdateItemDB(bufferNews, section);
+
+
+                var viewNewsComment = await HttpRequest.NewsViewAll(path, string.Join("", NewsListId));
+                var m_res = JsonConvert.DeserializeObject<CounterNewsJsonClass>(viewNewsComment);
+                foreach (dynamic numb in m_res.count)
+                { 
+                    var item = bufferNews.Where(x => x.NewsID.Equals(numb.Name.ToString())).FirstOrDefault();
+                    if (item != null)
+                        item.Popularcount = numb.Value.ToString();
+                }
+
+
+                //  await SQLiteDB.UpdateItemDB(bufferNews, section);
             });
             return myItems;
 
         }
+
 
         /// <summary>
         /// Parsing html linq one tag.
@@ -291,11 +312,15 @@ namespace Onliner.ParsingHtml
 
         private string QueryString(string newsID)
         {
-            var strings = $"news[]:{newsID}";
-            var s = WebUtility.UrlEncode(strings);
-            return s + "&";
+            var strings = $"news%5B%5D={newsID}";
+            return strings + "&";
         }
 
         #endregion
+    }
+
+    public class CounterNewsJsonClass
+    {
+        public dynamic count { get; set; }
     }
 }

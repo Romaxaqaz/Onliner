@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Template10.Mvvm;
+using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
 
 namespace Onliner_for_windows_10.View_Model.Message
@@ -15,10 +16,20 @@ namespace Onliner_for_windows_10.View_Model.Message
     {
         private HttpRequest HttpRequest = new HttpRequest();
 
+        #region Variables
         private readonly string ComposeMessageUrl = "https://profile.onliner.by/messages/compose";
         private readonly string HostMessage = "profile.onliner.by";
         private readonly string Origin = "https://profile.onliner.by";
+        #endregion
 
+        #region Constructor
+        public MessageSenderViewModel()
+        {
+            SendMessageCommand = new RelayCommand(() => SendMessage());
+        }
+        #endregion
+
+        #region Properties
         private string header;
         public string Header
         {
@@ -39,13 +50,13 @@ namespace Onliner_for_windows_10.View_Model.Message
             get { return content; }
             set { Set(ref content, value); }
         }
+        #endregion
 
+        #region Command
+        public RelayCommand SendMessageCommand { get; private set; }
+        #endregion
 
-        public MessageSenderViewModel()
-        {
-            SendMessageCommand = new RelayCommand(() => SendMessage());
-        }
-
+        #region Methods
         private void SetModelMessage(IMessageModel messageModel)
         {
             Header = messageModel.Header == null ? "" : messageModel.Header;
@@ -55,12 +66,21 @@ namespace Onliner_for_windows_10.View_Model.Message
 
         private async void SendMessage()
         {
-            StringBuilder postData = new StringBuilder();
-            postData.Append("username=" + UserSend + "&");
-            postData.Append("subject=" + Header + "&");
-            postData.Append("message=" + Content);
-            await HttpRequest.PostRequestFormData(ComposeMessageUrl, HostMessage, Origin, postData.ToString());
-            NavigationService.GoBack();
+            if (string.IsNullOrEmpty(UserSend) || string.IsNullOrEmpty(Header) || string.IsNullOrEmpty(Content))
+            {
+                MessageDialog message = new MessageDialog("Введены не все данные");
+                await message.ShowAsync();
+                return;
+            }
+            else
+            {
+                StringBuilder postData = new StringBuilder();
+                postData.Append("username=" + UserSend + "&");
+                postData.Append("subject=" + Header + "&");
+                postData.Append("message=" + Content);
+                await HttpRequest.PostRequestFormData(ComposeMessageUrl, HostMessage, Origin, postData.ToString());
+                NavigationService.GoBack();
+            }
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)
@@ -70,7 +90,6 @@ namespace Onliner_for_windows_10.View_Model.Message
                 SetModelMessage(model);
             await Task.CompletedTask;
         }
-
-        public RelayCommand SendMessageCommand { get; private set; }
+        #endregion
     }
 }

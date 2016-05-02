@@ -19,10 +19,14 @@
     xmlns:controls="using:Template10.Controls"
     xmlns:viewModel="using:Onliner_for_windows_10.View_Model"  
     mc:Ignorable="d">
+    
+    <!--#region Resources-->
     <Page.Resources>
         <converter:UpdateLogoImage x:Key="UpdateImage"/>
     </Page.Resources>
+    <!--#endregion-->
 
+    <!--#region Hamburger-->
     <controls:HamburgerMenu x:Name="MyHamburgerMenu"
                     PaneWidth="260"
                     HamburgerForeground="{ThemeResource ForegroundCustomOtherBlackBrush}"
@@ -41,6 +45,7 @@
                     VisualStateNarrowMinWidth="1"
                     VisualStateNormalMinWidth="800">
         <controls:HamburgerMenu.PrimaryButtons>
+            
             <!--  Profile page  -->
             <controls:HamburgerButtonInfo x:Name="Test" PageType="ProfilePage:ProfilePage">
                 <StackPanel Name="ProfileStackpanel" 
@@ -148,4 +153,5 @@
             </controls:HamburgerButtonInfo>
         </controls:HamburgerMenu.SecondaryButtons>
     </controls:HamburgerMenu>
+    <!--#endregion-->
 </Page>

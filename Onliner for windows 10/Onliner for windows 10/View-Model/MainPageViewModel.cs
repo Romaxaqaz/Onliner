@@ -10,8 +10,18 @@ namespace Onliner_for_windows_10.View_Model
 {
     public class MainPageViewModel : ViewModelBase
     {
-        private HttpRequest HttpRequestToApi = new HttpRequest();
         private readonly string AutorizationUrl = "https://www.onliner.by/#registration";
+
+        private HttpRequest HttpRequestToApi = new HttpRequest();
+
+        #region Constructor
+        public MainPageViewModel()
+        {
+            AuthorizationLaterCommand = new RelayCommand(() => AuthorizationLater());
+            RegistrationCommand = new RelayCommand(() => Registration());
+            AuthorizationCommand = new RelayCommand(async () => await Authorization());
+        }
+        #endregion
 
         #region Properties
         private bool progressRing;
@@ -73,13 +83,7 @@ namespace Onliner_for_windows_10.View_Model
         public RelayCommand RegistrationCommand { get; private set; }
         #endregion
 
-        public MainPageViewModel()
-        {
-            AuthorizationLaterCommand = new RelayCommand(() => AuthorizationLater());
-            RegistrationCommand = new RelayCommand(() => Registration());
-            AuthorizationCommand = new RelayCommand(async() => await Authorization());
-        }
-
+        #region Methods
         /// <summary>
         /// Authorization
         /// </summary>
@@ -88,6 +92,7 @@ namespace Onliner_for_windows_10.View_Model
         {
             ControlEnable = false;
             ProgressRing = true;
+
             if (string.IsNullOrEmpty(Login))
             {
                 var dialog = new Windows.UI.Popups.MessageDialog("Введите логин");
@@ -125,6 +130,6 @@ namespace Onliner_for_windows_10.View_Model
             SetParamsSetting(AuthorizationKey, "false");
             NavigationService.Navigate(typeof(Views.NewsPage));
         }
-
+        #endregion
     }
 }

@@ -1,17 +1,17 @@
-﻿using HtmlAgilityPack;
-using MyToolkit.Command;
-using Onliner.Http;
-using Onliner.Model.ProfileModel;
-using Onliner_for_windows_10.Model.Message;
-using Onliner_for_windows_10.Views.Profile;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using HtmlAgilityPack;
+using MyToolkit.Command;
 using Template10.Mvvm;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
+using Onliner.Http;
+using Onliner.Model.ProfileModel;
+using Onliner_for_windows_10.Model.Message;
+using Onliner_for_windows_10.Views.Profile;
 using static Onliner.Setting.SettingParams;
 
 namespace Onliner_for_windows_10.View_Model
@@ -117,7 +117,6 @@ namespace Onliner_for_windows_10.View_Model
         /// </summary>
         private async void ExitProfile()
         {
-
             var dialog = new MessageDialog("Вы действительно хотите выйти?");
 
             dialog.Commands.Add(new UICommand { Label = "да", Id = 0 });

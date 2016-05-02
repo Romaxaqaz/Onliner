@@ -1,4 +1,5 @@
-﻿<Page
+﻿<!--#region  namespace-->
+    <Page
     x:Class="Onliner_for_windows_10.Views.WeatherPage"
     xmlns:viewModelWeather="using:Onliner_for_windows_10.Views"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -8,12 +9,14 @@
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:converters="using:Onliner.Converters"
     xmlns:viewModel="using:Onliner_for_windows_10.View_Model"
+    xmlns:converters="using:Onliner.Converters"
     xmlns:controls="using:Template10.Controls"
     xmlns:vm="using:Onliner_for_windows_10.View_Model" mc:Ignorable="d">
-
     <!--°-->
+<!--#endregion-->
+        
+    <!-- Region Resources -->
     <Page.Resources>
         <converters:IndexImageTonameImageConverter x:Key="Convert"/>
         <converters:ScrubHtmlTag x:Key="ScrubHtml"/>
@@ -75,7 +78,7 @@
                     <Run Text="..."/>
                     <Run Text="{Binding dayTemperature.max}"/>
                 </TextBlock>
-                
+
 
                 <Viewbox Width="20" Height="20" Grid.Row="4" Grid.Column="0" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Path Data="{StaticResource WeatherNightSVG}" Fill="{ThemeResource ForegroundCustomOtherBlackBrush}" />
@@ -85,7 +88,7 @@
                     <Run Text="..."/>
                     <Run Text="{Binding nightTemperature.max}"/>
                 </TextBlock>
-               
+
 
                 <Viewbox  Width="20" Height="20" Grid.Row="5" Grid.Column="0" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Path Data="{StaticResource Wind}" Fill="{ThemeResource ForegroundCustomOtherBlackBrush}" />
@@ -95,17 +98,17 @@
                     <Run Text="{Binding wind.direction.abbr.rus}" Foreground="Gray" />
                     <Run Text="{Binding wind.speed[0]}" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                 </TextBlock>
-                
+
                 <Viewbox Width="20" Height="20" Grid.Row="6" Grid.Column="0" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Path Data="{StaticResource Barometer}" Fill="{ThemeResource ForegroundCustomOtherBlackBrush}" />
                 </Viewbox>
                 <TextBlock Text="{Binding pressureTitle}" FontSize="14" Grid.Row="6" Grid.Column="1"  TextAlignment="Center" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
-                
+
                 <Viewbox Width="20" Height="20" Grid.Row="7" Grid.Column="0" Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Path Data="{StaticResource Water}" Fill="{ThemeResource ForegroundCustomOtherBlackBrush}" />
                 </Viewbox>
                 <TextBlock Text="{Binding humidityTitle}" FontSize="14" Grid.Row="7" TextAlignment="Center" Grid.Column="1"  Margin="0,5,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
-              
+
                 <Grid Grid.Column="3" Grid.RowSpan="8">
                     <Rectangle Fill="Gray" Width="1"/>
                 </Grid>
@@ -117,12 +120,15 @@
         </DataTemplate>
 
     </Page.Resources>
+    <!--EndRegion-->
 
     <Grid Background="{ThemeResource BackGroundCustomHeaderColorBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
+
+        <!-- Region Page Header-->
         <controls:PageHeader x:Name="pageHeader" 
                              Frame="{x:Bind Frame}"
                              Text="Погода"
@@ -135,13 +141,12 @@
                 <AppBarButton Icon="Link" Label="Settings" />
             </controls:PageHeader.SecondaryCommands>
         </controls:PageHeader>
+        <!-- EndRegion -->
+
+        <!-- Region Main-->
         <ScrollViewer Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid Background="{ThemeResource BackGroundCustomColorBrush}" 
               BorderBrush="LightGray" BorderThickness="0,1,0,0">
-                <RelativePanel.Below>pageHeader</RelativePanel.Below>
-                <RelativePanel.AlignLeftWithPanel>True</RelativePanel.AlignLeftWithPanel>
-                <RelativePanel.AlignRightWithPanel>True</RelativePanel.AlignRightWithPanel>
-                <RelativePanel.AlignBottomWithPanel>True</RelativePanel.AlignBottomWithPanel>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
@@ -149,13 +154,15 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <!--MAIN WEATHER INFORMATION-->
+
+                <!-- Region MAIN WEATHER INFORMATION-->
                 <Grid Name="NowWeatherGrid" 
               Grid.Row="0"
               Grid.ColumnSpan="2" 
               HorizontalAlignment="Stretch"
               Background="{ThemeResource BackGroundCustomMainElementColorBrush}">
                     <StackPanel>
+                        <!--Town ComboBox-->
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <TextBlock Text="Сейчас в  " Name="WhereWeatherTown" 
                            FontSize="32" 
@@ -183,6 +190,7 @@
                             </ComboBox>
                         </StackPanel>
 
+                        <!--Now tempareture-->
                         <Grid HorizontalAlignment="Center" Margin="0,10,0,10" DataContext="{Binding Now}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
@@ -200,6 +208,7 @@
                                  Grid.Row="0"
                                  Grid.Column="0" Margin="5"
                                 Source="{Binding falloutIcon, Converter={StaticResource Convert}}"/>
+
                             <TextBlock Name="MainTemperatureWeather"
                                    FontSize="74" 
                                    FontWeight="Bold"
@@ -245,8 +254,10 @@
                         </Grid>
                     </StackPanel>
                 </Grid>
+                <!--EndRegion-->
                 <Rectangle Fill="Gray" Height="1"  Grid.Row="1" Grid.ColumnSpan="2" Margin="5"/>
-                <!--All Day temperature-->
+
+                <!-- Region All Day temperature-->
                 <ScrollViewer Name="TodayWeatherScroll" Grid.Row="2" HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Hidden" VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Disabled">
                     <ListView Name="TemperatureTodayListView" 
                           ItemsSource="{Binding WeatherTodayItems}" 
@@ -261,8 +272,10 @@
                         </ListView.ItemsPanel>
                     </ListView>
                 </ScrollViewer>
+                <!--EndRegion-->
                 <Rectangle Fill="Gray" Height="1" Grid.Row="3" Grid.ColumnSpan="2" Margin="5"/>
-                <!--Week WEATHER INFORMATION-->
+
+                <!-- Region Week WEATHER INFORMATION-->
                 <ScrollViewer Name="WeeksDayWeather" Grid.Row="4" HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Hidden" VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Disabled">
                     <ListView Name="WeekWeather" ItemsSource="{Binding ForecastItems}"
                           ItemTemplate="{StaticResource WeeksWeather}"
@@ -275,9 +288,11 @@
                         </ListView.ItemsPanel>
                     </ListView>
                 </ScrollViewer>
+                <!--EndRegion-->
                 <ProgressRing Name="WeatherProgressRing" Width="100" Height="100" Foreground="Blue" VerticalAlignment="Center" HorizontalAlignment="Center"  IsActive="{Binding CurrentProgress}" Grid.RowSpan="5"/>
             </Grid>
         </ScrollViewer>
-      
+        <!--EndRegion-->
+
     </Grid>
 </Page>

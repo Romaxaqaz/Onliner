@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Template10.Mvvm;
 using Windows.UI.Xaml.Navigation;
 using Onliner.Http;
 using static Onliner.Setting.SettingParams;
-using System;
 
 namespace Onliner_for_windows_10.View_Model
 {
@@ -85,8 +85,14 @@ namespace Onliner_for_windows_10.View_Model
         /// <returns></returns>
         private async Task GetMessage()
         {
-            var msg = await HttpRequest.MessageUnread();
-            Message = msg == null ? (string)GetParamsSetting(LastMessageKey) : msg;
+            try
+            {
+                var msg = await HttpRequest.MessageUnread();
+                Message = msg == null ? (string)GetParamsSetting(LastMessageKey) : msg;
+            }catch(ArgumentException)
+            {
+                Message = "";
+            }
             await Task.CompletedTask;
         }
 
@@ -245,6 +251,5 @@ namespace Onliner_for_windows_10.View_Model
             }
         }
         #endregion
-
     }
 }

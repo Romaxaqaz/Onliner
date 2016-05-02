@@ -12,17 +12,16 @@ using Windows.UI.Xaml.Navigation;
 namespace Onliner_for_windows_10.View_Model
 {
     public class KursViewModel : ViewModelBase
-    { 
+    {
         private readonly string KursUrlApi = "http://kurs.onliner.by/";
 
         private HttpRequest HttpRequest = new HttpRequest();
         private HtmlDocument resultat = new HtmlDocument();
 
-
         #region Methods
 
         /// <summary>
-        /// Loader current page
+        /// Loading a page with currency
         /// </summary>
         private async void LoadKursOnliner()
         {
@@ -59,7 +58,7 @@ namespace Onliner_for_windows_10.View_Model
         /// <param name="attributeName"></param>
         /// <param name="OrAttName"></param>
         /// <returns></returns>
-        private string GetContentTag(List<HtmlNode> node,  int index, string attributeName, string OrAttName = "")
+        private string GetContentTag(List<HtmlNode> node, int index, string attributeName, string OrAttName = "")
         {
             var tagContent = node[index].Descendants("p").FirstOrDefault();
             return tagContent != null ? tagContent.InnerText : "";
@@ -93,7 +92,7 @@ namespace Onliner_for_windows_10.View_Model
 
     }
 
-    public class Kurs 
+    public class Kurs
     {
         public string TypeMethod { get; set; }
         public string BankBuy { get; set; }
@@ -102,8 +101,8 @@ namespace Onliner_for_windows_10.View_Model
 
         public Kurs()
         {
-
         }
+
         public Kurs(string type, string bankBuy, string bankSale, string nbrb)
         {
             TypeMethod = type;

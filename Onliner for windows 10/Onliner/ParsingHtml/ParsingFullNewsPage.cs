@@ -171,8 +171,6 @@ namespace Onliner.ParsingHtml
             return NewsListItem;
         }
 
-
-
         private async Task<YouTubeUri> GetYouTubeYriForControl(string url)
         {
             string pattern = @"(embed\/[-A-Za-z0-9]+)";
@@ -206,7 +204,10 @@ namespace Onliner.ParsingHtml
                     commentsParams.Data = item.InnerHtml;
                     var commentsLikeCount = listItem.FirstOrDefault(x => x.ID == commentsParams.ID);
                     if (commentsLikeCount != null)
+                    {
+                        commentsParams.Like = commentsLikeCount.Item.like;
                         commentsParams.LikeCount = commentsLikeCount.Item.counter;
+                    }
 
                     listComments.Add(commentsParams);
                 }
@@ -253,7 +254,8 @@ namespace Onliner.ParsingHtml
     public class Item
     {
         public string counter { get; set; }
-        public string best { get; set; }
+        public bool best { get; set; }
+        public bool like { get; set; }
     }
 
     public class CommetsLike

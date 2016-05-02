@@ -1,4 +1,5 @@
-﻿<Page
+﻿<!--#region namespace -->
+<Page
     x:Class="Onliner_for_windows_10.Views.NewsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -17,6 +18,9 @@
     xmlns:pullToRefres="using:PullToRefresh.UWP"
     xmlns:viewModelNews="using:Onliner.Model.News"
     mc:Ignorable="d">
+    <!--#endregion-->
+
+    <!--#region Resources-->
     <Page.Resources>
         <converter:SelectionChangedConverter x:Key="SelectionChangedConverter" />
         <converter:ImageUrlConverters x:Key="ImageUrlConverter" />
@@ -30,6 +34,8 @@
         </Style>
 
     </Page.Resources>
+    <!--#endregion-->
+
     <Grid Background="{ThemeResource BackGroundCustomHeaderColorBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -53,6 +59,7 @@
                 <AppBarButton x:Name="ListDataTemplate" Icon="List" Command="{Binding ChangeDataTemplateNewsCommand}" Visibility="{Binding DataTemplateToggle, Converter={StaticResource BooleanToVisibilityConverter}}" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
             </controls:PageHeader.PrimaryCommands>
         </controls:PageHeader>
+        <!--#endregion-->
 
         <Grid Grid.Row="1"
               Background="{ThemeResource BackGroundCustomNewsHeaderColorBrush}"
@@ -98,7 +105,10 @@
             <!--#endregion-->
 
             <!--#region Tab Header-->
-            <Rectangle Height="1" VerticalAlignment="Bottom" Fill="LightGray" Grid.Row="0"/>
+            <Rectangle Height="1" 
+                       VerticalAlignment="Bottom"
+                       Fill="LightGray"
+                       Grid.Row="0"/>
             <ListView x:Name="TabListview" 
                       Background="{ThemeResource BackGroundCustomHeaderChildColorBrush}"
                       ItemContainerStyle="{ThemeResource HeaderTabListViewItemContainerStyle}" 
@@ -106,7 +116,8 @@
                       VerticalAlignment="Bottom" Height="48" Grid.Row="0">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="SelectionChanged">
-                        <Core:InvokeCommandAction Command="{Binding PivotOrFlipViewSelectionChange}" CommandParameter="{Binding ElementName=TabListview, Path=SelectedIndex}"/>
+                        <Core:InvokeCommandAction Command="{Binding PivotOrFlipViewSelectionChange}" 
+                                                  CommandParameter="{Binding ElementName=TabListview, Path=SelectedIndex}"/>
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
                 <ListView.ItemsPanel>
@@ -116,19 +127,25 @@
                 </ListView.ItemsPanel>
                 <ListViewItem >
                     <UserControls:TabHeader Glyph="&#xE1E4;" Label="Технологии"
-                                     FontSize="20"  Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                                            FontSize="20" 
+                                            Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                 </ListViewItem>
                 <ListViewItem>
                     <UserControls:TabHeader Glyph="&#xE125;" Label="Люди"
-                                     FontSize="20"  Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                                            FontSize="20" 
+                                            Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                 </ListViewItem>
                 <ListViewItem>
-                    <UserControls:TabHeader Glyph="&#xEC47;" Label="Авто"
-                                     FontSize="20"  Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                    <UserControls:TabHeader Glyph="&#xEC47;" 
+                                            Label="Авто"
+                                            FontSize="20"  
+                                            Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                 </ListViewItem>
                 <ListViewItem>
-                    <UserControls:TabHeader Glyph="&#xE825;" Label="Недвижимость"
-                                     FontSize="20"  Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
+                    <UserControls:TabHeader Glyph="&#xE825;" 
+                                            Label="Недвижимость"
+                                            FontSize="20"  
+                                            Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                 </ListViewItem>
             </ListView>
             <ProgressBar Foreground="Blue" Grid.Row="0" Grid.ColumnSpan="5" Background="Transparent" IsIndeterminate="{Binding ProgressRing}" VerticalAlignment="Top"/>
@@ -139,7 +156,7 @@
                     Grid.Row="1"
                    SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
                    Background="{ThemeResource BackGroundCustomNewsColorBrush}">
-                <!-- Tech section -->
+                <!--#region Tech section -->
                 <PivotItem Margin="0,-48,0,0">
                     <pullToRefres:PullToRefreshBox>
                         <pullToRefres:PullToRefreshBox.TopIndicatorTemplate>
@@ -155,11 +172,11 @@
                             </Core:EventTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
                         <GridView x:Name="TechGridView"
-                    ItemsSource="{Binding TechNewsList}"
-					ItemTemplate="{Binding NewsDataTemplate}"  
-                    ItemContainerStyle="{StaticResource GridViewItemStyle}"
-					SizeChanged="myGridView_SizeChanged"
-					BorderThickness="0" Margin="0">
+                                  ItemsSource="{Binding TechNewsList}"
+					              ItemTemplate="{Binding NewsDataTemplate}"  
+                                  ItemContainerStyle="{StaticResource GridViewItemStyle}"
+					              SizeChanged="myGridView_SizeChanged"
+					              BorderThickness="0" Margin="0">
                             <Interactivity:Interaction.Behaviors>
                                 <Core:EventTriggerBehavior EventName="SelectionChanged">
                                     <Core:InvokeCommandAction Command="{Binding OpenFullNewsCommandNav}" CommandParameter="{Binding ElementName=TechGridView, Path=SelectedItem}"/>
@@ -180,13 +197,15 @@
                         </GridView>
                     </pullToRefres:PullToRefreshBox>
                 </PivotItem>
-                <!-- People section -->
+                <!--#endregion-->
+
+                <!--#region People section -->
                 <PivotItem Margin="0,-48,0,0">
                     <pullToRefres:PullToRefreshBox>
                         <pullToRefres:PullToRefreshBox.TopIndicatorTemplate>
                             <DataTemplate>
                                 <pullToRefres:PullRefreshProgressControl Progress="{Binding}"
-                                    PullToRefreshText="Потяните, чтобы обновить..."
+                                                                         PullToRefreshText="Потяните, чтобы обновить..."
                                                                          ReleaseToRefreshText="Отпустите"/>
                             </DataTemplate>
                         </pullToRefres:PullToRefreshBox.TopIndicatorTemplate>
@@ -196,21 +215,21 @@
                             </Core:EventTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
                         <GridView x:Name="PeopleGridView" 
-                          ItemsSource="{Binding PeopleNewsList}"
-                          ItemTemplate="{Binding NewsDataTemplate}"   
-                          ItemContainerStyle="{StaticResource GridViewItemStyle}"
-    
-                          SizeChanged="myGridView_SizeChanged" >
+                                  ItemsSource="{Binding PeopleNewsList}"
+                                  ItemTemplate="{Binding NewsDataTemplate}"   
+                                  ItemContainerStyle="{StaticResource GridViewItemStyle}"
+                                  SizeChanged="myGridView_SizeChanged" >
                             <Interactivity:Interaction.Behaviors>
                                 <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                    <Core:InvokeCommandAction Command="{Binding OpenFullNewsCommandNav}" CommandParameter="{Binding ElementName=PeopleGridView, Path=SelectedItem}"/>
+                                    <Core:InvokeCommandAction Command="{Binding OpenFullNewsCommandNav}" 
+                                                              CommandParameter="{Binding ElementName=PeopleGridView, Path=SelectedItem}"/>
                                 </Core:EventTriggerBehavior>
                             </Interactivity:Interaction.Behaviors>
                             <GridView.ItemContainerTransitions>
                                 <TransitionCollection>
                                     <EntranceThemeTransition IsStaggeringEnabled="True" 
-								FromVerticalOffset="300" 
-								FromHorizontalOffset="0"/>
+								                             FromVerticalOffset="300" 
+								                             FromHorizontalOffset="0"/>
                                     <AddDeleteThemeTransition/>
                                     <NavigationThemeTransition/>
                                     <ContentThemeTransition/>
@@ -219,7 +238,9 @@
                         </GridView>
                     </pullToRefres:PullToRefreshBox>
                 </PivotItem>
-                <!-- Auto section -->
+                <!--#endregion-->
+
+                <!--#region Auto section -->
                 <PivotItem  Margin="0,-48,0,0">
                     <pullToRefres:PullToRefreshBox>
                         <pullToRefres:PullToRefreshBox.TopIndicatorTemplate>
@@ -257,7 +278,9 @@
                         </GridView>
                     </pullToRefres:PullToRefreshBox>
                 </PivotItem>
-                <!-- House section -->
+                <!--#endregion-->
+
+                <!--#region House section -->
                 <PivotItem  Margin="0,-48,0,0">
                     <pullToRefres:PullToRefreshBox>
                         <pullToRefres:PullToRefreshBox.TopIndicatorTemplate>
@@ -295,6 +318,7 @@
                         </GridView>
                     </pullToRefres:PullToRefreshBox>
                 </PivotItem>
+                <!--#endregion-->
             </Pivot>
             <!--#endregion-->
 

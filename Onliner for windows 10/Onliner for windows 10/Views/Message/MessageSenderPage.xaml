@@ -8,31 +8,34 @@
     xmlns:tem10Control="using:Template10.Controls"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource BackGroundCustomHeaderColorBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
+
+        <!--#region PageHeader-->
         <tem10Control:PageHeader Frame="{x:Bind Frame}"
                              Background="{ThemeResource BackGroundCustomHeaderColorBrush}"
                              Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"     
                              VisualStateNarrowMinWidth="1"/>
-        
-        <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-        </Grid.RowDefinitions>
-        <TextBox Header="Кому:" Text="{Binding UserSend, Mode=TwoWay}" Margin="5"/>
-        <TextBox Header="Заголовок:" Text="{Binding Header, Mode=TwoWay}" Grid.Row="1" Margin="5"/>
-        <tem10Control:Resizer Grid.Row="2" GrabberBrush="#FFF3FF00" Margin="5">
-            <TextBox Header="Сообщение" MinWidth="300" MinHeight="80"
-                     Text="{Binding Content, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-        </tem10Control:Resizer>
+        <!--#endregion-->
 
-            <Button Content="Отправить " Grid.Row="3" Margin="5" Command="{Binding SendMessageCommand}"/>
-    </Grid>
+        <ScrollViewer Grid.Row="1">
+            <Grid Background="{ThemeResource BackGroundCustomColorBrush}" Margin="5" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <TextBox Header="Кому:" Text="{Binding UserSend, Mode=TwoWay}"/>
+                <TextBox Header="Заголовок:" Text="{Binding Header, Mode=TwoWay}" Grid.Row="1" Margin="5"/>
+                <TextBox Header="Сообщение" MinWidth="300" MinHeight="200" Grid.Row="2"  Margin="5"
+                     Text="{Binding Content, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Button Content="Отправить " Grid.Row="3" Margin="5" Command="{Binding SendMessageCommand}"/>
+            </Grid>
+        </ScrollViewer>
     </Grid>
 </Page>

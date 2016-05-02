@@ -35,24 +35,69 @@ namespace Onliner_for_windows_10.View_Model
             AnswerCommentCommand = new RelayCommand<object>((obj) => AnswerComment(obj));
             AnswerQuoteCommentCommand = new RelayCommand<object>((obj) => AnswerQuoteComment(obj));
             LikeCommentsCommand = new RelayCommand<object>((obj) => LikeComments(obj));
+
+            var boolAuthorization = Convert.ToBoolean(GetParamsSetting(AuthorizationKey));
+            if (boolAuthorization)
+            {
+                CommentsButtonVisible = true;
+            }
         }
 
         private void LikeComments(object obj)
         {
-            var s = obj as CommentsItem;
-           // var ss = HttpRequest.LikeComment(s.ID);
+            var boolAuthorization = Convert.ToBoolean(GetParamsSetting(AuthorizationKey));
+            if (boolAuthorization)
+            {
+                var item = obj as CommentsItem;
+                if (item != null)
+                    LikeSetter(item);
+            }
+            else
+            {
+                LogInMessageBox("Чтобы работать с комментарииями необходимо авторизоваться..");
+            }
+
         }
 
-        private void AnswerQuoteComment(object obj)
+        private async void LikeSetter(CommentsItem commentItem)
         {
-            var s = obj.ToString();
+            if (!commentItem.Like)
+            {
+                var likeCount = await HttpRequest.LikeComment(commentItem.ID, LinkNews, LikeType.Like);
+                commentItem.LikeCount = likeCount;
+                commentItem.Like = true;
+            }
+            else
+            {
+                var likeCount = await HttpRequest.LikeComment(commentItem.ID, LinkNews, LikeType.UnLike);
+                commentItem.LikeCount = likeCount;
+                commentItem.Like = false;
+            }
+        }
+
+        private async void AnswerQuoteComment(object obj)
+        {
+            var item = obj as CommentsItem;
+            var quoteMessage = await HttpRequest.QuoteComment(item.ID, LinkNews);
+            Message = QuoteMessageGenerate(quoteMessage, item.Nickname);
         }
 
         private void AnswerComment(object obj)
         {
             var anwerUser = obj.ToString();
-            Message = $"[b]{anwerUser}[/b], ";
+            Message = AnswerMessageGenerate(anwerUser);
         }
+
+        private string AnswerMessageGenerate(string userName)
+        {
+            return $"[b]{userName}[/b], ";
+        }
+
+        private string QuoteMessageGenerate(string message, string userName)
+        {
+            return $"[quote=\"{userName}\"]{message}[/quote]";
+        }
+    
 
 
         #endregion
@@ -98,7 +143,7 @@ namespace Onliner_for_windows_10.View_Model
         }
 
         private void ActiveSendButton() =>
-             SendButton = true;
+            SendButton = !string.IsNullOrEmpty(Message) ? true : false;
 
         /// <summary>
         /// Open link in webBrowser
@@ -142,17 +187,22 @@ namespace Onliner_for_windows_10.View_Model
             }
             else
             {
-                var dialog = new MessageDialog("Чтобы оставлять комментарии необходимо авторизоваться..");
+                LogInMessageBox("Чтобы оставлять комментарии необходимо авторизоваться..");
+            }
+        }
 
-                dialog.Commands.Add(new UICommand { Label = "авторизоваться", Id = 0 });
-                dialog.Commands.Add(new UICommand { Label = "нет", Id = 1 });
+        private async void LogInMessageBox(string message)
+        {
+            var dialog = new MessageDialog(message);
 
-                var result = await dialog.ShowAsync();
+            dialog.Commands.Add(new UICommand { Label = "авторизоваться", Id = 0 });
+            dialog.Commands.Add(new UICommand { Label = "нет", Id = 1 });
 
-                if ((int)result.Id == 0)
-                {
-                    NavigationService.Navigate(typeof(MainPage));
-                }
+            var result = await dialog.ShowAsync();
+
+            if ((int)result.Id == 0)
+            {
+                NavigationService.Navigate(typeof(MainPage));
             }
         }
 
@@ -241,6 +291,19 @@ namespace Onliner_for_windows_10.View_Model
             set
             {
                 Set(ref commentsVisible, value);
+            }
+        }
+
+        private bool commentsButtonVisible = false;
+        public bool CommentsButtonVisible
+        {
+            get
+            {
+                return this.commentsButtonVisible;
+            }
+            set
+            {
+                Set(ref commentsButtonVisible, value);
             }
         }
 

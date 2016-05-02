@@ -1,27 +1,27 @@
-﻿using MyToolkit.Command;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using MyToolkit.Command;
+using Template10.Mvvm;
+using Windows.UI.Core;
+using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml;
 using Onliner.Model.News;
 using Onliner.Model.OpinionsModel;
 using Onliner.ParsingHtml;
 using Onliner.SQLiteDataBase;
 using Onliner_for_windows_10.Views;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using Template10.Mvvm;
-using Windows.UI.Core;
-using Windows.UI.Xaml.Navigation;
 using static Onliner.SQLiteDataBase.SQLiteDB;
 using static Onliner.Setting.SettingParams;
-using Windows.UI.Xaml;
 
 namespace Onliner_for_windows_10.View_Model
 {
     public class NewsSectionPageViewModel : ViewModelBase
     {
         private ParsingNewsSection parsNewsSection = new ParsingNewsSection();
-        CoreDispatcher dispatcher = Windows.UI.Core.CoreWindow.GetForCurrentThread().Dispatcher;
+        private CoreDispatcher dispatcher = Windows.UI.Core.CoreWindow.GetForCurrentThread().Dispatcher;
 
         #region url news
         private readonly string TechUrlNews = "http://tech.onliner.by/";
@@ -78,11 +78,14 @@ namespace Onliner_for_windows_10.View_Model
             switch (SelectedIndex)
             {
                 case 0:
-                    TechNewsList = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_TECH);
                     if (ShellViewModel.Instance.TechSectionNewsFirstLoad)
                     {
                         await AddAndUpdateCollectionNews(TechNewsList, SQLiteDB.DB_PATH_TECH, TechUrlNews, SectionNewsDB.Tech);
                         ShellViewModel.Instance.TechSectionNewsFirstLoad = false;
+                    }
+                    else
+                    {
+                        TechNewsList = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_TECH);
                     }
                     break;
                 case 1:
@@ -230,7 +233,6 @@ namespace Onliner_for_windows_10.View_Model
                 await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => NavigationService.Navigate(typeof(ViewNewsPage), feedItem.LinkNews));
             }
         }
-
 
         private void ChangeDataTemplateNews()
         {

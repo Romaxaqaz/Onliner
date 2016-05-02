@@ -1,48 +1,26 @@
-﻿using MyToolkit.Command;
-using Newtonsoft.Json;
-using Onliner.Expansion;
-using Onliner.SQLiteDataBase;
+﻿using System.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using Template10.Mvvm;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using static Onliner.Setting.SettingParams;
-using System.Threading.Tasks;
+using MyToolkit.Command;
+using Template10.Mvvm;
+using Newtonsoft.Json;
+using Onliner.Expansion;
+using Onliner.SQLiteDataBase;
 using Onliner.Http;
-using System.Reflection;
-using System.Collections;
+using static Onliner.Setting.SettingParams;
 
 namespace Onliner_for_windows_10.View_Model.Settings
 {
     public class SettingViewModel : ViewModelBase
     {
-        private Dictionary<string, string> bankActionDictionary = new Dictionary<string, string>
-        {
-            ["НБРБ"] = "nbrb",
-            ["Продажа"] = "sale",
-            ["Покупка"] = "buy"
-        };
-
-        public Dictionary<string, string> BankActionDictionary
-        {
-            get { return bankActionDictionary; }
-        }
-
-        private List<string> currentTypeList = new List<string> { "USD", "EUR", "RUB" };
-        public List<string> CurrentTypeList
-        {
-            get { return currentTypeList; }
-        }
-
         private HttpRequest requset = new HttpRequest();
 
         #region Constructor
@@ -89,94 +67,22 @@ namespace Onliner_for_windows_10.View_Model.Settings
         #endregion
 
         #region Methods
-        private void PivotSelectedIndexEvent(object obj)
-        {
-            var index = (int)obj;
-            switch (index)
-            {
-                case 0:
-                    break;
-                case 2:
-                    CacheSize = BytesToDouble(SQLiteDB.GetSizeByteDB());
-                    break;
-            }
-        }
 
+        #region Theme App
         /// <summary>
-        /// Clear cache news
+        /// Change the theme
         /// </summary>
-        private void CleadCache()
-        {
-            foreach (var item in SQLiteDB.FileNameCollection)
-            {
-                RemoveFile(item);
-            }
-            CacheSize = BytesToDouble(SQLiteDB.GetSizeByteDB()).ToString();
-        }
-
-        /// <summary>
-        /// Remove files DB
-        /// </summary>
-        /// <param name="filename"></param>
-        public async void RemoveFile(string filename)
-        {
-            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-            StorageFile sampleFile = await localFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
-            await sampleFile.DeleteAsync();
-        }
-
-        /// <summary>
-        /// Conver byte to string data
-        /// </summary>
-        /// <param name="byteCount"></param>
-        /// <returns></returns>
-        private string BytesToDouble(long byteCount)
-        {
-            string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
-            long bytes = Math.Abs(byteCount);
-            if (bytes == 0) return "0 " + suf[0];
-            int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
-            double num = Math.Round(bytes / Math.Pow(1024, place), 1);
-            return (Math.Sign(byteCount) * num).ToString() + suf[place];
-        }
-
+        /// <param name="obj"></param>
         private void ChangedThemeApp(object obj)
         {
             int index = (int)obj;
             SetThemeApp(index);
         }
 
-        private void ChangedNumberNewsCache()
-        {
-            var index = NumberNewsCache[NewsItemloadIndex];
-            SetParamsSetting(NumberOfNewsitemsToTheCacheKey, index);
-        }
-
-        private async void SetTownIDWeather(object obj)
-        {
-            TownWeatherID town = obj as TownWeatherID;
-            SetParamsSetting(TownWeatherIdKey, town.ID);
-            var weather = await requset.Weather(town.ID);
-            ShellViewModel.Instance.Weather = weather == null ? (string)GetParamsSetting(LastWeatherKey) : weather.now.temperature;
-        }
-
-        private int GetIndex(string townid)
-        {
-            int id = 0;
-            foreach (var item in TownList)
-            {
-                if (item.ID.Equals(townid))
-                {
-                    return id;
-                }
-                id++;
-            }
-            return id;
-        }
-        #endregion
-
-        #region Theme App
-
+        /// <summary>
+        /// Set theme
+        /// </summary>
+        /// <param name="index">Ligth = 0, Dark = 1</param>
         private void SetThemeApp(int index)
         {
             switch (index)
@@ -279,6 +185,89 @@ namespace Onliner_for_windows_10.View_Model.Settings
             themeAppIndex = Convert.ToInt32(indexValue);
             SetThemeApp(themeAppIndex);
 
+        }
+        #endregion
+
+        #region Cache News
+        /// <summary>
+        /// Clear cache news
+        /// </summary>
+        private void CleadCache()
+        {
+            foreach (var item in SQLiteDB.FileNameCollection)
+            {
+                RemoveFile(item);
+            }
+            CacheSize = BytesToDouble(SQLiteDB.GetSizeByteDB()).ToString();
+        }
+
+        /// <summary>
+        /// Remove files DB
+        /// </summary>
+        /// <param name="filename"></param>
+        public async void RemoveFile(string filename)
+        {
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            StorageFile sampleFile = await localFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
+            await sampleFile.DeleteAsync();
+        }
+
+        /// <summary>
+        /// Conver byte to string data
+        /// </summary>
+        /// <param name="byteCount"></param>
+        /// <returns></returns>
+        private string BytesToDouble(long byteCount)
+        {
+            string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
+            long bytes = Math.Abs(byteCount);
+            if (bytes == 0) return "0 " + suf[0];
+            int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
+            double num = Math.Round(bytes / Math.Pow(1024, place), 1);
+            return (Math.Sign(byteCount) * num).ToString() + suf[place];
+        }
+
+        private void ChangedNumberNewsCache()
+        {
+            var index = NumberNewsCache[NewsItemloadIndex];
+            SetParamsSetting(NumberOfNewsitemsToTheCacheKey, index);
+        }
+        #endregion
+
+        private void PivotSelectedIndexEvent(object obj)
+        {
+            var index = (int)obj;
+        }
+
+        /// <summary>
+        /// Set for city weather
+        /// </summary>
+        /// <param name="obj"></param>
+        private async void SetTownIDWeather(object obj)
+        {
+            TownWeatherID town = obj as TownWeatherID;
+            SetParamsSetting(TownWeatherIdKey, town.ID);
+            var weather = await requset.Weather(town.ID);
+            ShellViewModel.Instance.Weather = weather == null ? (string)GetParamsSetting(LastWeatherKey) : weather.now.temperature;
+        }
+
+        /// <summary>
+        /// Index city
+        /// </summary>
+        /// <param name="townid"></param>
+        /// <returns></returns>
+        private int GetIndex(string townid)
+        {
+            int id = 0;
+            foreach (var item in TownList)
+            {
+                if (item.ID.Equals(townid))
+                {
+                    return id;
+                }
+                id++;
+            }
+            return id;
         }
         #endregion
 
@@ -473,7 +462,6 @@ namespace Onliner_for_windows_10.View_Model.Settings
             set { Set(ref newCurrent, value); }
         }
 
-
         private int currentIndex;
         public int CurrentIndex
         {
@@ -529,7 +517,6 @@ namespace Onliner_for_windows_10.View_Model.Settings
 
         #region Collections
         public ObservableCollection<string> numberNewsCache = new ObservableCollection<string>() { "50", "100", "150" };
-
         public ObservableCollection<string> NumberNewsCache
         {
             get { return numberNewsCache; }
@@ -547,6 +534,24 @@ namespace Onliner_for_windows_10.View_Model.Settings
                 }
                 return JsonConvert.DeserializeObject<ObservableCollection<TownWeatherID>>(fileContent);
             }
+        }
+
+        private Dictionary<string, string> bankActionDictionary = new Dictionary<string, string>
+        {
+            ["НБРБ"] = "nbrb",
+            ["Продажа"] = "sale",
+            ["Покупка"] = "buy"
+        };
+
+        public Dictionary<string, string> BankActionDictionary
+        {
+            get { return bankActionDictionary; }
+        }
+
+        private List<string> currentTypeList = new List<string> { "USD", "EUR", "RUB" };
+        public List<string> CurrentTypeList
+        {
+            get { return currentTypeList; }
         }
         #endregion
     }

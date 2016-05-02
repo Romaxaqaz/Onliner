@@ -1,20 +1,20 @@
-﻿using MyToolkit.Command;
-using Onliner.Http;
-using Onliner.Model.JsonModel.Message;
-using Onliner.Model.Message;
-using Onliner_for_windows_10.Views.Message;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Template10.Mvvm;
-using Universal.UI.Xaml.Controls;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
+using Template10.Mvvm;
 using Template10.Services.NavigationService;
+using MyToolkit.Command;
+using Universal.UI.Xaml.Controls;
+using Onliner.Http;
+using Onliner.Model.JsonModel.Message;
+using Onliner.Model.Message;
+using Onliner_for_windows_10.Views.Message;
 
 namespace Onliner_for_windows_10.View_Model
 {
@@ -30,17 +30,23 @@ namespace Onliner_for_windows_10.View_Model
         private readonly string Origin = "https://profile.onliner.by";
         #endregion
 
+        #region Variables
+        private readonly string KeyPosts = "msgid=";
+        private readonly string KeyMessagesToTheList = "msgid%5B%5D=";
+
+        private bool ReturnBackPageNavigation = true;
+        #endregion
+
         private HttpRequest HttpRequest = new HttpRequest();
         private MessageList MessageListforRawText;
         private List<string> MessageIdList = new List<string>();
 
-        private bool ReturnBackPageNavigation = true;
-
+        private DelegateCommand<ItemSwipeEventArgs> _itemSwipeCommand;
 
         #region Constructor
         public MessagePageViewModel()
         {
-            PivotSelectionChange = new RelayCommand(async() => await UpdateItemSourceList());
+            PivotSelectionChange = new RelayCommand(async () => await UpdateItemSourceList());
             ListMessageSelectionChange = new RelayCommand<object>((obj) => ShowMessageContent(obj));
             CheckListItemChecked = new RelayCommand<object>((obj) => ChekcListItemAdd(obj));
             CheckListItemUnChecked = new RelayCommand<object>((obj) => ChekcListItemRemove(obj));
@@ -51,17 +57,18 @@ namespace Onliner_for_windows_10.View_Model
             MarkReadMessageCommand = new RelayCommand(async () => await MarkReadMessage());
             SaveMarkMessageCommand = new RelayCommand(async () => await SaveMarkMessage());
             SpamMarkMessageCommand = new RelayCommand(async () => await SpamMarkMessage());
+            SpamMessageCommand = new RelayCommand(async () => await SpamMessage());
             SaveMessageCommand = new RelayCommand(async () => await SaveOneMessage());
             DeleteMessageCommand = new RelayCommand(async () => await DeleteOneMessage());
             DeleteMarkMessageCommand = new RelayCommand(async () => await DeleteMarkMessage());
             CheckListItemCommand = new RelayCommand(() => CheckListLissageItem());
             CheckAllListItemCommand = new RelayCommand<object>((obj) => CheckAllListLissageItem(obj));
         }
-
         #endregion
 
         #region Methods
 
+        #region Check MessageList Item
         /// <summary>
         /// Check all list item id
         /// </summary>
@@ -89,7 +96,9 @@ namespace Onliner_for_windows_10.View_Model
         /// </summary>
         private void CheckListLissageItem() =>
             ListCheckBoxVisible = !ListCheckBoxVisible;
+        #endregion
 
+        #region Delete Message
         /// <summary>
         /// Delete selected messages
         /// </summary>
@@ -98,7 +107,7 @@ namespace Onliner_for_windows_10.View_Model
         {
             await HttpRequest.PostRequestFormData(DeleteMessage, HostMessage, Origin, await GeneratePostDataMessageIdList());
             HtmlMessageContent = string.Empty;
-            RemoveMessageListItem(MessageListforRawText.id);
+            RemoveMarkMessageInMessageList();
         }
 
         /// <summary>
@@ -111,7 +120,31 @@ namespace Onliner_for_windows_10.View_Model
             HtmlMessageContent = string.Empty;
             RemoveMessageListItem(MessageListforRawText.id);
         }
+        #endregion
 
+        #region Spam Message
+        /// <summary>
+        /// Spam message
+        /// </summary>
+        /// <returns></returns>
+        private async Task SpamMessage()
+        {
+            await HttpRequest.PostRequestFormData(MarkSpamUrl, HostMessage, Origin, GeneratePostDataMessageId(MessageListforRawText.id));
+            RemoveMessageListItem(MessageListforRawText.id);
+        }
+
+        /// <summary>
+        /// Mark as spam
+        /// </summary>
+        /// <returns></returns>
+        private async Task SpamMarkMessage()
+        {
+            await HttpRequest.PostRequestFormData(MarkSpamUrl, HostMessage, Origin, await GeneratePostDataMessageIdList());
+            RemoveMarkMessageInMessageList();
+        }
+        #endregion
+
+        #region Save Message
         /// <summary>
         /// Save read message
         /// </summary>
@@ -123,16 +156,6 @@ namespace Onliner_for_windows_10.View_Model
         }
 
         /// <summary>
-        /// Mark as spam
-        /// </summary>
-        /// <returns></returns>
-        private async Task SpamMarkMessage()
-        {
-            await HttpRequest.PostRequestFormData(MarkSpamUrl, HostMessage, Origin, GeneratePostDataMessageId(MessageListforRawText.id));
-            RemoveMessageListItem(MessageListforRawText.id);
-        }
-
-        /// <summary>
         /// Save read message
         /// </summary>
         /// <returns></returns>
@@ -140,7 +163,9 @@ namespace Onliner_for_windows_10.View_Model
         {
             await HttpRequest.PostRequestFormData(SaveMessageUrl, HostMessage, Origin, await GeneratePostDataMessageIdList());
         }
+        #endregion
 
+        #region Mark Message
         /// <summary>
         /// Mark as read
         /// </summary>
@@ -148,9 +173,13 @@ namespace Onliner_for_windows_10.View_Model
         private async Task MarkReadMessage()
         {
             await HttpRequest.PostRequestFormData(MessageMaskReadUrl, HostMessage, Origin, await GeneratePostDataMessageIdList());
-            RemoveMessageListItem(MessageListforRawText.id);
+            var item = MessageList.Where(x => x.id.Equals(MessageListforRawText.id)).FirstOrDefault();
+            if (item != null)
+                item.unread = "0";
         }
+        #endregion
 
+        #region Answer Message
         /// <summary>
         /// Answer on read message
         /// </summary>
@@ -168,22 +197,23 @@ namespace Onliner_for_windows_10.View_Model
         }
 
         /// <summary>
-        /// 
+        /// Creates a message to reply
         /// </summary>
         /// <param name="quote">Create qoute message contetn</param>
         /// <returns></returns>
         private IMessageModel CreateMessagePass(bool quote)
         {
             ReturnBackPageNavigation = false;
+
             string quoteMessage = string.Empty;
             if (true)
             {
                 quoteMessage = $"[quote=\"{MessageListforRawText.authorName}\"]{MessageListforRawText.rawText}[/quote] ";
             }
-            IMessageModel message = new MessageModel(MessageListforRawText.authorName,
-                MessageListforRawText.subject, quoteMessage);
-            return message;
+            return new MessageModel(MessageListforRawText.authorName, MessageListforRawText.subject, quoteMessage);
         }
+        #endregion
+
 
         /// <summary>
         /// Send message
@@ -193,24 +223,6 @@ namespace Onliner_for_windows_10.View_Model
         {
             PopUpSender = false;
             await HttpRequest.PostRequestFormData(ComposeMessageUrl, HostMessage, Origin, DataForAnswer().ToString());
-        }
-
-        private StringBuilder DataForAnswer()
-        {
-            StringBuilder postData = new StringBuilder();
-            if (MessageListforRawText != null)
-            {
-                postData.Append("username=" + MessageListforRawText.authorName + "&");
-                postData.Append("subject=" + MessageListforRawText.subject + "&");
-                postData.Append("message=" + MessageText);
-            }
-            else
-            {
-                postData.Append("username=" + UserNameRecipient + "&");
-                postData.Append("subject=" + MessageHeader + "&");
-                postData.Append("message=" + MessageText);
-            }
-            return postData;
         }
 
         /// <summary>
@@ -273,15 +285,44 @@ namespace Onliner_for_windows_10.View_Model
             await Task.CompletedTask;
         }
 
-        private async void MessageListType(string idOne, string idTwo)
+        /// <summary>
+        /// Remove marked items in the ListView
+        /// </summary>
+        private void RemoveMarkMessageInMessageList()
         {
-            var saveMessage = await HttpRequest.Message(idOne, idTwo);
-            if (saveMessage != null)
+            foreach (var item in MessageIdList)
             {
-                MessageList = new ObservableCollection<MessageList>(saveMessage.messages);
+                var itemMessageList = MessageList.Where(x => x.Equals(item)).FirstOrDefault();
+                if (itemMessageList != null)
+                    MessageList.Remove(itemMessageList);
             }
         }
 
+        /// <summary>
+        /// Message lsit
+        /// </summary>
+        /// <param name="idOne">input, output</param>
+        /// <param name="idTwo"></param>
+        private async void MessageListType(string idOne, string idTwo)
+        {
+            try
+            {
+                var saveMessage = await HttpRequest.Message(idOne, idTwo);
+                if (saveMessage != null)
+                {
+                    MessageList = new ObservableCollection<MessageList>(saveMessage.messages);
+                }
+            }
+            catch (ArgumentException)
+            {
+               
+            }
+        }
+
+        /// <summary>
+        /// Generate html for WebView  BETA
+        /// </summary>
+        /// <param name="Item"></param>
         private void ShowListViewItemContent(MessageList Item)
         {
             MessageLogoContent = false;
@@ -307,9 +348,13 @@ namespace Onliner_for_windows_10.View_Model
 
         private string GeneratePostDataMessageId(string id)
         {
-            return "msgid=" + id;
+            return KeyPosts + id;
         }
 
+        /// <summary>
+        /// Create list message for request
+        /// </summary>
+        /// <returns></returns>
         private async Task<string> GeneratePostDataMessageIdList()
         {
             StringBuilder postData = new StringBuilder();
@@ -319,11 +364,11 @@ namespace Onliner_for_windows_10.View_Model
                 {
                     if (i == MessageIdList.Count - 1)
                     {
-                        postData.Append("msgid%5B%5D=" + MessageIdList[i]);
+                        postData.Append(KeyMessagesToTheList + MessageIdList[i]);
                     }
                     else
                     {
-                        postData.Append("msgid%5B%5D=" + MessageIdList[i] + "&");
+                        postData.Append(KeyMessagesToTheList + MessageIdList[i] + "&");
                     }
                 }
             }
@@ -336,24 +381,69 @@ namespace Onliner_for_windows_10.View_Model
             return postData.ToString();
         }
 
+        /// <summary>
+        /// Create message object and navigation to sender page
+        /// </summary>
         private void CreateMessage()
         {
             IMessageModel message = new MessageModel(UserNameRecipient, MessageHeader, MessageText);
             NavigationService.Navigate(typeof(MessageSenderPage), message);
         }
 
+        private StringBuilder DataForAnswer()
+        {
+            StringBuilder postData = new StringBuilder();
+            if (MessageListforRawText != null)
+            {
+                postData.Append("username=" + MessageListforRawText.authorName + "&");
+                postData.Append("subject=" + MessageListforRawText.subject + "&");
+                postData.Append("message=" + MessageText);
+            }
+            else
+            {
+                postData.Append("username=" + UserNameRecipient + "&");
+                postData.Append("subject=" + MessageHeader + "&");
+                postData.Append("message=" + MessageText);
+            }
+            return postData;
+        }
+
+        #region CheckBox Command Method
         private void ChekcListItemRemove(object obj) =>
             MessageIdList.Remove(obj.ToString());
 
         private void ChekcListItemAdd(object obj) =>
             MessageIdList.Add(obj.ToString());
+        #endregion
 
-
+        /// <summary>
+        /// Remove list item message
+        /// </summary>
+        /// <param name="id">message ID</param>
         private void RemoveMessageListItem(string id)
         {
             var item = MessageList.Where(x => x.id.Equals(MessageListforRawText.id)).FirstOrDefault();
-            if(item!=null)
-            MessageList.Remove(item);
+            if (item != null)
+                MessageList.Remove(item);
+        }
+
+        private async void ItemSwipeCommandExecute(ItemSwipeEventArgs e)
+        {
+            var item = e.SwipedItem as MessageList;
+            if (item != null)
+            {
+                if (e.Direction == SwipeListDirection.Left)
+                {
+                    await HttpRequest.PostRequestFormData(SaveMessageUrl, HostMessage, Origin, GeneratePostDataMessageId(item.id));
+                    MessageList.Remove(item);
+                }
+                else
+                {
+                    await HttpRequest.PostRequestFormData(DeleteMessage, HostMessage, Origin, GeneratePostDataMessageId(item.id));
+                    HtmlMessageContent = string.Empty;
+                    MessageList.Remove(item);
+                }
+            }
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)
@@ -375,7 +465,6 @@ namespace Onliner_for_windows_10.View_Model
             }
             await Task.CompletedTask;
         }
-     
 
         #endregion
 
@@ -500,7 +589,6 @@ namespace Onliner_for_windows_10.View_Model
             }
         }
 
-
         private bool progressRingMessage = true;
         public bool ProgressRingMessage
         {
@@ -561,12 +649,6 @@ namespace Onliner_for_windows_10.View_Model
             get { return messageMessage; }
             set { Set(ref messageMessage, value); }
         }
-        private ObservableCollection<MessageList> messageMessage2 = new ObservableCollection<Onliner.Model.JsonModel.Message.MessageList>();
-        public ObservableCollection<MessageList> MessageList2
-        {
-            get { return messageMessage2; }
-            set { Set(ref messageMessage2, value); }
-        }
         #endregion
 
         #region Command
@@ -582,38 +664,18 @@ namespace Onliner_for_windows_10.View_Model
         public RelayCommand MarkReadMessageCommand { get; private set; }
         public RelayCommand SaveMarkMessageCommand { get; private set; }
         public RelayCommand SpamMarkMessageCommand { get; private set; }
+        public RelayCommand SpamMessageCommand { get; private set; }
         public RelayCommand SaveMessageCommand { get; private set; }
         public RelayCommand DeleteMessageCommand { get; private set; }
         public RelayCommand DeleteMarkMessageCommand { get; private set; }
 
         public RelayCommand CheckListItemCommand { get; private set; }
         public RelayCommand<object> CheckAllListItemCommand { get; private set; }
-        #endregion
 
-        private DelegateCommand<ItemSwipeEventArgs> _itemSwipeCommand;
         public ICommand ItemSwipeCommand
         {
             get { return _itemSwipeCommand = _itemSwipeCommand ?? new DelegateCommand<ItemSwipeEventArgs>(ItemSwipeCommandExecute); }
         }
-
-        private async void ItemSwipeCommandExecute(ItemSwipeEventArgs e)
-        {
-            var item = e.SwipedItem as MessageList;
-            if (item != null)
-            {
-                if (e.Direction == SwipeListDirection.Left)
-                {
-                    await HttpRequest.PostRequestFormData(SaveMessageUrl, HostMessage, Origin, GeneratePostDataMessageId(item.id));
-                    MessageList.Remove(item);
-                }
-                else
-                {
-                    await HttpRequest.PostRequestFormData(DeleteMessage, HostMessage, Origin, GeneratePostDataMessageId(item.id));
-                    HtmlMessageContent = string.Empty;
-                    MessageList.Remove(item);
-                }
-            }
-        }
+        #endregion
     }
-
 }

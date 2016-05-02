@@ -39,16 +39,13 @@ namespace Onliner.Http
         private const string ChangePassProfile = "https://profile.onliner.by/changepass";
         private const string StatusProfileApi = "https://profile.onliner.by/gapi/user/usersonline/?";
         private const string ViewNews = "https://people.onliner.by/viewcounter/view/";
-        private const string LikeApi = "https://tech.onliner.by/sdapi/news.api/tech/comments/";
+        private const string QuoteCommentApi = "https://tech.onliner.by/api/quote/";
         #endregion
 
-        /// <summary>
-        /// <value> Property for token profile</value>
-        /// </summary>
         private string EditProfileToken = string.Empty;
 
         private HttpClient httpClient = new HttpClient();
-        private CookieContainer CookieSession = new CookieContainer();
+        private CookieContainer CookieSession;
         private HttpResponseMessage response;
 
         public delegate void WebResponnceResult(string ok);
@@ -73,6 +70,7 @@ namespace Onliner.Http
         }
         #endregion
 
+        #region GET request
         /// <summary>
         ///  sample GET requset
         /// </summary>
@@ -83,7 +81,6 @@ namespace Onliner.Http
                 if (!HasInternet()) throw new WebException();
                 HttpClient httpClient = new HttpClient();
                 var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
-
                 ResultGetRequsetString = await response.Content.ReadAsStringAsync();
             }
             catch (WebException)
@@ -91,20 +88,19 @@ namespace Onliner.Http
                 await Message(InternerNotEnableMessage);
                 return null;
             }
-
             return ResultGetRequsetString;
         }
 
+        /// <summary>
+        /// Get request json
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
         public async Task<string> GetTypeRequestOnlinerAsync(string url)
         {
-
-            HttpWebRequest request =
-            (HttpWebRequest)WebRequest.Create(url);
-
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "GET";
             request.Accept = "application/json; charset=utf-8";
-
-
             var response = await request.GetResponseAsync();
             StreamReader reader = new StreamReader(response.GetResponseStream());
             StringBuilder output = new StringBuilder();
@@ -140,19 +136,50 @@ namespace Onliner.Http
             {
                 if (!HasInternet()) return null;
                 HttpClient httpClient = new HttpClient();
-                await Task.CompletedTask;
                 result = await httpClient.GetByteArrayAsync(new Uri(url));
+                await Task.CompletedTask;
             }
             catch (WebException ex) { await Message(ex.ToString()); }
             return result;
         }
 
         /// <summary>
+        /// Get request
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="qStringParam"></param>
+        /// <returns></returns>
+        public async Task<string> GetRequest(string url, string qStringParam)
+        {
+            string result = string.Empty;
+            string paramName = "name=";
+            string urlPath = $"{url}{paramName}{qStringParam}";
+            if (CookieSession == null)
+            {
+                Loadcookie("cookie");
+            }
+            try
+            {
+                if (!HasInternet()) throw new WebException();
+                HttpClient httpClient = new HttpClient(HandlerCookie());
+                var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, urlPath)).Result;
+                result = await response.Content.ReadAsStringAsync();
+            }
+            catch (WebException) { }
+            return result;
+
+        }
+        #endregion
+
+        #region POST request
+        /// <summary>
         /// POST requset for authorization
         /// </summary>
         public async Task<bool> PostRequestUserApi(string login, string password)
         {
             if (!HasInternet()) throw new WebException();
+
+            CookieSession = new CookieContainer();
             bool resultReques = false;
             //get token for authorizton
             HttpRequestMessage req = new HttpRequestMessage(System.Net.Http.HttpMethod.Get, UserApiOnliner);
@@ -194,6 +221,7 @@ namespace Onliner.Http
                     cookieContainer.SetCookies(pageUri, c);
                 }
             }
+
             ResultPostRequest = responseText.ToString();
 
             switch ((int)response.StatusCode)
@@ -215,17 +243,12 @@ namespace Onliner.Http
         /// </summary>
         public async Task AddComments(string newsID, string message, string linkNews)
         {
-
             if (newsID == string.Empty) { throw new Exception(); }
             if (message == string.Empty) { throw new Exception(); }
 
-            HttpClientHandler handler = new HttpClientHandler();
-            if (CookieSession != null)
-            {
-                handler.CookieContainer = CookieSession;
-            }
             if (!HasInternet()) throw new WebException();
-            HttpClient httpClient = new HttpClient(handler);
+
+            HttpClient httpClient = new HttpClient(HandlerCookie());
             var finalURl = GetApionLinks(linkNews) + ConvertToAjaxTime.ConvertToUnixTimestamp().ToString();
             HttpRequestMessage postRequest = new HttpRequestMessage(HttpMethod.Post, finalURl);
             postRequest.Headers.Add("Accept", "application/json, text/javascript, */*; q=0.01");
@@ -247,7 +270,6 @@ namespace Onliner.Http
         /// </summary>
         public async void EditPreferencesProfile(string pmNotification, string hideOnlineStatus, string showEmail, string birthdayView)
         {
-
             if (EditProfileToken == string.Empty)
             {
                 EditProfileToken = await GetEditProfileToken();
@@ -273,6 +295,38 @@ namespace Onliner.Http
         }
 
         /// <summary>
+        /// Sample POST request
+        /// <param name="url"></param>
+        /// <param name="host"></param>
+        /// <param name="origin"></param>
+        /// <param name="formdata">data for request</param>
+        /// </summary>
+        public async Task PostRequestFormData(string url, string host, string origin, string formdata)
+        {
+            try
+            {
+                if (!HasInternet()) throw new WebException();
+                HttpClient httpClient = new HttpClient(HandlerCookie());
+                HttpRequestMessage postRequest = new HttpRequestMessage(HttpMethod.Post, url);
+                postRequest.Headers.Add("Accept", "application/json, text/javascript, */*; q=0.01");
+                postRequest.Headers.Add("Accept-Encoding", "gzip, deflate");
+                postRequest.Headers.Add("Accept-Language", "en-US,en;q=0.8,ru;q=0.6");
+                postRequest.Headers.Add("Host", host);
+                postRequest.Headers.Add("Origin", origin);
+                postRequest.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36");
+
+                postRequest.Content = new System.Net.Http.StringContent(formdata, UnicodeEncoding.UTF8, "application/x-www-form-urlencoded");
+                response = httpClient.SendAsync(postRequest).Result;
+            }
+            catch (WebException ex)
+            {
+                await Message(ex.ToString());
+            }
+        }
+        #endregion
+
+        #region Message
+        /// <summary>
         /// GET request to obtain the number of incoming messages
         /// </summary>
         public async Task<string> MessageUnread()
@@ -285,9 +339,7 @@ namespace Onliner.Http
             try
             {
                 if (!HasInternet()) return null;
-                HttpClientHandler handler = new HttpClientHandler();
-                handler.CookieContainer = CookieSession;
-                HttpClient httpClient = new HttpClient(handler);
+                HttpClient httpClient = new HttpClient(HandlerCookie());
                 var response = httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, UnreadApi)).Result;
                 result = await response.Content.ReadAsStringAsync();
             }
@@ -297,6 +349,33 @@ namespace Onliner.Http
             }
             return result;
         }
+
+        /// <summary>
+        /// GET request for a list of messages
+        /// <param name="f">type message: inbox = 0, outbox = -1, saveimage = 1</param>
+        /// <param name="p">1</param>
+        /// </summary>
+        public async Task<MessageJson> Message(string f, string p)
+        {
+            MessageJson message = null;
+            string url = $"https://profile.onliner.by/messages/load/?f={f}&p={p}&token=" + ConvertToAjaxTime.ConvertToUnixTimestamp().ToString();
+            try
+            {
+                if (!HasInternet()) return message;
+                HttpClient httpClient = new HttpClient(HandlerCookie());
+                var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
+                var resultJson = await response.Content.ReadAsStringAsync();
+
+                var regex = new Regex("(\"m\\d+\":)", RegexOptions.Compiled | RegexOptions.Multiline);
+                var myString = regex.Replace(resultJson, "").Replace("\"messages\":{", "\"messages\":[").Replace("}}}", "}]}");
+                message = (MessageJson)JsonConvert.DeserializeObject<MessageJson>(myString);
+            }
+            catch (WebException) { }
+            return message;
+        }
+        #endregion
+
+        #region Menu Data (Shop, Weather, Bestrate)
 
         /// <summary>
         /// Shop counter
@@ -337,35 +416,6 @@ namespace Onliner.Http
         }
 
         /// <summary>
-        /// Get request
-        /// </summary>
-        /// <param name="url"></param>
-        /// <param name="qStringParam"></param>
-        /// <returns></returns>
-        public async Task<string> GetRequest(string url, string qStringParam)
-        {
-            string result = string.Empty;
-            string paramName = "name=";
-            string urlPath = $"{url}{paramName}{qStringParam}";
-            if (CookieSession == null)
-            {
-                Loadcookie("cookie");
-            }
-            try
-            {
-                if (!HasInternet()) throw new WebException();
-                HttpClientHandler handler = new HttpClientHandler();
-                handler.CookieContainer = CookieSession;
-                HttpClient httpClient = new HttpClient(handler);
-                var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, urlPath)).Result;
-                result = await response.Content.ReadAsStringAsync();
-            }
-            catch (WebException) { }
-            return result;
-
-        }
-
-        /// <summary>
         /// GET request for weather
         /// <param name="townID">id town</param>
         /// </summary>
@@ -393,36 +443,9 @@ namespace Onliner.Http
             return weather;
         }
 
-        /// <summary>
-        /// GET request for a list of messages
-        /// <param name="f">type message: inbox = 0, outbox = -1, saveimage = 1</param>
-        /// <param name="p">1</param>
-        /// </summary>
-        public async Task<MessageJson> Message(string f, string p)
-        {
-            MessageJson message = null;
-            string url = $"https://profile.onliner.by/messages/load/?f={f}&p={p}&token=" + ConvertToAjaxTime.ConvertToUnixTimestamp().ToString();
-            if (CookieSession == null)
-            {
-                Loadcookie("cookie");
-            }
-            try
-            {
-                if (!HasInternet()) return message;
-                HttpClientHandler handler = new HttpClientHandler();
-                handler.CookieContainer = CookieSession;
-                HttpClient httpClient = new HttpClient(handler);
-                var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
-                var resultJson = await response.Content.ReadAsStringAsync();
+        #endregion
 
-                var regex = new Regex("(\"m\\d+\":)", RegexOptions.Compiled | RegexOptions.Multiline);
-                var myString = regex.Replace(resultJson, "").Replace("\"messages\":{", "\"messages\":[").Replace("}}}", "}]}");
-                message = (MessageJson)JsonConvert.DeserializeObject<MessageJson>(myString);
-            }
-            catch (WebException) { }
-            return message;
-        }
-
+        #region Edip profile
         /// <summary>
         /// POST request for storing profile data
         /// </summary>
@@ -432,12 +455,6 @@ namespace Onliner.Http
             if (EditProfileToken == string.Empty)
             {
                 EditProfileToken = await GetEditProfileToken();
-            }
-
-            HttpClientHandler handler = new HttpClientHandler();
-            if (CookieSession != null)
-            {
-                handler.CookieContainer = CookieSession;
             }
             StringBuilder postData = new StringBuilder();
             postData.Append("token=" + EditProfileToken + "&");
@@ -470,12 +487,6 @@ namespace Onliner.Http
             {
                 EditProfileToken = await GetEditProfileToken();
             }
-
-            HttpClientHandler handler = new HttpClientHandler();
-            if (CookieSession != null)
-            {
-                handler.CookieContainer = CookieSession;
-            }
             StringBuilder postData = new StringBuilder();
             postData.Append("token=" + EditProfileToken + "&");
             postData.Append("old_password=" + oldPass + "&");
@@ -504,40 +515,159 @@ namespace Onliner.Http
             catch (WebException ex) { await Message(ex.ToString()); }
             return token;
         }
+        #endregion
+
+        #region Cookie
+        /// <summary>
+        /// Clear cookie
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="rcookie"></param>
+        /// <param name="uri"></param>
+        private async void Savecookie(string filename, CookieContainer rcookie, Uri uri)
+        {
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            StorageFile sampleFile = await localFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
+            using (StorageStreamTransaction transaction = await sampleFile.OpenTransactedWriteAsync())
+            {
+                SerializeCookie.Serialize(rcookie.GetCookies(uri), uri, transaction.Stream.AsStream());
+                await transaction.CommitAsync();
+            }
+        }
 
         /// <summary>
-        /// Sample POST request
-        /// <param name="url"></param>
-        /// <param name="host"></param>
-        /// <param name="origin"></param>
-        /// <param name="formdata">data for request</param>
+        /// Remove cookie
         /// </summary>
-        public async Task PostRequestFormData(string url, string host, string origin, string formdata)
+        public async void Remoovecookie()
         {
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            StorageFile sampleFile = await localFolder.CreateFileAsync("cookie", CreationCollisionOption.ReplaceExisting);
+            CookieSession = null;
+            await sampleFile.DeleteAsync();
+        }
+
+        /// <summary>
+        /// Load cookie for requests
+        /// </summary>
+        private async void Loadcookie(string filename)
+        {
+            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
+            StorageFile sampleFile;
             try
             {
-                if (!HasInternet()) throw new WebException();
-                HttpClientHandler handler = new HttpClientHandler();
-                if (CookieSession != null)
+                sampleFile = await localFolder.GetFileAsync(filename);
+                if (sampleFile == null) return;
+                using (Stream stream = await sampleFile.OpenStreamForReadAsync())
                 {
-                    handler.CookieContainer = CookieSession;
+                    CookieSession = SerializeCookie.Deserialize(stream, new Uri("http://www.onliner.by"));
                 }
-                HttpClient httpClient = new HttpClient(handler);
-                HttpRequestMessage postRequest = new HttpRequestMessage(HttpMethod.Post, url);
-                postRequest.Headers.Add("Accept", "application/json, text/javascript, */*; q=0.01");
-                postRequest.Headers.Add("Accept-Encoding", "gzip, deflate");
-                postRequest.Headers.Add("Accept-Language", "en-US,en;q=0.8,ru;q=0.6");
-                postRequest.Headers.Add("Host", host);
-                postRequest.Headers.Add("Origin", origin);
-                postRequest.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36");
-
-                postRequest.Content = new System.Net.Http.StringContent(formdata, UnicodeEncoding.UTF8, "application/x-www-form-urlencoded");
-                response = httpClient.SendAsync(postRequest).Result;
             }
-            catch (WebException ex)
+            catch
             {
-                await Message(ex.ToString());
+                await localFolder.CreateFileAsync("cookie", CreationCollisionOption.ReplaceExisting);
             }
+            await Task.CompletedTask;
+        }
+        #endregion
+
+        #region Comments
+
+        /// <summary>
+        /// Like request
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <param name="method">POST like, DELETE unlike</param>
+        /// <returns></returns>
+        public async Task<string> LikeComment(string userID, string url, LikeType likeType)
+        {
+            HttpMethod httpMethod = likeType == LikeType.Like ? HttpMethod.Post : HttpMethod.Delete;
+            string resultLike = string.Empty;
+            string UserApi = GenerateApiLikeOnliner(url) + userID + "/like";
+            if (!HasInternet()) throw new WebException();
+            HttpClientHandler handler = new HttpClientHandler();
+            if (CookieSession != null)
+            {
+                handler.CookieContainer = CookieSession;
+            }
+            HttpClient httpClient = new HttpClient(handler);
+            HttpRequestMessage postRequest = new HttpRequestMessage(httpMethod, UserApi);
+            postRequest.Headers.Add("Accept", "application/json; charset=utf-8");
+            postRequest.Headers.Add("X-Requested-With", "XMLHttpRequest");
+            var response = httpClient.SendAsync(postRequest).Result;
+            var resultJson = await response.Content.ReadAsStringAsync();
+            Regex pattern = new Regex(@"([0-9]+)");
+            resultLike = pattern.Match(resultJson).ToString();
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return resultLike;
+            }
+            return resultLike;
+        }
+
+        private string GenerateApiLikeOnliner(string url)
+        {
+            if (url.Contains("tech.onliner.by")) return "https://tech.onliner.by/sdapi/news.api/tech/comments/";
+            if (url.Contains("people.onliner.by")) return "https://people.onliner.by/sdapi/news.api/people/comments/";
+            if (url.Contains("auto.onliner.by")) return "https://auto.onliner.by/sdapi/news.api/auto/comments/";
+            if (url.Contains("realt.onliner.by")) return "https://realt.onliner.by/sdapi/news.api/realt/comments/";
+            return string.Empty;
+        }
+
+        public async Task<string> QuoteComment(string commentId, string url)
+        {
+            string quoteUrl = QuoteMessageUrlGenerate(url) + commentId + "?" + ConvertToAjaxTime.ConvertToUnixTimestamp().ToString();
+
+            if (!HasInternet()) throw new WebException();
+            HttpClientHandler handler = new HttpClientHandler();
+            if (CookieSession != null)
+            {
+                handler.CookieContainer = CookieSession;
+            }
+            HttpClient httpClient = new HttpClient(handler);
+            HttpRequestMessage postRequest = new HttpRequestMessage(HttpMethod.Get, quoteUrl);
+            postRequest.Headers.Add("Accept", "application/json, text/javascript, */*; q=0.01");
+            postRequest.Headers.Add("X-Requested-With", "XMLHttpRequest");
+            var response = httpClient.SendAsync(postRequest).Result;
+            var resultJson = await response.Content.ReadAsStringAsync();
+            return Regex.Unescape(resultJson);
+        }
+
+        private string QuoteMessageUrlGenerate(string url)
+        {
+            if (url.Contains("tech.onliner.by")) return "https://tech.onliner.by/api/quote/";
+            if (url.Contains("people.onliner.by")) return "https://people.onliner.by/api/quote/";
+            if (url.Contains("auto.onliner.by")) return "https://auto.onliner.by/api/quote/";
+            if (url.Contains("realt.onliner.by")) return "https://realt.onliner.by/api/quote/";
+            return string.Empty;
+        }
+
+        private string GetApionLinks(string link)
+        {
+            if (link.Contains("tech.onliner.by")) return CommentsApiTech;
+            if (link.Contains("people.onliner.by")) return CommentsApiPeople;
+            if (link.Contains("auto.onliner.by")) return CommentsApiAuto;
+            if (link.Contains("realt.onliner.by")) return CommentsApiHouse;
+            return string.Empty;
+        }
+        #endregion
+
+        public async Task<string> NewsViewAll(string url, string newsIDList)
+        {
+            string quoteUrl = url + "viewcounter/count/?" + newsIDList + "token=" + ConvertToAjaxTime.ConvertToUnixTimestamp().ToString();
+
+            if (!HasInternet()) throw new WebException();
+            HttpClientHandler handler = new HttpClientHandler();
+            if (CookieSession != null)
+            {
+                handler.CookieContainer = CookieSession;
+            }
+            HttpClient httpClient = new HttpClient(handler);
+            HttpRequestMessage postRequest = new HttpRequestMessage(HttpMethod.Get, quoteUrl);
+            postRequest.Headers.Add("Accept", "application/json, text/javascript, */*; q=0.01");
+            postRequest.Headers.Add("X-Requested-With", "XMLHttpRequest");
+            var response = httpClient.SendAsync(postRequest).Result;
+            var resultJson = await response.Content.ReadAsStringAsync();
+            return resultJson;
         }
 
         /// <summary>
@@ -586,54 +716,19 @@ namespace Onliner.Http
 
         }
 
-        /// <summary>
-        /// Clear cookie
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="rcookie"></param>
-        /// <param name="uri"></param>
-        private async void Savecookie(string filename, CookieContainer rcookie, Uri uri)
+        private HttpClientHandler HandlerCookie()
         {
-            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-            StorageFile sampleFile = await localFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
-            using (StorageStreamTransaction transaction = await sampleFile.OpenTransactedWriteAsync())
+            HttpClientHandler handler = new HttpClientHandler();
+            if (CookieSession == null)
             {
-                SerializeCookie.Serialize(rcookie.GetCookies(uri), uri, transaction.Stream.AsStream());
-                await transaction.CommitAsync();
+                Loadcookie("cookie");
             }
-        }
+            else
+            {
+                handler.CookieContainer = CookieSession;
+            }
 
-        /// <summary>
-        /// Remove cookie
-        /// </summary>
-        public async void Remoovecookie()
-        {
-            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-            StorageFile sampleFile = await localFolder.CreateFileAsync("cookie", CreationCollisionOption.ReplaceExisting);
-            await sampleFile.DeleteAsync();
-        }
-
-        /// <summary>
-        /// Load cookie for requests
-        /// </summary>
-        private async void Loadcookie(string filename)
-        {
-            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-            StorageFile sampleFile;
-            try
-            {
-                sampleFile = await localFolder.GetFileAsync(filename);
-                if (sampleFile == null) return;
-                using (Stream stream = await sampleFile.OpenStreamForReadAsync())
-                {
-                    CookieSession = SerializeCookie.Deserialize(stream, new Uri("http://www.onliner.by"));
-                }
-            }
-            catch
-            {
-                return;
-            }
-            await Task.CompletedTask;
+            return handler;
         }
 
         public bool HasInternet()
@@ -649,34 +744,10 @@ namespace Onliner.Http
             await msg.ShowAsync();
         }
 
-        /// <summary>
-        /// Like request
-        /// </summary>
-        /// <param name="userID"></param>
-        /// <param name="method">POST like, DELETE unlike</param>
-        /// <returns></returns>
-        public async Task<string> LikeComment(string userID, HttpMethod method)
-        {
-            string UserApi = LikeApi + userID + "/like";
-            if (!HasInternet()) throw new WebException();
-            HttpClientHandler handler = new HttpClientHandler();
-            if (CookieSession != null)
-            {
-                handler.CookieContainer = CookieSession;
-            }
-            HttpClient httpClient = new HttpClient(handler);
-            var response = httpClient.SendAsync(new HttpRequestMessage(method, UserApi)).Result;
-            var resultJson = await response.Content.ReadAsStringAsync();
-            return resultJson;
-        }
+    }
 
-        private string GetApionLinks(string link)
-        {
-            if (link.Contains("tech.onliner.by")) return CommentsApiTech;
-            if (link.Contains("people.onliner.by")) return CommentsApiPeople;
-            if (link.Contains("auto.onliner.by")) return CommentsApiAuto;
-            if (link.Contains("realt.onliner.by")) return CommentsApiHouse;
-            return string.Empty;
-        }
+    public enum LikeType
+    {
+        Like, UnLike
     }
 }

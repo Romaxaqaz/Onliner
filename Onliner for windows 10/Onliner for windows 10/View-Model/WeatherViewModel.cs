@@ -1,14 +1,14 @@
-﻿using MyToolkit.Command;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
-using Template10.Mvvm;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using MyToolkit.Command;
+using Newtonsoft.Json;
+using Template10.Mvvm;
 using Onliner.Http;
 using Onliner.Model.JsonModel.Weather;
 using static Onliner.Setting.SettingParams;
@@ -24,48 +24,6 @@ namespace Onliner_for_windows_10.View_Model
         public ObservableCollection<TownWeatherID> TownList { get; private set; }
         public Now now;
 
-        public int SelectedIndexItem
-        {
-            get
-            {
-                var town = GetParamsSetting(TownWeatherIdKey);
-                if (town == null) return 0;
-                return GetIndex(town.ToString());
-            }
-        }
-
-        /// <summary>
-        /// Change town command
-        /// </summary>
-        public RelayCommand<object> ChngeTown { get; private set; }
-
-        /// <summary>
-        /// Forecast list 
-        /// </summary>
-        public ObservableCollection<Forecast> ForecastItems
-        {
-            get { return forecastItems; }
-            set { Set(ref forecastItems, value); }
-        }
-
-        /// <summary>
-        /// Today list
-        /// </summary>
-        public ObservableCollection<object> WeatherTodayItems
-        {
-            get { return weatherTodayItems; }
-            set { Set(ref weatherTodayItems, value); }
-        }
-
-        /// <summary>
-        /// Now weather
-        /// </summary>
-        public Now Now
-        {
-            get { return now; }
-            set { Set(ref now, value); }
-        }
-
         public WeatherViewModel()
         {
             TownList = FillTownList();
@@ -73,6 +31,7 @@ namespace Onliner_for_windows_10.View_Model
             ChngeTown = new RelayCommand<object>(async (obj) => await GetTownID(obj));
         }
 
+        #region Methods
         /// <summary>
         /// Get town ID out combobox
         /// </summary>
@@ -132,15 +91,6 @@ namespace Onliner_for_windows_10.View_Model
             }
         }
 
-        /// <summary>
-        /// Progress indicator
-        /// </summary>
-        public bool CurrentProgress
-        {
-            get { return _currentProgress; }
-            set { Set(ref _currentProgress, value); }
-        }
-
         private int GetIndex(string townid)
         {
             int id = 0;
@@ -160,13 +110,70 @@ namespace Onliner_for_windows_10.View_Model
             await GeteWatherViewModel();
             await Task.CompletedTask;
         }
+        #endregion
 
+        #region Properties
+        public int SelectedIndexItem
+        {
+            get
+            {
+                var town = GetParamsSetting(TownWeatherIdKey);
+                if (town == null) return 0;
+                return GetIndex(town.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Progress indicator
+        /// </summary>
+        public bool CurrentProgress
+        {
+            get { return _currentProgress; }
+            set { Set(ref _currentProgress, value); }
+        }
+
+        /// <summary>
+        /// Now weather
+        /// </summary>
+        public Now Now
+        {
+            get { return now; }
+            set { Set(ref now, value); }
+        }
+
+        #endregion
+
+        #region Collections
+        /// <summary>
+        /// Forecast list 
+        /// </summary>
+        public ObservableCollection<Forecast> ForecastItems
+        {
+            get { return forecastItems; }
+            set { Set(ref forecastItems, value); }
+        }
+
+        /// <summary>
+        /// Today list
+        /// </summary>
+        public ObservableCollection<object> WeatherTodayItems
+        {
+            get { return weatherTodayItems; }
+            set { Set(ref weatherTodayItems, value); }
+        }
+        #endregion
+
+        #region Command
+        /// <summary>
+        /// Change town command
+        /// </summary>
+        public RelayCommand<object> ChngeTown { get; private set; }
+        #endregion
     }
 
     public class TownWeatherID
     {
         public string ID { get; set; }
         public string Name { get; set; }
-
     }
 }
