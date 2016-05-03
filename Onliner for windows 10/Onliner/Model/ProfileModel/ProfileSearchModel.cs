@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Onliner.Model.ProfileModel
+﻿namespace Onliner.Model.ProfileModel
 {
-    public class ProfileSearchModel
+    public class ProfileSearchModel : IProfileSearch
     {
         public string IdUser { get; set; }
         public string UrlImage { get; set; }
@@ -16,7 +10,7 @@ namespace Onliner.Model.ProfileModel
         public string Time { get; set; }
         public string CommentsCount { get; set; }
 
-        public ProfileSearchModel(string id, string urlImage,string name, string description, string status, string time, string commentsCount)
+        public ProfileSearchModel(string id, string urlImage, string name, string description, string status, string time, string commentsCount)
         {
             this.IdUser = id;
             this.UrlImage = urlImage;

@@ -18,7 +18,7 @@ using Onliner_for_windows_10.Views.Message;
 
 namespace Onliner_for_windows_10.View_Model
 {
-    public class MessagePageViewModel : ViewModelBase
+    public class MessageViewModel : ViewModelBase
     {
         #region Url Api
         private readonly string MessageMaskReadUrl = "https://profile.onliner.by/messages/markAsRead/";
@@ -44,7 +44,7 @@ namespace Onliner_for_windows_10.View_Model
         private DelegateCommand<ItemSwipeEventArgs> _itemSwipeCommand;
 
         #region Constructor
-        public MessagePageViewModel()
+        public MessageViewModel()
         {
             PivotSelectionChange = new RelayCommand(async () => await UpdateItemSourceList());
             ListMessageSelectionChange = new RelayCommand<object>((obj) => ShowMessageContent(obj));
@@ -63,7 +63,9 @@ namespace Onliner_for_windows_10.View_Model
             DeleteMarkMessageCommand = new RelayCommand(async () => await DeleteMarkMessage());
             CheckListItemCommand = new RelayCommand(() => CheckListLissageItem());
             CheckAllListItemCommand = new RelayCommand<object>((obj) => CheckAllListLissageItem(obj));
+            UserProfileCommand = new RelayCommand<object>((obj) => UserProfileNavigate(obj));
         }
+
         #endregion
 
         #region Methods
@@ -214,6 +216,10 @@ namespace Onliner_for_windows_10.View_Model
         }
         #endregion
 
+        private void UserProfileNavigate(object obj)
+        {
+            NavigationService.Navigate(typeof(ProfilePage.ProfilePage), obj.ToString());
+        }
 
         /// <summary>
         /// Send message
@@ -668,6 +674,7 @@ namespace Onliner_for_windows_10.View_Model
         public RelayCommand SaveMessageCommand { get; private set; }
         public RelayCommand DeleteMessageCommand { get; private set; }
         public RelayCommand DeleteMarkMessageCommand { get; private set; }
+        public RelayCommand<object> UserProfileCommand { get; private set; }
 
         public RelayCommand CheckListItemCommand { get; private set; }
         public RelayCommand<object> CheckAllListItemCommand { get; private set; }

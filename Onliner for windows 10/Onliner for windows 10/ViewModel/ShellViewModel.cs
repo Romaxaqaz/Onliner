@@ -75,7 +75,7 @@ namespace Onliner_for_windows_10.View_Model
         private async Task GetCurrent()
         {
             var current = await HttpRequest.Bestrate();
-            Current = current == null ? (string)GetParamsSetting(LastCurrentKey) : current.amount;
+            Current = current == null ? (string)GetParamsSetting(LastCurrentKey) : current.Amount;
             await Task.CompletedTask;
         }
 

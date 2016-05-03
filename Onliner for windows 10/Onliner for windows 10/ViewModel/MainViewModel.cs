@@ -8,14 +8,14 @@ using static Onliner.Setting.SettingParams;
 
 namespace Onliner_for_windows_10.View_Model
 {
-    public class MainPageViewModel : ViewModelBase
+    public class MainViewModel : ViewModelBase
     {
         private readonly string AutorizationUrl = "https://www.onliner.by/#registration";
 
         private HttpRequest HttpRequestToApi = new HttpRequest();
 
         #region Constructor
-        public MainPageViewModel()
+        public MainViewModel()
         {
             AuthorizationLaterCommand = new RelayCommand(() => AuthorizationLater());
             RegistrationCommand = new RelayCommand(() => Registration());

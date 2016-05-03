@@ -8,7 +8,7 @@ namespace Onliner_for_windows_10.Model.Message
 
     public sealed partial class MessagePage : Page
     {
-       private MessagePageViewModel viewModel = new MessagePageViewModel();
+       private MessageViewModel viewModel = new MessageViewModel();
 
         public MessagePage()
         {

@@ -303,52 +303,48 @@
                         <TextBlock Text="Основные" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>
                     </PivotItem.Header>
                     <ScrollViewer>
-  
-                    <StackPanel>
-                        <ToggleSwitch x:Name="ToggleSwitchNewsDataTemplateType"
+
+                        <StackPanel HorizontalAlignment="Left">
+                            <ToggleSwitch x:Name="ToggleSwitchNewsDataTemplateType"
                                       OnContent="Плитки" 
                                       OffContent="Список" 
                                       HorizontalAlignment="Stretch"
                                       Margin="5"
                                       IsOn="{Binding ToggleSwitchNewsDataTemplateType, Mode=TwoWay}"
                                       IsEnabled="{Binding ToggleSwitchNewsDataTemplateTypeIsEnable, Mode=TwoWay}"
-                                      Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}">
-                            <ToggleSwitch.Header>
+                                      Foreground="Gray">
                                 <TextBlock Text="Отображение ленты новостей (только для мобильных устройств)" TextWrapping="Wrap" FontSize="14"/>
-                            </ToggleSwitch.Header>
-                        </ToggleSwitch>
+                            </ToggleSwitch>
                             <ToggleSwitch x:Name="AutoUpdateToggleSwith"                                  
                                       Margin="5"
                                       HorizontalAlignment="Stretch"
-                                       Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
+                                      Foreground="Gray"
                                       IsOn="{Binding AutoUpdateCheked, Mode=TwoWay}">
-                                <ToggleSwitch.Header>
-                                    <TextBlock Text="Автоматически обновлять ленту новостей при старте" TextWrapping="Wrap" FontSize="14"/>
-                                </ToggleSwitch.Header>
+                                <TextBlock Text="Автоматически обновлять ленту новостей при старте" TextWrapping="Wrap" FontSize="14"/>
                             </ToggleSwitch>
-                            <TextBlock Text="Меню приложения" Margin="5,0,0,3"/>
+                            <TextBlock Text="Меню приложения" Margin="5,0,0,3" Foreground="Gray"/>
                             <Rectangle Height="1" Fill="Gray" Margin="5,0,0,5" MaxWidth="500"/>
                             <StackPanel Margin="5" MaxWidth="500">
-                             
-                            <ComboBox x:Name="TownChoise" 
-                                      Header="Город для отображения погоды"
+
+                                <ComboBox x:Name="TownChoise" 
+                                      Header="Город для отображения погоды" Foreground="Gray"
                                       HorizontalAlignment="Stretch"
                                       ItemsSource="{Binding TownList}"
                                       SelectedIndex="{Binding TownWeatherIdindex, Mode=TwoWay}">
-                                <Interactivity:Interaction.Behaviors>
-                                    <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                        <Core:InvokeCommandAction Command="{Binding ChangeTown}" CommandParameter="{Binding ElementName=TownChoise, Path=SelectedItem}"/>
-                                    </Core:EventTriggerBehavior>
-                                </Interactivity:Interaction.Behaviors>
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding Name}"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                        </StackPanel>
+                                    <Interactivity:Interaction.Behaviors>
+                                        <Core:EventTriggerBehavior EventName="SelectionChanged">
+                                            <Core:InvokeCommandAction Command="{Binding ChangeTown}" CommandParameter="{Binding SelectedItem, ElementName=TownChoise}"/>
+                                        </Core:EventTriggerBehavior>
+                                    </Interactivity:Interaction.Behaviors>
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Name}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
                             <StackPanel Margin="5" MaxWidth="500">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -359,19 +355,19 @@
                                         <RowDefinition Height="auto"/>
                                         <RowDefinition/>
                                     </Grid.RowDefinitions>
-                                    <TextBlock Grid.ColumnSpan="2">
+                                    <TextBlock Grid.ColumnSpan="2" Foreground="Gray">
                                         <Run Text="Курс: "/>
                                         <Run Text="{Binding NewCurrent, Mode=TwoWay}"/>
                                     </TextBlock>
-                                    <ComboBox x:Name="CurrentTypeComboBox" Header="Валюта" Grid.Row="1"
+                                    <ComboBox x:Name="CurrentTypeComboBox" Header="Валюта" Grid.Row="1" Foreground="Gray"
                                               ItemsSource="{Binding CurrentTypeList}" SelectedIndex="{Binding CurrentIndex, Mode=TwoWay}">
                                         <Interactivity:Interaction.Behaviors>
                                             <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                                <Core:InvokeCommandAction Command="{Binding CurrentTypeCommand}" CommandParameter="{Binding ElementName=CurrentTypeComboBox, Path=SelectedItem}"/>
+                                                <Core:InvokeCommandAction Command="{Binding CurrentTypeCommand}" CommandParameter="{Binding SelectedItem, ElementName=CurrentTypeComboBox}"/>
                                             </Core:EventTriggerBehavior>
                                         </Interactivity:Interaction.Behaviors>
                                     </ComboBox>
-                                    <ComboBox x:Name="BankActionComboBox" Header="Действие банка"
+                                    <ComboBox x:Name="BankActionComboBox" Header="Действие банка" Foreground="Gray"
                                               Grid.Column="1" Grid.Row="1"
                                               HorizontalAlignment="Stretch"
                                               ItemsSource="{Binding BankActionDictionary}"
@@ -385,7 +381,7 @@
                                         </ComboBox.ItemTemplate>
                                         <Interactivity:Interaction.Behaviors>
                                             <Core:EventTriggerBehavior EventName="SelectionChanged">
-                                                <Core:InvokeCommandAction Command="{Binding BankActionCommand}" CommandParameter="{Binding ElementName=BankActionComboBox, Path=SelectedItem}"/>
+                                                <Core:InvokeCommandAction Command="{Binding BankActionCommand}" CommandParameter="{Binding SelectedItem, ElementName=BankActionComboBox}"/>
                                             </Core:EventTriggerBehavior>
                                         </Interactivity:Interaction.Behaviors>
                                     </ComboBox>
@@ -401,7 +397,7 @@
                                   Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"/>-->
 
 
-                    </StackPanel>
+                        </StackPanel>
                     </ScrollViewer>
                 </PivotItem>
                 <PivotItem>

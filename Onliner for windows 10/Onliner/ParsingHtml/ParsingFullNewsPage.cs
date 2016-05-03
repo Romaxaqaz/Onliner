@@ -33,9 +33,7 @@ namespace Onliner.ParsingHtml
         private readonly string NameTagLi = "li";
         private readonly string AttributeTagSRC = "src";
         #endregion
-        /// <summary>
-        /// <value> Background color listview item</value>
-        /// </summary>
+
         private string urlPageNews = string.Empty;
         private string loadePage = string.Empty;
         private string newsID = string.Empty;
@@ -43,34 +41,18 @@ namespace Onliner.ParsingHtml
         private HttpRequest HttpRequest = new HttpRequest();
         private HtmlDocument htmlDoc = new HtmlDocument();
         private List<FullItemNews> listNews = new List<FullItemNews>();
-        private ObservableCollection<CommentsItem> listComments = new ObservableCollection<CommentsItem>();
+        private ObservableCollection<Comments> listComments = new ObservableCollection<Comments>();
         private List<string> listDataContent = new List<string>();
-        private List<UIElement> controlList = new List<UIElement>();
-
-        List<CommetsLike> listItem = new List<CommetsLike>();
-
+        private List<CommetsLike> listItem = new List<CommetsLike>();
         private ObservableCollection<ListViewItemSelectorModel> NewsListItem = new ObservableCollection<ListViewItemSelectorModel>();
-        ListViewItemSelectorModel listViewMode = new ListViewItemSelectorModel();
-        private int countNews = 0;
-        public int CountPTag { get { return countNews; } }
 
         public string LoadePage { get { return loadePage; } }
         public string NewsID { get { return newsID; } }
 
-        public ParsingFullNewsPage(string page)
+        public ParsingFullNewsPage(string page, string urlPage)
         {
-            urlPageNews = page;
-            loadePage = GetHtmlPage();
-        }
-
-        /// <summary>
-        /// Get html page to string
-        /// </summary>
-        /// <returns>string page</returns>
-        private string GetHtmlPage()
-        {
-            HttpRequest.GetRequestOnliner(urlPageNews);
-            return HttpRequest.ResultGetRequsetString;
+            loadePage = page;
+            urlPageNews = urlPage;
         }
 
         /// <summary>
@@ -80,25 +62,14 @@ namespace Onliner.ParsingHtml
         public async Task<ObservableCollection<ListViewItemSelectorModel>> NewsMainInfo()
         {
             FullItemNews fullNews = new FullItemNews();
-            htmlDoc.LoadHtml(loadePage);
 
-
+            htmlDoc.LoadHtml(LoadePage);
 
             newsID = htmlDoc.DocumentNode.Descendants(NameTagSpan).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "news_view_count").FirstOrDefault().Attributes["news_id"].Value;
 
-            string urll = UrlLikeApi(urlPageNews, newsID);
-            var strings = await HttpRequest.GetTypeRequestOnlinerAsync(urll);
-
-
-            var m_res = JsonConvert.DeserializeObject<YourJsonClass>(strings);
-            foreach (dynamic numb in m_res.comments)
-            {
-                string h = numb.Value.ToString();
-                CommetsLike com = new CommetsLike();
-                com.ID = numb.Name;
-                com.Item = JsonConvert.DeserializeObject<Item>(h);
-                listItem.Add(com);
-            }
+            string likeApiUrl = GetUrlLikeApi(urlPageNews, newsID);
+            var likeDataCollection = await HttpRequest.GetTypeRequestOnlinerAsync(likeApiUrl);
+            SetCommentsList(likeDataCollection);
 
             string _category = htmlDoc.DocumentNode.Descendants(NameTagDiv).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-post-tags-1").LastOrDefault().Descendants(NameTagStrong).LastOrDefault().Descendants(NameTagA).LastOrDefault().InnerText;
             string _time = htmlDoc.DocumentNode.Descendants(NameTagDiv).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-post-tags-1").LastOrDefault().Descendants("time").FirstOrDefault().InnerText;
@@ -118,30 +89,25 @@ namespace Onliner.ParsingHtml
 
             foreach (var item in htmlDoc.DocumentNode.ChildNodes)
             {
-                if (item.Name == "p")
+                if (item.Name.Equals("p"))
                 {
                     if (item.InnerHtml.Contains("<img"))
                     {
-                        string url = item.Descendants("img").FirstOrDefault().Attributes["src"].Value;
-                        NewsListItem.Add(new ListViewItemSelectorModel("image", url));
+                        NewsListItem.Add(new ListViewItemSelectorModel("image", ParsingUrlImage(item)));
                     }
-                    else 
-                    if (item.InnerHtml.Contains("iframe"))
+                    else if (item.InnerHtml.Contains("iframe"))
                     {
                         if (item.InnerHtml.Contains("https://www.youtube.com/embed/"))
                         {
-                            YouTubeUri uri = new YouTubeUri();
-                            string linkVideo = item.Descendants("iframe").FirstOrDefault().Attributes["src"].Value;
                             try
                             {
-                                uri = await GetYouTubeYriForControl(linkVideo);
+                                var uri = await ParsingYouTubeUrl(item);
                                 NewsListItem.Add(new ListViewItemSelectorModel("video", uri.Uri));
                             }
-                            catch(YouTubeUriNotFoundException)
+                            catch (YouTubeUriNotFoundException)
                             {
                                 NewsListItem.Add(new ListViewItemSelectorModel("web", item.InnerHtml));
                             }
-                           
                         }
                         else
                         {
@@ -153,22 +119,52 @@ namespace Onliner.ParsingHtml
                         NewsListItem.Add(new ListViewItemSelectorModel("story", item.InnerHtml));
                     }
                 }
-                if (item.Name == "ul")
+                if (item.Name.Equals("ul"))
                 {
-                    HtmlDocument htmlDoc = new HtmlDocument();
-                    htmlDoc.LoadHtml(item.InnerHtml);
-
-                    var liCollection = htmlDoc.DocumentNode.Descendants("li").ToList();
-                    string html = string.Empty;
-                    foreach (var it in liCollection)
-                    {
-                        html = html + it.InnerHtml + "<br>";
-                    }
-                    NewsListItem.Add(new ListViewItemSelectorModel("story", html));
+                    NewsListItem.Add(new ListViewItemSelectorModel("story", ParsingLiCollection(item.InnerHtml)));
                 }
             }
             NewsListItem.Add(new ListViewItemSelectorModel("story", footerNews));
             return NewsListItem;
+        }
+
+        private string ParsingUrlImage(HtmlNode node)
+        {
+            return node.Descendants("img").FirstOrDefault().Attributes["src"].Value;
+        }
+
+        private async Task<YouTubeUri> ParsingYouTubeUrl(HtmlNode node)
+        {
+            YouTubeUri uri = new YouTubeUri();
+            string linkVideo = node.Descendants("iframe").FirstOrDefault().Attributes["src"].Value;
+            return await GetYouTubeYriForControl(linkVideo);
+        }
+
+        private string ParsingLiCollection(string parsingContent)
+        {
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(parsingContent);
+
+            var liCollection = htmlDoc.DocumentNode.Descendants("li").ToList();
+            string html = string.Empty;
+            foreach (var it in liCollection)
+            {
+                html = html + it.InnerHtml + "<br>";
+            }
+            return html;
+        }
+
+        private void SetCommentsList(string collectionJSon)
+        {
+            var commentsValue = JsonConvert.DeserializeObject<CommentsClass>(collectionJSon);
+            foreach (dynamic item in commentsValue.comments)
+            {
+                string value = item.Value.ToString();
+                CommetsLike commment = new CommetsLike();
+                commment.ID = item.Name;
+                commment.Item = JsonConvert.DeserializeObject<Item>(value);
+                listItem.Add(commment);
+            }
         }
 
         private async Task<YouTubeUri> GetYouTubeYriForControl(string url)
@@ -185,28 +181,30 @@ namespace Onliner.ParsingHtml
         /// Comments data
         /// </summary>
         /// <returns></returns>
-        public async Task<ObservableCollection<CommentsItem>> CommentsMainInfo()
+        public async Task<ObservableCollection<Comments>> CommentsMainInfo()
         {
-            CommentsItem commentsParams;
-            htmlDoc.LoadHtml(loadePage);
-            int step = 0;
+            Comments commentsParams;
+            htmlDoc.LoadHtml(LoadePage);
             await Task.Run(() =>
             {
                 var commentsList = htmlDoc.DocumentNode.Descendants(NameTagLi).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-comments-1__list-item commentListItem").ToList();
+
                 foreach (var item in commentsList)
                 {
-                    step++;
-                    commentsParams = new CommentsItem();
-                    commentsParams.ID = item.Descendants(NameTagDiv).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "comment-actions").FirstOrDefault().Descendants("a").FirstOrDefault().Attributes["data-comment-id"].Value;
+                    commentsParams = new Comments();
+                    commentsParams.ID = item.Attributes["data-comment-id"].Value;
                     commentsParams.Nickname = item.Descendants(NameTagStrong).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "author").FirstOrDefault().InnerText;
+                    commentsParams.UserId = item.Attributes["data-author-id"].Value;
                     commentsParams.Time = item.Descendants(NameTagSpan).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "date").FirstOrDefault().InnerText;
                     commentsParams.Image = "https:" + item.Descendants(NameTagFigure).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "author-image").FirstOrDefault().Descendants(NameTagImg).FirstOrDefault().Attributes[AttributeTagSRC].Value;
                     commentsParams.Data = item.InnerHtml;
+
                     var commentsLikeCount = listItem.FirstOrDefault(x => x.ID == commentsParams.ID);
                     if (commentsLikeCount != null)
                     {
                         commentsParams.Like = commentsLikeCount.Item.like;
                         commentsParams.LikeCount = commentsLikeCount.Item.counter;
+                        commentsParams.Best = commentsLikeCount.Item.best;
                     }
 
                     listComments.Add(commentsParams);
@@ -223,7 +221,7 @@ namespace Onliner.ParsingHtml
             return textBlock;
         }
 
-        private string UrlLikeApi(string url, string newsId)
+        private string GetUrlLikeApi(string url, string newsId)
         {
             if (url.Contains("tech.onliner.by"))
             {
@@ -246,7 +244,7 @@ namespace Onliner.ParsingHtml
 
     }
 
-    public class YourJsonClass
+    public class CommentsClass
     {
         public dynamic comments { get; set; }
     }

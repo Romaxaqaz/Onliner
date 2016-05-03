@@ -12,7 +12,7 @@ namespace Onliner_for_windows_10.Views
 {
     public sealed partial class NewsPage : Page
     {
-        private NewsSectionPageViewModel newsModel = new NewsSectionPageViewModel();
+        private NewsSectionViewModel newsModel = new NewsSectionViewModel();
         public NewsPage()
         {
             this.InitializeComponent();

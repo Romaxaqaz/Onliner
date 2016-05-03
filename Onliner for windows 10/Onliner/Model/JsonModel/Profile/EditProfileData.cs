@@ -2,7 +2,7 @@
 
 namespace Onliner.Model.JsonModel.Profile
 {
-    public class EditProfileData
+    public class EditProfileData : IEditProfileData
     {
         [JsonProperty("token")]
         public string Token { get; set; }

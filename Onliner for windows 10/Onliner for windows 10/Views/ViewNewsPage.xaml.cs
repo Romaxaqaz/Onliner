@@ -11,7 +11,7 @@ namespace Onliner_for_windows_10.Views
 {
     public sealed partial class ViewNewsPage : Page
     {
-        private ViewNewsPageViewModel viewModel = new ViewNewsPageViewModel();
+        private ViewNewsViewModel viewModel = new ViewNewsViewModel();
         private bool DownPosition = false;
         public ViewNewsPage()
         {

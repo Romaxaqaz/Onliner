@@ -20,9 +20,9 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="2*"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
                     <Ellipse Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Width="50" Height="50" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Center">
                         <Ellipse.Fill>
@@ -41,7 +41,8 @@
             </Border>
         </DataTemplate>
     </Page.Resources>
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Background="{ThemeResource BackGroundCustomHeaderColorBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition/>
@@ -53,7 +54,7 @@
                              Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
                              VisualStateNarrowMinWidth="1"
                              BackButtonVisibility="Collapsed"/>
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Background="{ThemeResource BackGroundCustomColorBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>

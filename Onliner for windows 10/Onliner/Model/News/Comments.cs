@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Onliner.Model.News
 {
-    public class CommentsItem : ICommentsItem, INotifyPropertyChanged
+    public class Comments : IComments, INotifyPropertyChanged
     {
         private string id = string.Empty;
         private string data = string.Empty;
@@ -13,8 +13,9 @@ namespace Onliner.Model.News
         private string nickname = string.Empty;
         private string time = string.Empty;
         private string colorItem = string.Empty;
+        private string userId = string.Empty;
         private bool like = false;
-
+        private bool best = false;
 
         public string ID
         {
@@ -66,6 +67,16 @@ namespace Onliner.Model.News
             }
         }
 
+        public string UserId
+        {
+            get { return userId; }
+            set
+            {
+                userId = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public string Time
         {
             get { return time; }
@@ -92,6 +103,16 @@ namespace Onliner.Model.News
             set
             {
                 like = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public bool Best
+        {
+            get { return best; }
+            set
+            {
+                best = value;
                 NotifyPropertyChanged();
             }
         }

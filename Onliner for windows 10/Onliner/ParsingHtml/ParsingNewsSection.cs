@@ -15,6 +15,7 @@ using static Onliner.SQLiteDataBase.SQLiteDB;
 using Onliner.SQLiteDataBase;
 using System.Net;
 using Newtonsoft.Json;
+using Onliner.Interface.News;
 
 namespace Onliner.ParsingHtml
 {
@@ -23,24 +24,22 @@ namespace Onliner.ParsingHtml
         #region Classes
         private ObservableCollection<ItemsNews> myItems;
         private HtmlDocument resultat = new HtmlDocument();
-        private CategoryNews _categoryNews = new CategoryNews();
         private HttpRequest HttpRequest = new HttpRequest();
         private ItemsNews _itemNews;
         private OpinionModel opinionModel;
         private HttpClient client = new HttpClient();
         #endregion
 
-
         Dictionary<string, string> com = new Dictionary<string, string>();
 
         #region Collections
         private ObservableCollection<OpinionModel> _opinionsItems = new ObservableCollection<OpinionModel>();
-        private ObservableCollection<ItemsNews> bufferNews;
+        private ObservableCollection<ItemsNews> oldNewsItem;
         private List<string> NewsListId = new List<string>();
 
         public ObservableCollection<ItemsNews> OldNewsForUpdate
         {
-            get { return bufferNews; }
+            get { return oldNewsItem; }
         }
         #endregion
 
@@ -72,10 +71,11 @@ namespace Onliner.ParsingHtml
         {
             if (!HttpRequest.HasInternet()) return null;
             myItems = new ObservableCollection<ItemsNews>();
+
             await Task.Run(async () =>
             {
                 HttpClient httpClient = new HttpClient();
-                bufferNews = new ObservableCollection<ItemsNews>();
+                oldNewsItem = new ObservableCollection<ItemsNews>();
                 ResultHtmlPage = await HttpRequest.GetRequestOnlinerAsync(path);
                 resultat.LoadHtml(ResultHtmlPage);
 
@@ -84,7 +84,7 @@ namespace Onliner.ParsingHtml
                 ("b-posts-1-item b-content-posts-1-item news_for_copy"))).ToList();
 
                 //db news collections
-                var DBlist = await GetNeedList(pathDB);
+                var DBNewsList = await GetNeedList(pathDB);
 
                 foreach (var item in titleList)
                 {
@@ -93,24 +93,23 @@ namespace Onliner.ParsingHtml
                              Where(div => div.GetAttributeValue("class", string.Empty) == "show_news_view_count").FirstOrDefault().Attributes["news_id"].Value;
                     NewsListId.Add(QueryString(_itemNews.NewsID));
 
-
                     //data for update
                     _itemNews.LinkNews = item.Descendants("h3").
-                             Where(div => div.GetAttributeValue("class", string.Empty) == "b-posts-1-item__title").FirstOrDefault().Descendants("a").FirstOrDefault().Attributes["href"].Value;
+                                            Where(div => div.GetAttributeValue("class", string.Empty) == "b-posts-1-item__title").FirstOrDefault().Descendants("a").FirstOrDefault().Attributes["href"].Value;
                     _itemNews.CountViews = GetFirstOrDefaultTwoTagInARowHtmlInnerText(item, "a", "span");
                     _itemNews.Footer = Regex.Replace(item.Descendants("span").
-                           Where(div => div.GetAttributeValue("class", string.Empty) == "right-side").LastOrDefault().InnerText.Replace("\n", "").Trim(), @"\s+", " ");
+                                            Where(div => div.GetAttributeValue("class", string.Empty) == "right-side").LastOrDefault().InnerText.Replace("\n", "").Trim(), @"\s+", " ");
 
-                    var m = item?.Descendants("span").Where(div => div.GetAttributeValue("class", string.Empty) == "popular-count").FirstOrDefault();
-                    if (m != null)
-                        _itemNews.Popularcount = m.InnerText;
+                    var popularCount = item?.Descendants("span").Where(div => div.GetAttributeValue("class", string.Empty) == "popular-count").FirstOrDefault();
+                    if (popularCount != null)
+                        _itemNews.Popularcount = popularCount.InnerText;
 
-                    if (DBlist != null)
+                    if (DBNewsList != null)
                     {
-                        var containItem = DBlist.FirstOrDefault(x => x.LinkNews == _itemNews.LinkNews);
+                        var containItem = DBNewsList.FirstOrDefault(x => x.LinkNews == _itemNews.LinkNews);
                         if (containItem != null)
                         {
-                            bufferNews.Add(_itemNews);
+                            oldNewsItem.Add(_itemNews);
                             continue;
                         }
                     }
@@ -129,22 +128,22 @@ namespace Onliner.ParsingHtml
 
                     myItems.Add(_itemNews);
                 }
-
-
-                var viewNewsComment = await HttpRequest.NewsViewAll(path, string.Join("", NewsListId));
-                var m_res = JsonConvert.DeserializeObject<CounterNewsJsonClass>(viewNewsComment);
-                foreach (dynamic numb in m_res.count)
-                { 
-                    var item = bufferNews.Where(x => x.NewsID.Equals(numb.Name.ToString())).FirstOrDefault();
-                    if (item != null)
-                        item.Popularcount = numb.Value.ToString();
-                }
-
-
-                //  await SQLiteDB.UpdateItemDB(bufferNews, section);
+                UpdateViewNews(oldNewsItem, path);
             });
             return myItems;
 
+        }
+
+        private async void UpdateViewNews(IEnumerable<INewsItems> collections, string pathNews)
+        {
+            var viewNewsComment = await HttpRequest.NewsViewAll(pathNews, string.Join("", NewsListId));
+            var m_res = JsonConvert.DeserializeObject<CounterNewsJsonClass>(viewNewsComment);
+            foreach (dynamic numb in m_res.count)
+            {
+                var item = collections.Where(x => x.NewsID.Equals(numb.Name.ToString())).FirstOrDefault();
+                if (item != null)
+                    item.Popularcount = numb.Value.ToString();
+            }
         }
 
 

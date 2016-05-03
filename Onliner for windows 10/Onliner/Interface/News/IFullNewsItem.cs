@@ -10,16 +10,6 @@
         string Author { get; set; }
     }
 
-    public interface ICommentsItem
-    {
-        string Image { get; set; }
-        string Nickname { get; set; }
-        string Time { get; set; }
-        string Data { get; set; }
-        string LikeCount { get; set; }
-        string ColorItem { get; set; }
-    }
-
     public interface IImageList
     {
         string Link { get; set; }

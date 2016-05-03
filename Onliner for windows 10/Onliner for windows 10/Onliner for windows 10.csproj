@@ -188,19 +188,19 @@
     <Compile Include="UserControls\SwipeableSplitView.cs" />
     <Compile Include="UserControls\TabHeader\HeaderTab.cs" />
     <Compile Include="UserControls\TabHeader\HorizontalStretchPanel.cs" />
-    <Compile Include="View-Model\KursViewModel.cs" />
-    <Compile Include="View-Model\MainPageViewModel.cs" />
-    <Compile Include="View-Model\MessagePageViewModel.cs" />
-    <Compile Include="View-Model\Message\MessageSenderViewModel.cs" />
-    <Compile Include="View-Model\NewsSectionPageViewModel.cs" />
-    <Compile Include="View-Model\OpinionsViewModel.cs" />
-    <Compile Include="View-Model\ProfileViewModel.cs" />
-    <Compile Include="View-Model\ProfileViewModels\EditProfileViewModel.cs" />
-    <Compile Include="View-Model\ProfileViewModels\SearchUserViewModel.cs" />
-    <Compile Include="View-Model\Settings\SettingViewModel.cs" />
-    <Compile Include="View-Model\ShellViewModel.cs" />
-    <Compile Include="View-Model\ViewNewsPageViewModel.cs" />
-    <Compile Include="View-Model\WeatherViewModel.cs" />
+    <Compile Include="ViewModel\KursViewModel.cs" />
+    <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\MessageViewModel.cs" />
+    <Compile Include="ViewModel\Message\MessageSenderViewModel.cs" />
+    <Compile Include="ViewModel\NewsSectionViewModel.cs" />
+    <Compile Include="ViewModel\OpinionsViewModel.cs" />
+    <Compile Include="ViewModel\ProfileViewModel.cs" />
+    <Compile Include="ViewModel\ProfileViewModels\EditProfileViewModel.cs" />
+    <Compile Include="ViewModel\ProfileViewModels\SearchUserViewModel.cs" />
+    <Compile Include="ViewModel\Settings\SettingViewModel.cs" />
+    <Compile Include="ViewModel\ShellViewModel.cs" />
+    <Compile Include="ViewModel\ViewNewsViewModel.cs" />
+    <Compile Include="ViewModel\WeatherViewModel.cs" />
     <Compile Include="Views\KursCurrent\KursPage.xaml.cs">
       <DependentUpon>KursPage.xaml</DependentUpon>
     </Compile>

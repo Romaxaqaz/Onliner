@@ -190,14 +190,14 @@ namespace Onliner.Http
             string token = bufferToken.Replace("token('", "");
 
             //create json params
-            var json = new JsonParams
+            var json = new Authentication
             {
                 Token = token,
                 Login = login,
                 Password = password,
                 Session_id = "null",
-                Recaptcha_challenge_field = string.Empty,
-                Recaptcha_response_field = string.Empty,
+                RecaptchaChallengeField = string.Empty,
+                RecaptchaResponseField = string.Empty,
             };
             JsonRequest = JsonConvert.SerializeObject(json);
 
@@ -241,7 +241,7 @@ namespace Onliner.Http
         /// <summary>
         /// POST request to add a comment
         /// </summary>
-        public async Task AddComments(string newsID, string message, string linkNews)
+        public async Task<bool> AddComments(string newsID, string message, string linkNews)
         {
             if (newsID == string.Empty) { throw new Exception(); }
             if (message == string.Empty) { throw new Exception(); }
@@ -262,7 +262,12 @@ namespace Onliner.Http
             postData.Append("postId=" + WebUtility.UrlEncode(newsID));
             postRequest.Content = new System.Net.Http.StringContent(postData.ToString(), UnicodeEncoding.UTF8, "application/x-www-form-urlencoded");
             response = await httpClient.SendAsync(postRequest);
-            string res = response.Content.ToString();
+            
+            if(response.StatusCode == HttpStatusCode.OK)
+            {
+                return true;
+            }
+            return false;
         }
 
         /// <summary>

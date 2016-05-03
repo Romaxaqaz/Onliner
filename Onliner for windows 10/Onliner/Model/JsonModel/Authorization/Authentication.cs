@@ -1,13 +1,9 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Onliner.Model.JsonModel.Authorization;
 
 namespace Onliner.JsonModel.Authorization
 {
-    public class JsonParams
+    public class Authentication : IAuthentication
     {
         [JsonProperty("token")]
         public string Token { get; set; }
@@ -18,8 +14,8 @@ namespace Onliner.JsonModel.Authorization
         [JsonProperty("session_id")]
         public string Session_id { get; set; }
         [JsonProperty("recaptcha_challenge_field")]
-        public string Recaptcha_challenge_field { get; set; }
+        public string RecaptchaChallengeField { get; set; }
         [JsonProperty("recaptcha_response_field")]
-        public string Recaptcha_response_field { get; set; }
+        public string RecaptchaResponseField { get; set; }
     }
 }

@@ -13,6 +13,8 @@ using Onliner.Model.ProfileModel;
 using Onliner_for_windows_10.Model.Message;
 using Onliner_for_windows_10.Views.Profile;
 using static Onliner.Setting.SettingParams;
+using Onliner.Model.Message;
+using Onliner_for_windows_10.Views.Message;
 
 namespace Onliner_for_windows_10.View_Model
 {
@@ -39,7 +41,7 @@ namespace Onliner_for_windows_10.View_Model
         public ObservableCollection<ProfilePataList> ProfileDataCollection
         {
             get { return profileDataCollection; }
-            set { Set(ref profileDataCollection, value);}
+            set { Set(ref profileDataCollection, value); }
         }
         #endregion
 
@@ -137,14 +139,8 @@ namespace Onliner_for_windows_10.View_Model
 
         private void ActionWithMessage()
         {
-            if (TypeAccaunt)
-            {
-
-            }
-            else
-            {
-                NavigationService.Navigate(typeof(MessagePage));
-            }
+            IMessageModel message = new MessageModel(NickName, "", "");
+            NavigationService.Navigate(typeof(MessageSenderPage), message);
         }
 
         private void MessageButtonContent() =>
@@ -168,14 +164,14 @@ namespace Onliner_for_windows_10.View_Model
             var auth = GetParamsSetting(AuthorizationKey);
             var authBool = Convert.ToBoolean(auth);
             //if not logged in go to the login page
-            if(!authBool)
+            if (!authBool)
             {
                 NavigationService.Navigate(typeof(MainPage));
             }
             else
             {
                 //if there is an option key
-                if(parameter!= null)
+                if (parameter != null)
                 {
                     string profileUrl = DefaultUserUrl + (string)parameter;
                     TypeAccaunt = true;
@@ -237,7 +233,6 @@ namespace Onliner_for_windows_10.View_Model
         }
 
         private bool progressRingIsActive = false;
-
         public bool ProgressRingIsActive
         {
             get { return progressRingIsActive; }
@@ -251,6 +246,14 @@ namespace Onliner_for_windows_10.View_Model
             set { Set(ref commandButtonVisibility, value); }
         }
 
+        public bool ExitButtonVisibility
+        {
+            get
+            {
+                if (TypeAccaunt) return false;
+                return true;
+            }
+        }
         #endregion
     }
 }

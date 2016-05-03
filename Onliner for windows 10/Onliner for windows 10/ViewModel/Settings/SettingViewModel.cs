@@ -60,8 +60,8 @@ namespace Onliner_for_windows_10.View_Model.Settings
         private async void UpdateCurrent()
         {
             var newCurent = await requset.Bestrate(CurrentType, BankAction);
-            NewCurrent = newCurent.amount;
-            ShellViewModel.Instance.Current = newCurent.amount;
+            NewCurrent = newCurent.Amount;
+            ShellViewModel.Instance.Current = newCurent.Amount;
         }
 
         #endregion

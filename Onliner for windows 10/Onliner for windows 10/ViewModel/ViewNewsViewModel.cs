@@ -15,26 +15,28 @@ using static Onliner.Setting.SettingParams;
 
 namespace Onliner_for_windows_10.View_Model
 {
-    public class ViewNewsPageViewModel : ViewModelBase
+    public class ViewNewsViewModel : ViewModelBase
     {
-        private ParsingFullNewsPage fullPagePars;
+        private ParsingFullNewsPage FullPageParser;
         private FullItemNews fullItem = new FullItemNews();
         private HttpRequest HttpRequest = new HttpRequest();
         private string loaderPage = string.Empty;
         private string NewsID = string.Empty;
+        private string NewsUrl = string.Empty;
 
         #region Constructor
-        public ViewNewsPageViewModel()
+        public ViewNewsViewModel()
         {
             CommentsAdd = new RelayCommand<object>((obj) => AddComments(obj));
             SendButtonActive = new RelayCommand(() => ActiveSendButton());
             ChangeCommetnsGridVisible = new RelayCommand(() => VisibleCommentsGrid());
-            OpenNewsInBrowser = new RelayCommand<object>(async(obj) => await OpenLink(obj));
+            OpenNewsInBrowser = new RelayCommand<object>(async (obj) => await OpenLink(obj));
             SaveNewsInDB = new RelayCommand<object>((obj) => SaveNewsDB(obj));
             UpdateCommentsList = new RelayCommand(async () => await UpdateCommets());
             AnswerCommentCommand = new RelayCommand<object>((obj) => AnswerComment(obj));
             AnswerQuoteCommentCommand = new RelayCommand<object>((obj) => AnswerQuoteComment(obj));
             LikeCommentsCommand = new RelayCommand<object>((obj) => LikeComments(obj));
+            UserProfileCommand = new RelayCommand<object>((obj) => UserProfileNavigate(obj));
 
             var boolAuthorization = Convert.ToBoolean(GetParamsSetting(AuthorizationKey));
             if (boolAuthorization)
@@ -42,64 +44,6 @@ namespace Onliner_for_windows_10.View_Model
                 CommentsButtonVisible = true;
             }
         }
-
-        private void LikeComments(object obj)
-        {
-            var boolAuthorization = Convert.ToBoolean(GetParamsSetting(AuthorizationKey));
-            if (boolAuthorization)
-            {
-                var item = obj as CommentsItem;
-                if (item != null)
-                    LikeSetter(item);
-            }
-            else
-            {
-                LogInMessageBox("Чтобы работать с комментарииями необходимо авторизоваться..");
-            }
-
-        }
-
-        private async void LikeSetter(CommentsItem commentItem)
-        {
-            if (!commentItem.Like)
-            {
-                var likeCount = await HttpRequest.LikeComment(commentItem.ID, LinkNews, LikeType.Like);
-                commentItem.LikeCount = likeCount;
-                commentItem.Like = true;
-            }
-            else
-            {
-                var likeCount = await HttpRequest.LikeComment(commentItem.ID, LinkNews, LikeType.UnLike);
-                commentItem.LikeCount = likeCount;
-                commentItem.Like = false;
-            }
-        }
-
-        private async void AnswerQuoteComment(object obj)
-        {
-            var item = obj as CommentsItem;
-            var quoteMessage = await HttpRequest.QuoteComment(item.ID, LinkNews);
-            Message = QuoteMessageGenerate(quoteMessage, item.Nickname);
-        }
-
-        private void AnswerComment(object obj)
-        {
-            var anwerUser = obj.ToString();
-            Message = AnswerMessageGenerate(anwerUser);
-        }
-
-        private string AnswerMessageGenerate(string userName)
-        {
-            return $"[b]{userName}[/b], ";
-        }
-
-        private string QuoteMessageGenerate(string message, string userName)
-        {
-            return $"[quote=\"{userName}\"]{message}[/quote]";
-        }
-    
-
-
         #endregion
 
         #region Methods
@@ -110,36 +54,32 @@ namespace Onliner_for_windows_10.View_Model
         /// <returns></returns>
         private async Task LoadNewsData(string urlPage)
         {
-            fullPagePars = new ParsingFullNewsPage(urlPage);    
+            NewsUrl = urlPage;
+
+            var htmlPage = await HttpRequest.GetRequestOnlinerAsync(NewsUrl);
+
+            FullPageParser = new ParsingFullNewsPage(htmlPage, NewsUrl);
             //news data
-            NewsItemContent = await fullPagePars.NewsMainInfo();
+            NewsItemContent = await FullPageParser.NewsMainInfo();
             //comments data
-            CommentsItem = await fullPagePars.CommentsMainInfo();
+            Comments = await FullPageParser.CommentsMainInfo();
+
             CommentsProgressRing = false;
-
-            await HttpRequest.ViewNewsSet(fullPagePars.NewsID);
+            await HttpRequest.ViewNewsSet(FullPageParser.NewsID);
         }
 
-        private void VisibleCommentsGrid()
-        {
-            if (CommentsVisible)
-            {
-                CommentsVisible = false;
-            }
-            else
-            {
-                CommentsVisible = true;
-            }
-        }
-
+     
         private async Task UpdateCommets()
         {
             CommentsProgressRing = true;
-            fullPagePars = new ParsingFullNewsPage(LinkNews);
-            CommentsItem = await fullPagePars.CommentsMainInfo();
-            await Task.CompletedTask;
+
+            var htmlPage = await HttpRequest.GetRequestOnlinerAsync(NewsUrl);
+            FullPageParser = new ParsingFullNewsPage(htmlPage, NewsUrl);
+
+            Comments = await FullPageParser.CommentsMainInfo();
+
             CommentsProgressRing = false;
-            await HttpRequest.ViewNewsSet(NewsID);
+            await Task.CompletedTask;
         }
 
         private void ActiveSendButton() =>
@@ -156,7 +96,7 @@ namespace Onliner_for_windows_10.View_Model
             var uri = new Uri(app);
             var success = await Windows.System.Launcher.LaunchUriAsync(uri);
         }
-        
+
         /// <summary>
         /// Save item News in DB
         /// </summary>
@@ -174,15 +114,19 @@ namespace Onliner_for_windows_10.View_Model
         private async void AddComments(object obj)
         {
             var boolAuthorization = Convert.ToBoolean(GetParamsSetting(AuthorizationKey));
+
             if (boolAuthorization)
             {
-                await HttpRequest.AddComments(fullPagePars.NewsID, obj.ToString(), LinkNews);
-                CommentsItem comItem = new Onliner.Model.News.CommentsItem();
-                comItem.Nickname = ShellViewModel.Instance.Login;
-                comItem.Image = ShellViewModel.Instance.AvatarUrl;
-                comItem.Time = "Только что";
-                comItem.Data = obj.ToString();
-                CommentsItem.Add(comItem);
+                var result = await HttpRequest.AddComments(FullPageParser.NewsID, obj.ToString(), LinkNews);
+                if (result)
+                {
+                    Comments comItem = new Onliner.Model.News.Comments();
+                    comItem.Nickname = ShellViewModel.Instance.Login;
+                    comItem.Image = ShellViewModel.Instance.AvatarUrl;
+                    comItem.Time = "Только что";
+                    comItem.Data = obj.ToString();
+                    Comments.Add(comItem);
+                }
                 Message = string.Empty;
             }
             else
@@ -191,6 +135,10 @@ namespace Onliner_for_windows_10.View_Model
             }
         }
 
+        /// <summary>
+        /// Generate default message dialog
+        /// </summary>
+        /// <param name="message"></param>
         private async void LogInMessageBox(string message)
         {
             var dialog = new MessageDialog(message);
@@ -206,9 +154,80 @@ namespace Onliner_for_windows_10.View_Model
             }
         }
 
+        /// <summary>
+        /// Like
+        /// </summary>
+        /// <param name="obj"></param>
+        private void LikeComments(object obj)
+        {
+            var boolAuthorization = Convert.ToBoolean(GetParamsSetting(AuthorizationKey));
+
+            if (boolAuthorization)
+            {
+                var item = obj as IComments;
+                if (item != null)
+                    LikeSetter(item);
+            }
+            else
+            {
+                LogInMessageBox("Чтобы работать с комментарииями необходимо авторизоваться..");
+            }
+
+        }
+
+        private async void LikeSetter(IComments commentItem)
+        {
+            if (!commentItem.Like)
+            {
+                var likeCount = await HttpRequest.LikeComment(commentItem.ID, LinkNews, LikeType.Like);
+                commentItem.LikeCount = likeCount;
+                commentItem.Like = true;
+            }
+            else
+            {
+                var likeCount = await HttpRequest.LikeComment(commentItem.ID, LinkNews, LikeType.UnLike);
+                commentItem.LikeCount = likeCount;
+                commentItem.Like = false;
+            }
+        }
+
+        private async void AnswerQuoteComment(object obj)
+        {
+            var item = obj as Comments;
+            var quoteMessage = await HttpRequest.QuoteComment(item.ID, LinkNews);
+            Message = QuoteMessageGenerate(quoteMessage, item.Nickname);
+        }
+
+        private void AnswerComment(object obj)
+        {
+            var anwerUser = obj.ToString();
+            Message = AnswerMessageGenerate(anwerUser);
+        }
+
+        private void VisibleCommentsGrid() =>
+                         CommentsVisible = !CommentsVisible;
+
+        private string AnswerMessageGenerate(string userName)
+        {
+            return $"[b]{userName}[/b], ";
+        }
+
+        private string QuoteMessageGenerate(string message, string userName)
+        {
+            return $"[quote=\"{userName}\"]{message}[/quote]";
+        }
+
+        private void UserProfileNavigate(object obj)
+        {
+           // var item = obj as Comments;
+            NavigationService.Navigate(typeof(ProfilePage.ProfilePage), obj.ToString());
+        }
+
+
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)
         {
             LinkNews = parameter?.ToString();
+
             if (HttpRequest.HasInternet())
             {
                 await LoadNewsData(LinkNews);
@@ -216,7 +235,7 @@ namespace Onliner_for_windows_10.View_Model
             }
             else
             {
-               await HttpRequest.Message("Упс, вы не подключены к интернету :(");
+                await HttpRequest.Message("Упс, вы не подключены к интернету :(");
             }
             await Task.CompletedTask;
         }
@@ -224,14 +243,14 @@ namespace Onliner_for_windows_10.View_Model
 
         #region Collections
         private ObservableCollection<ListViewItemSelectorModel> newsItem;
-        private ObservableCollection<CommentsItem> commentsItem;
+        private ObservableCollection<Comments> commentsItem;
 
         public ObservableCollection<ListViewItemSelectorModel> NewsItemContent
         {
             get { return newsItem; }
             set { Set(ref newsItem, value); }
         }
-        public ObservableCollection<CommentsItem> CommentsItem
+        public ObservableCollection<Comments> Comments
         {
             get { return commentsItem; }
             set { Set(ref commentsItem, value); }
@@ -329,7 +348,8 @@ namespace Onliner_for_windows_10.View_Model
         public RelayCommand UpdateCommentsList { get; private set; }
         public RelayCommand<object> AnswerCommentCommand { get; private set; }
         public RelayCommand<object> AnswerQuoteCommentCommand { get; private set; }
-        public RelayCommand<object> LikeCommentsCommand{ get; private set; }
-    #endregion
-}
+        public RelayCommand<object> LikeCommentsCommand { get; private set; }
+        public RelayCommand<object> UserProfileCommand { get; private set; }
+        #endregion
+    }
 }

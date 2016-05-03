@@ -18,7 +18,7 @@ using static Onliner.Setting.SettingParams;
 
 namespace Onliner_for_windows_10.View_Model
 {
-    public class NewsSectionPageViewModel : ViewModelBase
+    public class NewsSectionViewModel : ViewModelBase
     {
         private ParsingNewsSection parsNewsSection = new ParsingNewsSection();
         private CoreDispatcher dispatcher = Windows.UI.Core.CoreWindow.GetForCurrentThread().Dispatcher;
@@ -32,7 +32,7 @@ namespace Onliner_for_windows_10.View_Model
         #endregion
 
         #region Constructor
-        public NewsSectionPageViewModel()
+        public NewsSectionViewModel()
         {
 
             PivotOrFlipViewSelectionChange = new RelayCommand<object>((obj) => ChangeNewsSection(obj));
@@ -80,7 +80,7 @@ namespace Onliner_for_windows_10.View_Model
                 case 0:
                     if (ShellViewModel.Instance.TechSectionNewsFirstLoad)
                     {
-                        await AddAndUpdateCollectionNews(TechNewsList, SQLiteDB.DB_PATH_TECH, TechUrlNews, SectionNewsDB.Tech);
+                        await AddAndUpdateCollectionNews(TechNewsList, SQLiteDB.DB_PATH_TECH, TechUrlNews);
                         ShellViewModel.Instance.TechSectionNewsFirstLoad = false;
                     }
                     else
@@ -92,7 +92,7 @@ namespace Onliner_for_windows_10.View_Model
                     PeopleNewsList = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_PEOPLE);
                     if (ShellViewModel.Instance.PeopleSectionNewsFirstLoad)
                     {
-                        await AddAndUpdateCollectionNews(PeopleNewsList, SQLiteDB.DB_PATH_PEOPLE, PeoplehUrlNews, SectionNewsDB.People);
+                        await AddAndUpdateCollectionNews(PeopleNewsList, SQLiteDB.DB_PATH_PEOPLE, PeoplehUrlNews);
                         ShellViewModel.Instance.PeopleSectionNewsFirstLoad = false;
                     }
                     break;
@@ -100,7 +100,7 @@ namespace Onliner_for_windows_10.View_Model
                     AutoNewsList = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_AUTO);
                     if (ShellViewModel.Instance.AutoSectionNewsFirstLoad)
                     {
-                        await AddAndUpdateCollectionNews(AutoNewsList, SQLiteDB.DB_PATH_AUTO, AutohUrlNews, SectionNewsDB.Auto);
+                        await AddAndUpdateCollectionNews(AutoNewsList, SQLiteDB.DB_PATH_AUTO, AutohUrlNews);
                         ShellViewModel.Instance.AutoSectionNewsFirstLoad = false;
                     }
                     break;
@@ -108,11 +108,10 @@ namespace Onliner_for_windows_10.View_Model
                     HouseNewsList = await SQLiteDB.GetAllNews(SQLiteDB.DB_PATH_HOUSE);
                     if (ShellViewModel.Instance.HomeSectionNewsFirstLoad)
                     {
-                        await AddAndUpdateCollectionNews(HouseNewsList, SQLiteDB.DB_PATH_HOUSE, RealtUrlNews, SectionNewsDB.House);
+                        await AddAndUpdateCollectionNews(HouseNewsList, SQLiteDB.DB_PATH_HOUSE, RealtUrlNews);
                         ShellViewModel.Instance.HomeSectionNewsFirstLoad = false;
                     }
                     break;
-
             }
             NewsSectionIndex = SelectedIndex;
             ProgressRing = false;
@@ -125,9 +124,8 @@ namespace Onliner_for_windows_10.View_Model
         /// <param name="mainCollection">UI Collection</param>
         /// <param name="pathDB">SQlite DB path</param>
         /// <param name="urlNews"></param>
-        /// <param name="section"></param>
         /// <returns>Update collection</returns>
-        private async Task AddAndUpdateCollectionNews(ObservableCollection<ItemsNews> mainCollection, string pathDB, string urlNews, SectionNewsDB section)
+        private async Task AddAndUpdateCollectionNews(ObservableCollection<ItemsNews> mainCollection, string pathDB, string urlNews)
         {
             if (mainCollection == null)
                 mainCollection = await SQLiteDB.GetAllNews(pathDB);
@@ -155,7 +153,7 @@ namespace Onliner_for_windows_10.View_Model
             //update item in collection and database
             mainCollection = await UpdateOldItemInCollection(mainCollection, pathDB);
             //save database collection
-            await SQLiteDB.UpdateAndCollectionInDB(mainCollection, pathDB);
+            await SQLiteDB.UpdateAndCollectionInDB(mainCollection, pathDB); 
         }
 
         /// <summary>
@@ -166,16 +164,17 @@ namespace Onliner_for_windows_10.View_Model
         private async Task<ObservableCollection<ItemsNews>> UpdateOldItemInCollection(ObservableCollection<ItemsNews> items, string pathDB)
         {
             var oldCollection = parsNewsSection.OldNewsForUpdate;
+
             if (oldCollection.Count != 0)
             {
                 foreach (var item in items)
                 {
-                    var it = oldCollection.FirstOrDefault(x => x.LinkNews.Contains(item.LinkNews));
-                    if (it != null)
+                    var oldItem = oldCollection.FirstOrDefault(x => x.LinkNews.Contains(item.LinkNews));
+                    if (oldItem != null)
                     {
-                        item.CountViews = it.CountViews;
-                        item.Footer = it.Footer;
-                        item.Popularcount = it.Popularcount;
+                        item.CountViews = oldItem.CountViews;
+                        item.Footer = oldItem.Footer;
+                        item.Popularcount = oldItem.Popularcount;
                     }
                 }
                 await SQLiteDB.UpdateItemDB(items, pathDB);

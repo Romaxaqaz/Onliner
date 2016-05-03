@@ -399,9 +399,20 @@
                              Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"     
                              VisualStateNarrowMinWidth="1">
             <controls:PageHeader.SecondaryCommands>
-                <AppBarButton Name="EditProfile" Label="Редактировать профиль" Foreground="Black" Icon="Setting" Command="{Binding EditProfileCommand}" Visibility="Collapsed"/>
-                <AppBarButton Name="PinWindow" Label="Найти пользователя" Icon="OtherUser" Foreground="Black" Command="{Binding SearchUsersCommand}" Visibility="Collapsed"/>
-                <AppBarButton Name="ExitProfile" Label="Выход" Icon="Remove" Foreground="Black" Command="{Binding ExitProfileCommand}"/>
+                <AppBarButton x:Name="EditProfile" Label="Редактировать профиль" 
+                              Foreground="Black"
+                              Icon="Setting" Command="{Binding EditProfileCommand}" Visibility="Collapsed"/>
+                <AppBarButton x:Name="Search" 
+                              Label="Найти пользователя"
+                              Icon="OtherUser" 
+                              Foreground="Black"
+                              Command="{Binding SearchUsersCommand}"/>
+                <AppBarButton x:Name="ExitProfile" 
+                              Label="Выход" 
+                              Icon="Remove"  
+                              Foreground="Black"    
+                              Command="{Binding ExitProfileCommand}" 
+                              Visibility="{Binding ExitButtonVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </controls:PageHeader.SecondaryCommands>
         </controls:PageHeader>
         <!--#endregion-->
@@ -430,6 +441,7 @@
                                 <EdgeUIThemeTransition Edge="Bottom"/>
                             </TransitionCollection>
                         </StackPanel.ChildrenTransitions>
+                        
                         <StackPanel>
                             <StackPanel.ChildrenTransitions>
                                 <TransitionCollection>
@@ -473,13 +485,14 @@
                                     <EdgeUIThemeTransition Edge="Left"/>
                                 </TransitionCollection>
                             </Grid.ChildrenTransitions>
+                            
                             <Button Name="SendMessageButton"
                                     Height="35" FontSize="16"
                                     HorizontalAlignment="Stretch"
                                     BorderThickness="0" 
                                     Command="{Binding ActionWithMessageCommand}" 
                                     Style="{StaticResource SendMessageButtonStyle}"
-                                    Visibility="Collapsed">
+                                    Visibility="{Binding TypeAccaunt, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="&#xE715;"
                                                FontFamily="Segoe MDL2 Assets"
@@ -487,7 +500,7 @@
                                                VerticalAlignment="Center"
                                                Foreground="{ThemeResource ForegroundCustomWhiteBrush}"/>
                                     <TextBlock Name="SendMessageTextBox" 
-                                               Text="{Binding TextButtonMessageContent}"
+                                               Text="Отправить сообщение"
                                                HorizontalAlignment="Center" 
                                                VerticalAlignment="Center"
                                                Margin="5,0,0,0" 
@@ -518,6 +531,7 @@
                         </ListView>
                     </Grid>
                     <!--#endregion-->
+                    
                     <StackPanel/>
                 </Grid>
             </ScrollViewer>

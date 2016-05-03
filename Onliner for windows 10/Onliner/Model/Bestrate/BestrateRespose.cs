@@ -1,12 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Onliner.Model.Bestrate
 {
-    public class BestrateRespose
+    public class BestrateRespose : IBestrate
     {
-        public string amount { get; set; }
-        public IList<string> banks { get; set; }
-        public string delta { get; set; }
-        public string grow { get; set; }
+        [JsonProperty("amount")]
+        public string Amount { get; set; }
+        [JsonProperty("banks")]
+        public IList<string> Banks { get; set; }
+        [JsonProperty("delta")]
+        public string Delta { get; set; }
+        [JsonProperty("grow")]
+        public string Grow { get; set; }
     }
 }
