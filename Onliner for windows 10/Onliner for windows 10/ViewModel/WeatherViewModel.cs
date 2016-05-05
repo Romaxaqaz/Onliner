@@ -18,17 +18,17 @@ namespace Onliner_for_windows_10.View_Model
     public class WeatherViewModel : ViewModelBase
     {
         private bool _currentProgress = true;
-        private HttpRequest HttpRequest = new HttpRequest();
-        private ObservableCollection<Forecast> forecastItems;
-        private ObservableCollection<object> weatherTodayItems;
-        public ObservableCollection<TownWeatherID> TownList { get; private set; }
+        private readonly HttpRequest _httpRequest = new HttpRequest();
+        private ObservableCollection<Forecast> _forecastItems;
+        private ObservableCollection<object> _weatherTodayItems;
+        public ObservableCollection<TownWeatherId> TownList { get; private set; }
         public Now now;
 
         public WeatherViewModel()
         {
-            TownList = FillTownList();
-            forecastItems = new ObservableCollection<Forecast>();
-            ChngeTown = new RelayCommand<object>(async (obj) => await GetTownID(obj));
+            TownList = FillTownList;
+            _forecastItems = new ObservableCollection<Forecast>();
+            ChngeTown = new RelayCommand<object>(async (obj) => await GetTownId(obj));
         }
 
         #region Methods
@@ -36,57 +36,60 @@ namespace Onliner_for_windows_10.View_Model
         /// Get town ID out combobox
         /// </summary>
         /// <param name="obj">Combobox</param>
-        private async Task GetTownID(object obj)
+        private async Task GetTownId(object obj)
         {
-            ComboBox combo = obj as ComboBox;
-            TownWeatherID town = combo.SelectedItem as TownWeatherID;
-            await GeteWatherViewModel(town.ID);
+            var combo = obj as ComboBox;
+            var town = combo?.SelectedItem as TownWeatherId;
+            if (town != null) await GeteWatherViewModel(town.Id);
         }
 
         /// <summary>
         /// Fill combobox item
         /// </summary>
         /// <returns></returns>
-        private ObservableCollection<TownWeatherID> FillTownList()
+        public ObservableCollection<TownWeatherId> FillTownList
         {
-            string fileContent;
-            var fileStream = File.OpenRead("Files/Weather/" + "townWeather.txt");
-            using (StreamReader reader = new StreamReader(fileStream))
+            get
             {
-                fileContent = reader.ReadToEnd();
+                string fileContent;
+                var fileStream = File.OpenRead("Files/Weather/" + "townWeather.txt");
+                using (var reader = new StreamReader(fileStream))
+                {
+                    fileContent = reader.ReadToEnd();
+                }
+                return JsonConvert.DeserializeObject<ObservableCollection<TownWeatherId>>(fileContent);
             }
-            return JsonConvert.DeserializeObject<ObservableCollection<TownWeatherID>>(fileContent);
         }
 
         /// <summary>
         /// Get weather data
         /// </summary>
-        /// <param name="townID">ID town</param>
-        private async Task GeteWatherViewModel(string townID = "26850")
+        /// <param name="townId">ID town</param>
+        private async Task GeteWatherViewModel(string townId = "26850")
         {
             try
             {
                 CurrentProgress = true;
 
-                var _temperatureToday = new ObservableCollection<object>();
-                var responsseObject = await HttpRequest.Weather(townID);
+                var temperatureToday = new ObservableCollection<object>();
+                var responsseObject = await _httpRequest.Weather(townId);
                 if (responsseObject.today.morning != null)
                 {
-                    _temperatureToday.Add(responsseObject.today.morning);
+                    temperatureToday.Add(responsseObject.today.morning);
                 }
-                _temperatureToday.Add(responsseObject.today.day);
-                _temperatureToday.Add(responsseObject.today.evening);
-                _temperatureToday.Add(responsseObject.today.night);
+                temperatureToday.Add(responsseObject.today.day);
+                temperatureToday.Add(responsseObject.today.evening);
+                temperatureToday.Add(responsseObject.today.night);
 
                 ForecastItems = responsseObject.forecast;
-                WeatherTodayItems = _temperatureToday;
+                WeatherTodayItems = temperatureToday;
                 Now = responsseObject.now;
 
                 CurrentProgress = false;
             }
             catch (Exception)
             {
-                MessageDialog msg = new MessageDialog("Упс, вы не подключены к интернету :(");
+                var msg = new MessageDialog("Упс, вы не подключены к интернету :(");
                 await msg.ShowAsync();
             }
         }
@@ -96,7 +99,7 @@ namespace Onliner_for_windows_10.View_Model
             int id = 0;
             foreach (var item in TownList)
             {
-                if (item.ID.Equals(townid))
+                if (item.Id.Equals(townid))
                 {
                     return id;
                 }
@@ -118,8 +121,7 @@ namespace Onliner_for_windows_10.View_Model
             get
             {
                 var town = GetParamsSetting(TownWeatherIdKey);
-                if (town == null) return 0;
-                return GetIndex(town.ToString());
+                return town == null ? 0 : GetIndex(town.ToString());
             }
         }
 
@@ -149,8 +151,8 @@ namespace Onliner_for_windows_10.View_Model
         /// </summary>
         public ObservableCollection<Forecast> ForecastItems
         {
-            get { return forecastItems; }
-            set { Set(ref forecastItems, value); }
+            get { return _forecastItems; }
+            set { Set(ref _forecastItems, value); }
         }
 
         /// <summary>
@@ -158,8 +160,8 @@ namespace Onliner_for_windows_10.View_Model
         /// </summary>
         public ObservableCollection<object> WeatherTodayItems
         {
-            get { return weatherTodayItems; }
-            set { Set(ref weatherTodayItems, value); }
+            get { return _weatherTodayItems; }
+            set { Set(ref _weatherTodayItems, value); }
         }
         #endregion
 
@@ -171,9 +173,9 @@ namespace Onliner_for_windows_10.View_Model
         #endregion
     }
 
-    public class TownWeatherID
+    public class TownWeatherId
     {
-        public string ID { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
     }
 }

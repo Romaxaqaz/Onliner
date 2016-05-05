@@ -10,14 +10,9 @@ namespace Onliner_for_windows_10.View_Model
 {
     public sealed class ShellViewModel : ViewModelBase
     {
-        private static ShellViewModel _instance = new ShellViewModel();
+        public static ShellViewModel Instance { set; get; } = new ShellViewModel();
 
-        public static ShellViewModel Instance
-        {
-            set { _instance = value; }
-            get { return _instance; }
-        }
-        private HttpRequest HttpRequest = new HttpRequest();
+        private readonly HttpRequest _httpRequest = new HttpRequest();
 
         #region Constructor
         private ShellViewModel()
@@ -38,7 +33,7 @@ namespace Onliner_for_windows_10.View_Model
         /// </summary>
         private void SetAutoLoadNews()
         {
-            bool boolValue = true;
+            var boolValue = true;
             var resultKeyValue = GetParamsSetting(AutoLoadNewsAtStartUpAppKey);
             if (resultKeyValue != null)
                 boolValue = Convert.ToBoolean(GetParamsSetting(AutoLoadNewsAtStartUpAppKey));
@@ -52,8 +47,7 @@ namespace Onliner_for_windows_10.View_Model
 
         private bool GetBoolAutoLoadNews()
         {
-            var boolValue = GetParamsSetting(AutoLoadNewsAtStartUpAppKey);
-            if (boolValue == null) boolValue = true;
+            var boolValue = GetParamsSetting(AutoLoadNewsAtStartUpAppKey) ?? true;
             return Convert.ToBoolean(boolValue);
         }
 
@@ -63,8 +57,8 @@ namespace Onliner_for_windows_10.View_Model
         /// <returns></returns>
         private async Task GetWeatherNow()
         {
-            var weather = await HttpRequest.Weather();
-            Weather = weather == null ? (string)GetParamsSetting(LastWeatherKey) : weather.now.temperature;
+            var weatherJSon = await _httpRequest.Weather();
+            Weather = weatherJSon == null ? (string)GetParamsSetting(LastWeatherKey) : weatherJSon.now.temperature;
             await Task.CompletedTask;
         }
 
@@ -74,8 +68,8 @@ namespace Onliner_for_windows_10.View_Model
         /// <returns></returns>
         private async Task GetCurrent()
         {
-            var current = await HttpRequest.Bestrate();
-            Current = current == null ? (string)GetParamsSetting(LastCurrentKey) : current.Amount;
+            var bestrateRespose = await _httpRequest.Bestrate();
+            Current = bestrateRespose == null ? (string)GetParamsSetting(LastCurrentKey) : bestrateRespose.Amount;
             await Task.CompletedTask;
         }
 
@@ -87,9 +81,10 @@ namespace Onliner_for_windows_10.View_Model
         {
             try
             {
-                var msg = await HttpRequest.MessageUnread();
-                Message = msg == null ? (string)GetParamsSetting(LastMessageKey) : msg;
-            }catch(ArgumentException)
+                var msg = await _httpRequest.MessageUnread();
+                Message = msg ?? (string)GetParamsSetting(LastMessageKey);
+            }
+            catch (ArgumentException)
             {
                 Message = "";
             }
@@ -114,54 +109,54 @@ namespace Onliner_for_windows_10.View_Model
         #endregion
 
         #region Properties
-        private string shop = "0";
+        private string _shop = "0";
         public string Shop
         {
-            get { return shop; }
-            set { Set(ref shop, value); }
+            get { return _shop; }
+            set { Set(ref _shop, value); }
         }
 
-        private string weather = "0";
+        private string _weather = "0";
         public string Weather
         {
-            get { return weather; }
+            get { return _weather; }
             set
             {
-                Set(ref weather, value);
+                Set(ref _weather, value);
                 SetParamsSetting(LastWeatherKey, value);
             }
         }
 
-        private string message = "0";
+        private string _message = "0";
         public string Message
         {
-            get { return message; }
+            get { return _message; }
             set
             {
-                Set(ref message, value);
+                Set(ref _message, value);
                 SetParamsSetting(LastMessageKey, value);
             }
         }
 
-        private string current = "0";
+        private string _current = "0";
         public string Current
         {
-            get { return current; }
+            get { return _current; }
             set
             {
-                Set(ref current, value);
+                Set(ref _current, value);
                 SetParamsSetting(LastCurrentKey, value);
             }
         }
 
-        private string status = "offline";
+        private string _status = "offline";
         public string Status
         {
-            get { return status; }
+            get { return _status; }
             set
             {
                 if (value == null) value = "offline";
-                Set(ref status, value);
+                Set(ref _status, value);
             }
         }
 
@@ -170,8 +165,7 @@ namespace Onliner_for_windows_10.View_Model
         {
             get
             {
-                var avatar = GetParamsSetting(AvatarKey);
-                if (avatar == null) avatar = "/ImageCollection/default_avatar.png";
+                var avatar = GetParamsSetting(AvatarKey) ?? "/ImageCollection/default_avatar.png";
                 return avatar.ToString();
             }
             set
@@ -182,13 +176,12 @@ namespace Onliner_for_windows_10.View_Model
             }
         }
 
-        public string _login;
+        private string _login;
         public string Login
         {
             get
             {
-                var profileName = GetParamsSetting(NickNameKey);
-                if (profileName == null) profileName = "Войти";
+                var profileName = GetParamsSetting(NickNameKey) ?? "Войти";
                 return profileName.ToString();
             }
             set
@@ -199,57 +192,14 @@ namespace Onliner_for_windows_10.View_Model
             }
         }
 
-        private bool techSectionNewsFirstLoad = true;
-        public bool TechSectionNewsFirstLoad
-        {
-            get
-            {
-                return techSectionNewsFirstLoad;
-            }
-            set
-            {
-                techSectionNewsFirstLoad = value;
-            }
-        }
+        public bool TechSectionNewsFirstLoad { get; set; } = true;
 
-        private bool peopleSectionNewsFirstLoad = true;
-        public bool PeopleSectionNewsFirstLoad
-        {
-            get
-            {
-                return peopleSectionNewsFirstLoad;
-            }
-            set
-            {
-                peopleSectionNewsFirstLoad = value;
-            }
-        }
+        public bool PeopleSectionNewsFirstLoad { get; set; } = true;
 
-        private bool homeSectionNewsFirstLoad = true;
-        public bool HomeSectionNewsFirstLoad
-        {
-            get
-            {
-                return homeSectionNewsFirstLoad;
-            }
-            set
-            {
-                homeSectionNewsFirstLoad = value;
-            }
-        }
+        public bool HomeSectionNewsFirstLoad { get; set; } = true;
 
-        private bool autoSectionNewsFirstLoad = true;
-        public bool AutoSectionNewsFirstLoad
-        {
-            get
-            {
-                return autoSectionNewsFirstLoad;
-            }
-            set
-            {
-                autoSectionNewsFirstLoad = value;
-            }
-        }
+        public bool AutoSectionNewsFirstLoad { get; set; } = true;
+
         #endregion
     }
 }

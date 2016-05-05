@@ -19,7 +19,7 @@ namespace Onliner.Model.News
         private string _bmediaicon = string.Empty;
      //   private bool inDataBase = false;
 
-        public string NewsID { get; set; }
+        public string NewsId { get; set; }
 
         public string Bmediaicon
         {

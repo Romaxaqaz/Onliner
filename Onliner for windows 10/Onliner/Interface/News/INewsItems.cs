@@ -3,7 +3,7 @@ namespace Onliner.Interface.News
 {
     public interface INewsItems
     {
-        string NewsID { get; set; }
+        string NewsId { get; set; }
         string LinkNews { get; set; }
         string CountViews { get; set; }
         string Themes { get; set; }

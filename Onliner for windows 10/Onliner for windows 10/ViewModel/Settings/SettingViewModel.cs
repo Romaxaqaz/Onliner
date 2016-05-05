@@ -21,19 +21,19 @@ namespace Onliner_for_windows_10.View_Model.Settings
 {
     public class SettingViewModel : ViewModelBase
     {
-        private HttpRequest requset = new HttpRequest();
+        private readonly HttpRequest _requset = new HttpRequest();
 
         #region Constructor
         public SettingViewModel()
         {
-            CheckUncheckAutoLoadnewsCommand = new RelayCommand<object>((obj) => CheckUncheckAutoLoadnews(obj));
-            ChangedThemeAppCommand = new RelayCommand<object>((obj) => ChangedThemeApp(obj));
-            PivotSelectedIndexCommand = new RelayCommand<object>((obj) => PivotSelectedIndexEvent(obj));
-            ChangedNumberNewsCacheCommand = new RelayCommand(() => ChangedNumberNewsCache());
-            ClearCacheCommand = new RelayCommand(() => CleadCache());
-            ChangeTown = new RelayCommand<object>((obj) => SetTownIDWeather(obj));
-            CurrentTypeCommand = new RelayCommand<object>((obj) => CurrentTypeChanged(obj));
-            BankActionCommand = new RelayCommand<object>((obj) => BankActionChanged(obj));
+            CheckUncheckAutoLoadnewsCommand = new RelayCommand<object>(CheckUncheckAutoLoadnews);
+            ChangedThemeAppCommand = new RelayCommand<object>(ChangedThemeApp);
+            PivotSelectedIndexCommand = new RelayCommand<object>(PivotSelectedIndexEvent);
+            ChangedNumberNewsCacheCommand = new RelayCommand(ChangedNumberNewsCache);
+            ClearCacheCommand = new RelayCommand(CleadCache);
+            ChangeTown = new RelayCommand<object>(SetTownIdWeather);
+            CurrentTypeCommand = new RelayCommand<object>(CurrentTypeChanged);
+            BankActionCommand = new RelayCommand<object>(BankActionChanged);
         }
 
         private void CurrentTypeChanged(object obj)
@@ -47,9 +47,7 @@ namespace Onliner_for_windows_10.View_Model.Settings
         private void BankActionChanged(object obj)
         {
             var type = obj.GetType();
-            var key = type.GetProperty("Key");
             var value = type.GetProperty("Value");
-            var keyObj = key.GetValue(obj, null);
             var valueObj = value.GetValue(obj, null);
 
             SetParamsSetting(BankActionKey, valueObj.ToString());
@@ -59,7 +57,7 @@ namespace Onliner_for_windows_10.View_Model.Settings
 
         private async void UpdateCurrent()
         {
-            var newCurent = await requset.Bestrate(CurrentType, BankAction);
+            var newCurent = await _requset.Bestrate(CurrentType, BankAction);
             NewCurrent = newCurent.Amount;
             ShellViewModel.Instance.Current = newCurent.Amount;
         }
@@ -75,7 +73,7 @@ namespace Onliner_for_windows_10.View_Model.Settings
         /// <param name="obj"></param>
         private void ChangedThemeApp(object obj)
         {
-            int index = (int)obj;
+            var index = (int)obj;
             SetThemeApp(index);
         }
 
@@ -180,10 +178,9 @@ namespace Onliner_for_windows_10.View_Model.Settings
 
         public void GetThemeApp()
         {
-            var indexValue = GetParamsSetting(ThemeAppKey);
-            if (indexValue == null) indexValue = 0;
-            themeAppIndex = Convert.ToInt32(indexValue);
-            SetThemeApp(themeAppIndex);
+            var indexValue = GetParamsSetting(ThemeAppKey) ?? 0;
+            _themeAppIndex = Convert.ToInt32(indexValue);
+            SetThemeApp(_themeAppIndex);
 
         }
         #endregion
@@ -194,11 +191,11 @@ namespace Onliner_for_windows_10.View_Model.Settings
         /// </summary>
         private void CleadCache()
         {
-            foreach (var item in SQLiteDB.FileNameCollection)
+            foreach (var item in SqLiteDb.FileNameCollection)
             {
                 RemoveFile(item);
             }
-            CacheSize = BytesToDouble(SQLiteDB.GetSizeByteDB()).ToString();
+            //CacheSize = BytesToDouble(SqLiteDb.SizeByteFile).ToString();
         }
 
         /// <summary>
@@ -243,11 +240,12 @@ namespace Onliner_for_windows_10.View_Model.Settings
         /// Set for city weather
         /// </summary>
         /// <param name="obj"></param>
-        private async void SetTownIDWeather(object obj)
+        private async void SetTownIdWeather(object obj)
         {
-            TownWeatherID town = obj as TownWeatherID;
-            SetParamsSetting(TownWeatherIdKey, town.ID);
-            var weather = await requset.Weather(town.ID);
+            var town = obj as TownWeatherId;
+            if (town == null) return;
+            SetParamsSetting(TownWeatherIdKey, town.Id);
+            var weather = await _requset.Weather(town.Id);
             ShellViewModel.Instance.Weather = weather == null ? (string)GetParamsSetting(LastWeatherKey) : weather.now.temperature;
         }
 
@@ -258,10 +256,10 @@ namespace Onliner_for_windows_10.View_Model.Settings
         /// <returns></returns>
         private int GetIndex(string townid)
         {
-            int id = 0;
+            var id = 0;
             foreach (var item in TownList)
             {
-                if (item.ID.Equals(townid))
+                if (item.Id.Equals(townid))
                 {
                     return id;
                 }
@@ -274,11 +272,10 @@ namespace Onliner_for_windows_10.View_Model.Settings
         #region Properties
         private void CheckUncheckAutoLoadnews(object obj)
         {
-            object boolValue = null;
             switch ((string)obj)
             {
                 case "LoadImageCheckBox":
-                    boolValue = GetParamsSetting(LoadImageKey);
+                    var boolValue = GetParamsSetting(LoadImageKey);
                     LoadImage = ChangeBool(boolValue);
                     break;
             }
@@ -292,134 +289,121 @@ namespace Onliner_for_windows_10.View_Model.Settings
             return value;
         }
 
-        private bool autoUpdateCheked = false;
+        private bool _autoUpdateCheked;
         public bool AutoUpdateCheked
         {
             get
             {
-                var boolValue = GetParamsSetting(AutoLoadNewsAtStartUpAppKey);
-                if (boolValue == null) boolValue = true;
-                autoUpdateCheked = Convert.ToBoolean(boolValue);
-                return autoUpdateCheked;
+                var boolValue = GetParamsSetting(AutoLoadNewsAtStartUpAppKey) ?? true;
+                _autoUpdateCheked = Convert.ToBoolean(boolValue);
+                return _autoUpdateCheked;
             }
             set
             {
                 SetParamsSetting(AutoLoadNewsAtStartUpAppKey, value.ToString());
-                Set(ref autoUpdateCheked, value);
+                Set(ref _autoUpdateCheked, value);
             }
         }
 
-        private bool loadImage = false;
+        private bool _loadImage;
         public bool LoadImage
         {
             get
             {
-                var boolValue = GetParamsSetting(LoadImageKey);
-                if (boolValue == null) boolValue = false;
+                var boolValue = GetParamsSetting(LoadImageKey) ?? false;
                 var value = Convert.ToBoolean(boolValue);
-                loadImage = value;
-                return loadImage;
+                _loadImage = value;
+                return _loadImage;
             }
             set
             {
                 SetParamsSetting(LoadImageKey, value.ToString());
-                Set(ref loadImage, value);
+                Set(ref _loadImage, value);
             }
         }
 
-        private int themeAppIndex = 0;
+        private int _themeAppIndex;
         public int ThemeAppIndex
         {
             get
             {
-                var indexValue = GetParamsSetting(ThemeAppKey);
-                if (indexValue == null) indexValue = 0;
-                themeAppIndex = Convert.ToInt32(indexValue);
-                return themeAppIndex;
+                var indexValue = GetParamsSetting(ThemeAppKey) ?? 0;
+                _themeAppIndex = Convert.ToInt32(indexValue);
+                return _themeAppIndex;
             }
             set
             {
                 SetParamsSetting(ThemeAppKey, value.ToString());
-                Set(ref themeAppIndex, value);
+                Set(ref _themeAppIndex, value);
             }
         }
 
-        private int newsItemloadIndex;
+        private int _newsItemloadIndex;
         public int NewsItemloadIndex
         {
             get
             {
-                var indexValue = GetParamsSetting(NumberOfNewsitemsToTheCacheKey);
-                if (indexValue == null) indexValue = "50";
-                newsItemloadIndex = NumberNewsCache.IndexOf((string)indexValue);
-                return newsItemloadIndex;
+                var indexValue = GetParamsSetting(NumberOfNewsitemsToTheCacheKey) ?? "50";
+                _newsItemloadIndex = NumberNewsCache.IndexOf((string)indexValue);
+                return _newsItemloadIndex;
             }
             set
             {
                 SetParamsSetting(NumberOfNewsitemsToTheCacheKey, NumberNewsCache[value]);
-                Set(ref newsItemloadIndex, value);
+                Set(ref _newsItemloadIndex, value);
             }
         }
 
-        private string cacheSize;
+        private string _cacheSize;
         public string CacheSize
         {
-            get { return cacheSize; }
-            set { Set(ref cacheSize, value); }
+            get { return _cacheSize; }
+            set { Set(ref _cacheSize, value); }
         }
 
-        private int pivotSelectedIndex = 0;
+        private int _pivotSelectedIndex;
         public int PivotSelectedIndex
         {
-            get { return pivotSelectedIndex; }
-            set { Set(ref pivotSelectedIndex, value); }
+            get { return _pivotSelectedIndex; }
+            set { Set(ref _pivotSelectedIndex, value); }
         }
 
-        private int townWeatherIdindex;
+        private int _townWeatherIdindex;
         public int TownWeatherIdindex
         {
             get
             {
                 var town = GetParamsSetting(TownWeatherIdKey);
                 if (town == null) return 0;
-                townWeatherIdindex = GetIndex(town.ToString());
-                return townWeatherIdindex;
+                _townWeatherIdindex = GetIndex(town.ToString());
+                return _townWeatherIdindex;
             }
             set
             {
-                Set(ref townWeatherIdindex, value);
+                Set(ref _townWeatherIdindex, value);
             }
         }
 
-        private bool toggleSwitchNewsDataTemplateType = true;
+        private bool _toggleSwitchNewsDataTemplateType = true;
         public bool ToggleSwitchNewsDataTemplateType
         {
             get
             {
                 var toggle = GetParamsSetting(ToggleSwitchNewsDataTemplateTypeKey);
                 if (toggle == null) return true;
-                toggleSwitchNewsDataTemplateType = Convert.ToBoolean(toggle);
-                return toggleSwitchNewsDataTemplateType;
+                _toggleSwitchNewsDataTemplateType = Convert.ToBoolean(toggle);
+                return _toggleSwitchNewsDataTemplateType;
             }
             set
             {
                 SetDataTemplateType(value);
                 SetParamsSetting(ToggleSwitchNewsDataTemplateTypeKey, value.ToString());
-                Set(ref toggleSwitchNewsDataTemplateType, value);
+                Set(ref _toggleSwitchNewsDataTemplateType, value);
             }
         }
 
-        private void SetDataTemplateType(bool value)
-        {
-            if (value == true)
-            {
-                SetParamsSetting(NewsDataTemplateKey, TileDataTemplate);
-            }
-            else
-            {
-                SetParamsSetting(NewsDataTemplateKey, ListDataTemplate);
-            }
-        }
+        private void SetDataTemplateType(bool value) => 
+            SetParamsSetting(NewsDataTemplateKey, value == true ? TileDataTemplate : ListDataTemplate);
 
         public bool ToggleSwitchNewsDataTemplateTypeIsEnable
         {
@@ -431,59 +415,57 @@ namespace Onliner_for_windows_10.View_Model.Settings
             }
         }
 
-        private string currentType;
+        private string _currentType;
         public string CurrentType
         {
             get
             {
                 var current = GetParamsSetting(CurrentTypeKey);
-                if (current == null) return "USD";
-                return current.ToString();
+                return current == null ? "USD" : current.ToString();
             }
-            set { Set(ref currentType, value); }
+            set { Set(ref _currentType, value); }
         }
 
-        private string bankAction;
+        private string _bankAction;
         public string BankAction
         {
             get
             {
                 var bankAction = GetParamsSetting(BankActionKey);
-                if (bankAction == null) return "nbrb";
-                return bankAction.ToString();
+                return bankAction == null ? "nbrb" : bankAction.ToString();
             }
-            set { Set(ref bankAction, value); }
+            set { Set(ref _bankAction, value); }
         }
 
-        private string newCurrent;
+        private string _newCurrent;
         public string NewCurrent
         {
-            get { return newCurrent; }
-            set { Set(ref newCurrent, value); }
+            get { return _newCurrent; }
+            set { Set(ref _newCurrent, value); }
         }
 
-        private int currentIndex;
+        private int _currentIndex;
         public int CurrentIndex
         {
             get
             {
                 var town = GetParamsSetting(CurrentTypeKey);
                 if (town == null) return 0;
-                currentIndex = currentTypeList.IndexOf(town.ToString());
-                return currentIndex;
+                _currentIndex = CurrentTypeList.IndexOf(town.ToString());
+                return _currentIndex;
             }
             set
             {
-                Set(ref currentIndex, value);
+                Set(ref _currentIndex, value);
             }
         }
 
-        private int bankActionIndex;
+        private int _bankActionIndex;
         public int BankActionIndex
         {
             get
             {
-                int index = 0;
+                var index = 0;
                 var town = GetParamsSetting(BankActionKey);
                 if (town == null) return 0;
                 foreach (var item in BankActionDictionary)
@@ -494,11 +476,11 @@ namespace Onliner_for_windows_10.View_Model.Settings
                     }
                     index++;
                 }
-                return bankActionIndex;
+                return _bankActionIndex;
             }
             set
             {
-                Set(ref bankActionIndex, value);
+                Set(ref _bankActionIndex, value);
             }
         }
 
@@ -516,43 +498,32 @@ namespace Onliner_for_windows_10.View_Model.Settings
         #endregion
 
         #region Collections
-        public ObservableCollection<string> numberNewsCache = new ObservableCollection<string>() { "50", "100", "150" };
-        public ObservableCollection<string> NumberNewsCache
-        {
-            get { return numberNewsCache; }
-        }
 
-        public ObservableCollection<TownWeatherID> TownList
+        public ObservableCollection<string> NumberNewsCache { get; } = new ObservableCollection<string>() { "50", "100", "150" };
+
+        public ObservableCollection<TownWeatherId> TownList
         {
             get
             {
                 string fileContent;
                 var fileStream = File.OpenRead("Files/Weather/" + "townWeather.txt");
-                using (StreamReader reader = new StreamReader(fileStream))
+                using (var reader = new StreamReader(fileStream))
                 {
                     fileContent = reader.ReadToEnd();
                 }
-                return JsonConvert.DeserializeObject<ObservableCollection<TownWeatherID>>(fileContent);
+                return JsonConvert.DeserializeObject<ObservableCollection<TownWeatherId>>(fileContent);
             }
         }
 
-        private Dictionary<string, string> bankActionDictionary = new Dictionary<string, string>
+        public Dictionary<string, string> BankActionDictionary { get; } = new Dictionary<string, string>
         {
             ["НБРБ"] = "nbrb",
             ["Продажа"] = "sale",
             ["Покупка"] = "buy"
         };
 
-        public Dictionary<string, string> BankActionDictionary
-        {
-            get { return bankActionDictionary; }
-        }
+        public List<string> CurrentTypeList { get; } = new List<string> { "USD", "EUR", "RUB" };
 
-        private List<string> currentTypeList = new List<string> { "USD", "EUR", "RUB" };
-        public List<string> CurrentTypeList
-        {
-            get { return currentTypeList; }
-        }
         #endregion
     }
 }

@@ -12,67 +12,67 @@ namespace Onliner_for_windows_10.View_Model
     {
         private readonly string AutorizationUrl = "https://www.onliner.by/#registration";
 
-        private HttpRequest HttpRequestToApi = new HttpRequest();
+        private readonly HttpRequest _httpRequestToApi = new HttpRequest();
 
         #region Constructor
         public MainViewModel()
         {
-            AuthorizationLaterCommand = new RelayCommand(() => AuthorizationLater());
-            RegistrationCommand = new RelayCommand(() => Registration());
+            AuthorizationLaterCommand = new RelayCommand(AuthorizationLater);
+            RegistrationCommand = new RelayCommand(Registration);
             AuthorizationCommand = new RelayCommand(async () => await Authorization());
         }
         #endregion
 
         #region Properties
-        private bool progressRing;
+        private bool _progressRing;
         public bool ProgressRing
         {
             get
             {
-                return this.progressRing;
+                return _progressRing;
             }
             set
             {
-                Set(ref progressRing, value);
+                Set(ref _progressRing, value);
             }
         }
 
-        private bool controlEnable = true;
+        private bool _controlEnable = true;
         public bool ControlEnable
         {
             get
             {
-                return this.controlEnable;
+                return _controlEnable;
             }
             set
             {
-                Set(ref controlEnable, value);
+                Set(ref _controlEnable, value);
             }
         }
 
-        private string login;
+        private string _login;
         public string Login
         {
             get
             {
-                return this.login;
+                return _login;
             }
             set
             {
-                Set(ref login, value);
+                Set(ref _login, value);
             }
         }
 
-        private string password;
+        private string _password;
         public string Password
         {
             get
             {
-                return this.password;
+                return _password;
             }
             set
             {
-                Set(ref password, value);
+                Set(ref _password, value);
             }
         }
         #endregion
@@ -105,8 +105,8 @@ namespace Onliner_for_windows_10.View_Model
             }
             else
             {
-                bool Status = await HttpRequestToApi.PostRequestUserApi(Login, Password);
-                if (Status)
+                var status = await _httpRequestToApi.PostRequestUserApi(Login, Password);
+                if (status)
                 {
                     SetParamsSetting(AuthorizationKey, "true");
                     NavigationService.Navigate(typeof(ProfilePage.ProfilePage));

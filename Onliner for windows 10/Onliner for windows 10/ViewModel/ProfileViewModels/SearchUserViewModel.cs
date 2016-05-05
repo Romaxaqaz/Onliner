@@ -11,22 +11,22 @@ namespace Onliner_for_windows_10.View_Model.ProfileViewModels
     public class SearchUserViewModel : ViewModelBase
     {
         private const string UrlApiSearchProfile = "http://forum.onliner.by/memberlist.php?";
-        private HttpRequest HttpRequest = new HttpRequest();
-        private ParsingSearchUserResult searchResult = new ParsingSearchUserResult();
+        private readonly HttpRequest _httpRequest = new HttpRequest();
+        private readonly ParsingSearchUserResult _searchResult = new ParsingSearchUserResult();
 
         #region Collections
-        private ObservableCollection<ProfileSearchModel> usersCollection = new ObservableCollection<ProfileSearchModel>();
+        private ObservableCollection<ProfileSearchModel> _usersCollection = new ObservableCollection<ProfileSearchModel>();
         public ObservableCollection<ProfileSearchModel> UsersCollection
         {
-            get { return usersCollection; }
-            set { Set(ref usersCollection, value); }
+            get { return _usersCollection; }
+            set { Set(ref _usersCollection, value); }
         }
         #endregion
 
         #region Constructor
         public SearchUserViewModel()
         {
-            SelectedItemCommand = new RelayCommand<object>((obj) => SelectedItem(obj));
+            SelectedItemCommand = new RelayCommand<object>(SelectedItem);
             SearchCommand = new RelayCommand(async () => await SearchUsers());
         }
         #endregion
@@ -34,8 +34,8 @@ namespace Onliner_for_windows_10.View_Model.ProfileViewModels
         #region Methods
         private void SelectedItem(object obj)
         {
-            ProfileSearchModel item = obj as ProfileSearchModel;
-            NavigationService.Navigate(typeof(ProfilePage.ProfilePage), item.IdUser);
+            var item = obj as ProfileSearchModel;
+            if (item != null) NavigationService.Navigate(typeof(ProfilePage.ProfilePage), item.IdUser);
         }
 
         private async Task SearchUsers()
@@ -45,17 +45,17 @@ namespace Onliner_for_windows_10.View_Model.ProfileViewModels
 
         private async Task LoadUsersResult()
         {
-            var htmlResult = await HttpRequest.GetRequest(UrlApiSearchProfile, SearchBoxContent);
-            UsersCollection = searchResult.GetResultList(htmlResult);
+            var htmlResult = await _httpRequest.GetRequest(UrlApiSearchProfile, SearchBoxContent);
+            UsersCollection = _searchResult.GetResultList(htmlResult);
         }
         #endregion
 
         #region Properties
-        private string searchBoxContent;
+        private string _searchBoxContent;
         public string SearchBoxContent
         {
-            get { return searchBoxContent; }
-            set { Set(ref searchBoxContent, value); }
+            get { return _searchBoxContent; }
+            set { Set(ref _searchBoxContent, value); }
         }
         #endregion
 

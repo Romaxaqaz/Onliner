@@ -20,38 +20,38 @@ namespace Onliner_for_windows_10.View_Model
 {
     public class ProfileViewModel : ViewModelBase
     {
-        private ProfileData profile = new ProfileData();
-        private HtmlDocument resultat = new HtmlDocument();
-        private HttpRequest HttpRequest = new HttpRequest();
-        private BirthDayDate bday = new BirthDayDate();
+        private ProfileData _profile = new ProfileData();
+        private readonly HtmlDocument _resultat = new HtmlDocument();
+        private readonly HttpRequest _httpRequest = new HttpRequest();
+        private BirthDayDate _bday = new BirthDayDate();
 
         #region Variables
-        private bool TypeAccaunt = false;
+        private bool _typeAccaunt;
         private const string DefaultProfileUrl = "https://profile.onliner.by";
         private const string DefaultUserUrl = "https://profile.onliner.by/user/";
-        private string[] accauntNameParsParam = new string[4] { "h1", "class", "m-title", "(^([A-Za-z0-9-_]+))" };
-        private string[] accauntImageParsParam = new string[4] { "div", "class", "uprofile-ph", "(?<=src=\").*?(?=\")" };
-        private string[] accauntStatusParsParam = new string[4] { "p", "class", "uprofile-connect user-status", "" };
-        private string[] accauntNumbersParsParam = new string[4] { "sup", "class", "nfm", "" };
-        private string[] accauntMoneyParsParam = new string[4] { "span", "class", "b-pay-widgetbalance-info", "" };
+        private readonly string[] _accauntNameParsParam = new string[4] { "h1", "class", "m-title", "(^([A-Za-z0-9-_]+))" };
+        private readonly string[] _accauntImageParsParam = new string[4] { "div", "class", "uprofile-ph", "(?<=src=\").*?(?=\")" };
+        private readonly string[] _accauntStatusParsParam = new string[4] { "p", "class", "uprofile-connect user-status", "" };
+        private string[] _accauntNumbersParsParam = new string[4] { "sup", "class", "nfm", "" };
+        private string[] _accauntMoneyParsParam = new string[4] { "span", "class", "b-pay-widgetbalance-info", "" };
         #endregion
 
         #region Collection
-        private ObservableCollection<ProfilePataList> profileDataCollection = new ObservableCollection<ProfilePataList>();
+        private ObservableCollection<ProfilePataList> _profileDataCollection = new ObservableCollection<ProfilePataList>();
         public ObservableCollection<ProfilePataList> ProfileDataCollection
         {
-            get { return profileDataCollection; }
-            set { Set(ref profileDataCollection, value); }
+            get { return _profileDataCollection; }
+            set { Set(ref _profileDataCollection, value); }
         }
         #endregion
 
         #region Constructor
         public ProfileViewModel()
         {
-            ActionWithMessageCommand = new RelayCommand(() => ActionWithMessage());
-            EditProfileCommand = new RelayCommand(() => EditProfile());
-            ExitProfileCommand = new RelayCommand(() => ExitProfile());
-            SearchUsersCommand = new RelayCommand(() => SearchUsers());
+            ActionWithMessageCommand = new RelayCommand(ActionWithMessage);
+            EditProfileCommand = new RelayCommand(EditProfile);
+            ExitProfileCommand = new RelayCommand(ExitProfile);
+            SearchUsersCommand = new RelayCommand(SearchUsers);
         }
         #endregion
 
@@ -64,15 +64,15 @@ namespace Onliner_for_windows_10.View_Model
         public async void LoadProfileInfo(bool updateShell, string profileUrl = DefaultProfileUrl)
         {
             ProgressRingIsActive = true;
-            if (HttpRequest.HasInternet())
+            if (_httpRequest.HasInternet())
             {
                 var parsHtml = new Onliner.ParsingHtml.ParsingHtml();
-                string resultGetHttpRequest = await HttpRequest.GetRequestOnlinerAsync(profileUrl);
-                resultat.LoadHtml(resultGetHttpRequest);
+                var resultGetHttpRequest = await _httpRequest.GetRequestOnlinerAsync(profileUrl);
+                _resultat.LoadHtml(resultGetHttpRequest);
 
-                NickName = parsHtml.ParsElementHtml(accauntNameParsParam, resultat);
-                Avatar = parsHtml.ParsElementHtml(accauntImageParsParam, resultat);
-                Status = parsHtml.ParsElementHtml(accauntStatusParsParam, resultat);
+                NickName = parsHtml.ParsElementHtml(_accauntNameParsParam, _resultat);
+                Avatar = parsHtml.ParsElementHtml(_accauntImageParsParam, _resultat);
+                Status = parsHtml.ParsElementHtml(_accauntStatusParsParam, _resultat);
 
                 if (updateShell)
                 {
@@ -82,12 +82,12 @@ namespace Onliner_for_windows_10.View_Model
                     CommandButtonVisibility = true;
                 }
 
-                SetProfileDataCollection(resultat);
+                SetProfileDataCollection(_resultat);
                 ProgressRingIsActive = false;
             }
             else
             {
-                await HttpRequest.Message("Упс");
+                await _httpRequest.Message("Упс");
             }
         }
 
@@ -97,14 +97,14 @@ namespace Onliner_for_windows_10.View_Model
         /// <param name="document"></param>
         private void SetProfileDataCollection(HtmlDocument document)
         {
-            List<HtmlNode> titleList = document.DocumentNode.Descendants().Where
+            var titleList = document.DocumentNode.Descendants().Where
             (x => (x.Name == "div" && x.Attributes["class"] != null && x.Attributes["class"].Value.Contains("profp-col-2-i"))).ToList();
             //name
             var infolist = titleList[0].Descendants("dt").ToList();
             //value
             var valuelist = titleList[0].Descendants("dd").ToList();
 
-            for (int i = 0; i < infolist.Count - 1; i++)
+            for (var i = 0; i < infolist.Count - 1; i++)
             {
                 ProfileDataCollection.Add(new ProfilePataList
                 {
@@ -126,15 +126,18 @@ namespace Onliner_for_windows_10.View_Model
 
             var result = await dialog.ShowAsync();
 
-            if ((int)result.Id == 0)
-            {
-                //remove the file with cookie
-                HttpRequest.Remoovecookie();
-                SetParamsSetting(AuthorizationKey, "false");
-                //reset splitview profile button content
-                ResetShellData();
-                NavigationService.Navigate(typeof(MainPage));
-            }
+            if (NewMethod(result) != 0) return;
+            //remove the file with cookie
+            _httpRequest.Remoovecookie();
+            SetParamsSetting(AuthorizationKey, "false");
+            //reset splitview profile button content
+            ResetShellData();
+            NavigationService.Navigate(typeof(MainPage));
+        }
+
+        private static int NewMethod(IUICommand result)
+        {
+            return (int)result.Id;
         }
 
         private void ActionWithMessage()
@@ -144,7 +147,7 @@ namespace Onliner_for_windows_10.View_Model
         }
 
         private void MessageButtonContent() =>
-            TextButtonMessageContent = TypeAccaunt == false ? "Мои сообщения" : "Отправить сообщение";
+            TextButtonMessageContent = _typeAccaunt == false ? "Мои сообщения" : "Отправить сообщение";
 
         private void EditProfile() =>
            NavigationService.Navigate(typeof(EditProfilePage));
@@ -173,13 +176,13 @@ namespace Onliner_for_windows_10.View_Model
                 //if there is an option key
                 if (parameter != null)
                 {
-                    string profileUrl = DefaultUserUrl + (string)parameter;
-                    TypeAccaunt = true;
+                    var profileUrl = DefaultUserUrl + (string)parameter;
+                    _typeAccaunt = true;
                     LoadProfileInfo(false, profileUrl);
                 }
                 else
                 {
-                    TypeAccaunt = false;
+                    _typeAccaunt = false;
                     LoadProfileInfo(true);
                 }
             }
@@ -197,63 +200,57 @@ namespace Onliner_for_windows_10.View_Model
 
         #region Properties
 
-        private string nickName;
+        private string _nickName;
         public string NickName
         {
-            get { return nickName; }
-            set { Set(ref nickName, value); }
+            get { return _nickName; }
+            set { Set(ref _nickName, value); }
         }
 
-        private string avatar;
+        private string _avatar;
         public string Avatar
         {
-            get { return avatar; }
-            set { Set(ref avatar, value); }
+            get { return _avatar; }
+            set { Set(ref _avatar, value); }
         }
 
-        private string status;
+        private string _status;
         public string Status
         {
-            get { return status; }
-            set { Set(ref status, value); }
+            get { return _status; }
+            set { Set(ref _status, value); }
         }
 
-        private string money;
+        private string _money;
         public string Money
         {
-            get { return money; }
-            set { Set(ref money, value); }
+            get { return _money; }
+            set { Set(ref _money, value); }
         }
 
-        private string textButtonMessageContent;
+        private string _textButtonMessageContent;
         public string TextButtonMessageContent
         {
-            get { return textButtonMessageContent; }
-            set { Set(ref textButtonMessageContent, value); }
+            get { return _textButtonMessageContent; }
+            set { Set(ref _textButtonMessageContent, value); }
         }
 
-        private bool progressRingIsActive = false;
+        private bool _progressRingIsActive = false;
         public bool ProgressRingIsActive
         {
-            get { return progressRingIsActive; }
-            set { Set(ref progressRingIsActive, value); }
+            get { return _progressRingIsActive; }
+            set { Set(ref _progressRingIsActive, value); }
         }
 
-        private bool commandButtonVisibility = false;
+        private bool _commandButtonVisibility = false;
         public bool CommandButtonVisibility
         {
-            get { return commandButtonVisibility; }
-            set { Set(ref commandButtonVisibility, value); }
+            get { return _commandButtonVisibility; }
+            set { Set(ref _commandButtonVisibility, value); }
         }
 
-        public bool ExitButtonVisibility
-        {
-            get
-            {
-                if (TypeAccaunt) return false;
-                return true;
-            }
-        }
+        public bool ExitButtonVisibility => !_typeAccaunt;
+
         #endregion
     }
 }

@@ -19,8 +19,8 @@ namespace Onliner.Http
         /// <param name="stream"></param>
         public static void Serialize(CookieCollection cookies, Uri address, Stream stream)
         {
-            DataContractSerializer formatter = new DataContractSerializer(typeof(List<Cookie>));
-            List<Cookie> cookieList = new List<Cookie>();
+            var formatter = new DataContractSerializer(typeof(List<Cookie>));
+            var cookieList = new List<Cookie>();
             for (var enumerator = cookies.GetEnumerator(); enumerator.MoveNext();)
             {
                 var cookie = enumerator.Current as Cookie;
@@ -39,13 +39,12 @@ namespace Onliner.Http
         /// <returns></returns>
         public static CookieContainer Deserialize(Stream stream, Uri uri)
         {
-            List<Cookie> cookies = new List<Cookie>();
-            CookieContainer container = new CookieContainer();
-            DataContractSerializer formatter = new DataContractSerializer(typeof(List<Cookie>));
-            cookies = (List<Cookie>)formatter.ReadObject(stream);
-            CookieCollection cookieco = new CookieCollection();
+            var container = new CookieContainer();
+            var formatter = new DataContractSerializer(typeof(List<Cookie>));
+            var cookies = (List<Cookie>)formatter.ReadObject(stream);
+            var cookieco = new CookieCollection();
 
-            foreach (Cookie cookie in cookies)
+            foreach (var cookie in cookies)
             {
                 cookieco.Add(cookie);
             }

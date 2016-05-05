@@ -6,23 +6,18 @@ namespace Onliner.Model.AdditionalInformation
 {
     public class Additionalinformation : INotifyPropertyChanged
     {
-        Windows.Storage.ApplicationDataContainer localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+        readonly Windows.Storage.ApplicationDataContainer _localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
 
-        private static Additionalinformation instance = new Additionalinformation();
         private Additionalinformation() { }
 
-        public static Additionalinformation Instance
-        {
-            set { instance = value; }
-            get { return instance; }
-        }
+        public static Additionalinformation Instance { set; get; } = new Additionalinformation();
 
-        public string _login;
-        public string _unreadMessage;
-        public string _current;
-        public string _wheather;
-        public string _nameActivePage;
-        public string _avatarUrl;
+        private string _login;
+        private string _unreadMessage;
+        private string _current;
+        private string _wheather;
+        private string _nameActivePage;
+        private string _avatarUrl;
 
         public string UnreadeMessage
         {
@@ -30,7 +25,7 @@ namespace Onliner.Model.AdditionalInformation
             set
             {
                 _unreadMessage = value;
-                OnPropertyChanged("UnreadeMessage");
+                OnPropertyChanged();
             }
         }
         public string Current
@@ -39,7 +34,7 @@ namespace Onliner.Model.AdditionalInformation
             set
             {
                 _current = value;
-                OnPropertyChanged("Current");
+                OnPropertyChanged();
             }
         }
         public string Wheather
@@ -48,7 +43,7 @@ namespace Onliner.Model.AdditionalInformation
             set
             {
                 _wheather = value;
-                OnPropertyChanged("Wheather");
+                OnPropertyChanged();
             }
         }
 
@@ -58,7 +53,7 @@ namespace Onliner.Model.AdditionalInformation
             set
             {
                 _nameActivePage = value;
-                OnPropertyChanged("NameActivePage");
+                OnPropertyChanged();
             }
         }
 
@@ -66,7 +61,7 @@ namespace Onliner.Model.AdditionalInformation
         {
             get
             {
-                    var avatar = localSettings.Values[LocalSettingParams.AvatarUrl];
+                    var avatar = _localSettings.Values[LocalSettingParams.AvatarUrl];
                     if (avatar != null)
                     {
                         _avatarUrl = avatar.ToString();
@@ -80,7 +75,7 @@ namespace Onliner.Model.AdditionalInformation
             set
             {
                 _avatarUrl = value;
-                OnPropertyChanged("AvatarUrl");
+                OnPropertyChanged();
             }
         }
 
@@ -88,7 +83,7 @@ namespace Onliner.Model.AdditionalInformation
         {
             get
             {
-                var profileName = localSettings.Values[LocalSettingParams.Login];
+                var profileName = _localSettings.Values[LocalSettingParams.Login];
                 if (profileName != null)
                 {
                     _login = profileName.ToString();
@@ -102,7 +97,7 @@ namespace Onliner.Model.AdditionalInformation
             set
             {
                 _login = value;
-                OnPropertyChanged("Login");
+                OnPropertyChanged();
             }
         }
 
@@ -111,10 +106,7 @@ namespace Onliner.Model.AdditionalInformation
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             var eventHandler = this.PropertyChanged;
-            if (eventHandler != null)
-            {
-                eventHandler(this, new PropertyChangedEventArgs(propertyName));
-            }
+            eventHandler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

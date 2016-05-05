@@ -20,11 +20,11 @@ namespace Onliner.ParsingHtml
         /// <returns>html</returns>
         public string GetDataHtml(string tagName, string className, string elementTag)
         {
-            HtmlDocument resultat = new HtmlDocument();
-            var node = resultat.DocumentNode.Descendants(tagName).
-               Where(div => div.GetAttributeValue(className, string.Empty) == elementTag).
-               FirstOrDefault();
-            return node.InnerHtml.ToString();
+            var resultat = new HtmlDocument();
+            var node = resultat.DocumentNode.
+               Descendants(tagName).
+               FirstOrDefault(div => div.GetAttributeValue(className, string.Empty) == elementTag);
+            return node.InnerHtml;
         }
 
         /// <summary>
@@ -37,30 +37,30 @@ namespace Onliner.ParsingHtml
         /// <returns>text</returns>
         public string GetDataText(string tagName, string className, string elementTag)
         {
-            HtmlDocument resultat = new HtmlDocument();
-            var node = resultat.DocumentNode.Descendants(tagName).
-               Where(div => div.GetAttributeValue(className, string.Empty) == elementTag).
-               FirstOrDefault();
+            var resultat = new HtmlDocument();
+            var node = resultat.DocumentNode.
+               Descendants(tagName).
+               FirstOrDefault(div => div.GetAttributeValue(className, string.Empty) == elementTag);
             return node.InnerText.ToString();
         }
 
         public string ParsElementHtml(string[] paramsPars, HtmlDocument htmldoc)
         {
-            string finalResult = "";
+            var finalResult = "";
             if (paramsPars[3] != "")
             {
-                Regex htmlreg = new Regex(paramsPars[3]);
-                var name = htmldoc.DocumentNode.Descendants(paramsPars[0]).
-                   Where(div => div.GetAttributeValue(paramsPars[1], string.Empty) == paramsPars[2]).
-                   FirstOrDefault();
-                string result = name.InnerHtml.Trim();
+                var htmlreg = new Regex(paramsPars[3]);
+                var name = htmldoc.DocumentNode.
+                   Descendants(paramsPars[0]).
+                   FirstOrDefault(div => div.GetAttributeValue(paramsPars[1], string.Empty) == paramsPars[2]);
+                var result = name.InnerHtml.Trim();
                 finalResult = htmlreg.Match(result).ToString();
             }
             else
             {
-                var name = htmldoc.DocumentNode.Descendants(paramsPars[0]).
-                   Where(div => div.GetAttributeValue(paramsPars[1], string.Empty) == paramsPars[2]).
-                   FirstOrDefault();
+                var name = htmldoc.DocumentNode.
+                   Descendants(paramsPars[0]).
+                   FirstOrDefault(div => div.GetAttributeValue(paramsPars[1], string.Empty) == paramsPars[2]);
                 finalResult = name.InnerHtml.Trim();
             }
             return finalResult;

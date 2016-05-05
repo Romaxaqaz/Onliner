@@ -19,12 +19,18 @@
     xmlns:pullToRefresh="using:PullToRefresh.UWP"
     xmlns:animatedImage="using:Onliner_for_windows_10.UserControls.Image"
     xmlns:viewModel="using:Onliner_for_windows_10.View_Model"
+    xmlns:commentsModel="using:Onliner.Model.News"
     x:Class="Onliner_for_windows_10.Views.ViewNewsPage"
     mc:Ignorable="d">
 <!--#endregion-->
+
+    <Page.DataContext>
+        <viewModel:ViewNewsViewModel x:Name="ViewModel"/>
+    </Page.DataContext>
         
     <!--Region Resources-->
     <Page.Resources>
+
         <DataTemplate x:Key="HeaderTemlate">
             <Grid HorizontalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
@@ -189,7 +195,7 @@
         <!--#endregion-->
 
         <!--#region Page Header-->
-        <controls:PageHeader x:Name="pageHeader" 
+        <controls:PageHeader x:Name="PageHeader" 
                              Frame="{x:Bind Frame}"
                              Background="{ThemeResource BackGroundCustomHeaderColorBrush}"
                              Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
@@ -203,7 +209,7 @@
                 <AppBarButton Name="CommentsCoomBarButton" Icon="Comment" Label="Комментарии" Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" Command="{Binding ChangeCommetnsGridVisible}"/>
             </controls:PageHeader.PrimaryCommands>
             <controls:PageHeader.SecondaryCommands>
-                <AppBarButton Icon="Save" Label="Сохранить" Foreground="Black" Command="{Binding SaveNewsInDB}" Visibility="Collapsed"/>
+                <AppBarButton Icon="Save" Label="Сохранить" Foreground="Black" Command="{Binding SaveNewsInDb}" Visibility="Collapsed"/>
                 <AppBarButton Icon="Link" Label="Перейти на сайт" Foreground="Black" Command="{Binding OpenNewsInBrowser}"/>
             </controls:PageHeader.SecondaryCommands>
         </controls:PageHeader>
@@ -261,7 +267,7 @@
                                     </TransitionCollection>
                                 </ListView.ItemContainerTransitions>
                                 <ListView.ItemTemplate>
-                                    <DataTemplate>
+                                    <DataTemplate x:DataType="commentsModel:Comments">
                                         <Border BorderThickness="0,0,0,1" BorderBrush="Gray">
                                             <Grid  HorizontalAlignment="Stretch">
                                                 <Grid.ColumnDefinitions>
@@ -281,31 +287,26 @@
                                                     <Ellipse.Fill>
                                                         <ImageBrush>
                                                             <ImageBrush.ImageSource>
-                                                                <BitmapImage DecodePixelHeight="250" DecodePixelWidth="250" UriSource="{Binding Image}" />
+                                                                <BitmapImage DecodePixelHeight="250" DecodePixelWidth="250" UriSource="{x:Bind Image}"/>
                                                             </ImageBrush.ImageSource>
                                                         </ImageBrush>
                                                     </Ellipse.Fill>
                                                 </Ellipse>
                                                 <!--Name user-->
-                                                <HyperlinkButton x:Name="NickNameTextBlock" Content="{Binding Nickname}" Grid.Column="1" Grid.ColumnSpan="2" FontWeight="Bold" FontSize="14"  Margin="3,0,0,0" HorizontalAlignment="Left"  Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}">
-                                                    <Interactivity:Interaction.Behaviors>
-                                                        <Core:EventTriggerBehavior EventName="Click">
-                                                            <Core:InvokeCommandAction Command="{Binding ElementName=CommentsView, Path=DataContext.UserProfileCommand}" 
-                                                                                              CommandParameter="{Binding UserId}"/>
-                                                        </Core:EventTriggerBehavior>
-                                                    </Interactivity:Interaction.Behaviors>
+                                                <HyperlinkButton x:Name="NickNameTextBlock" Content="{x:Bind Nickname}" Grid.Column="1" Grid.ColumnSpan="2" FontWeight="Bold" FontSize="14"  Margin="3,0,0,0" HorizontalAlignment="Left"  Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" x:Phase="1">
+
                                                 </HyperlinkButton>
                                                 <!--Time-->
-                                                <TextBlock Text="{Binding Time}" Grid.Row="0" Grid.Column="3" FontSize="14" TextAlignment="Right" VerticalAlignment="Center" Margin="2" Foreground="Gray" Grid.ColumnSpan="2" FontFamily="Segoe UI Light" HorizontalAlignment="Stretch"/>
+                                                <TextBlock Text="{x:Bind Time}" Grid.Row="0" Grid.Column="3" FontSize="14" TextAlignment="Right" VerticalAlignment="Center" Margin="2" Foreground="Gray" Grid.ColumnSpan="2" FontFamily="Segoe UI Light" HorizontalAlignment="Stretch" x:Phase="3"/>
                                                 <!--Content Viewer-->
-                                                <UserControl:CommentsContentViewer x:Name="CommentsContentViewer" UserControl:CommentsContentViewer.HtmlString="{Binding Data}" BorderThickness="1" FontSize="14" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"/>
+                                                <UserControl:CommentsContentViewer x:Name="CommentsContentViewer" UserControl:CommentsContentViewer.HtmlString="{x:Bind Data}" BorderThickness="1" FontSize="14" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" x:Phase="0"/>
                                                 <!--Like-->
                                                 <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Margin="2" >
                                                     <Grid>
                                                         <TextBlock Text="&#xE006;" FontSize="14" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Foreground="Gray"/>
-                                                        <TextBlock Text="&#xE0A5;" FontSize="14" Foreground="Red" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Visibility="{Binding Like, Converter={StaticResource BooleToVisible}}"/>
+                                                        <TextBlock Text="&#xE0A5;" FontSize="14" Foreground="Red" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Visibility="{x:Bind Like, Converter={StaticResource BooleToVisible}}" x:Phase="2"/>
                                                     </Grid>
-                                                    <TextBlock Text="{Binding LikeCount}" FontSize="14" Margin="2" VerticalAlignment="Center" Foreground="Gray"/>
+                                                    <TextBlock Text="{x:Bind LikeCount}" FontSize="14" Margin="2" VerticalAlignment="Center" Foreground="Gray" x:Phase="4"/>
                                                     <Interactivity:Interaction.Behaviors>
                                                         <Core:EventTriggerBehavior EventName="Tapped">
                                                             <Core:InvokeCommandAction Command="{Binding ElementName=CommentsView, Path=DataContext.LikeCommentsCommand}" 

@@ -14,7 +14,7 @@ namespace Onliner_for_windows_10.View_Model.Message
 {
     public class MessageSenderViewModel : ViewModelBase
     {
-        private HttpRequest HttpRequest = new HttpRequest();
+        private readonly HttpRequest _httpRequest = new HttpRequest();
 
         #region Variables
         private readonly string ComposeMessageUrl = "https://profile.onliner.by/messages/compose";
@@ -25,30 +25,30 @@ namespace Onliner_for_windows_10.View_Model.Message
         #region Constructor
         public MessageSenderViewModel()
         {
-            SendMessageCommand = new RelayCommand(() => SendMessage());
+            SendMessageCommand = new RelayCommand(SendMessage);
         }
         #endregion
 
         #region Properties
-        private string header;
+        private string _header;
         public string Header
         {
-            get { return header; }
-            set { Set(ref header, value); }
+            get { return _header; }
+            set { Set(ref _header, value); }
         }
 
-        private string userSend;
+        private string _userSend;
         public string UserSend
         {
-            get { return userSend; }
-            set { Set(ref userSend, value); }
+            get { return _userSend; }
+            set { Set(ref _userSend, value); }
         }
 
-        private string content;
+        private string _content;
         public string Content
         {
-            get { return content; }
-            set { Set(ref content, value); }
+            get { return _content; }
+            set { Set(ref _content, value); }
         }
         #endregion
 
@@ -59,26 +59,25 @@ namespace Onliner_for_windows_10.View_Model.Message
         #region Methods
         private void SetModelMessage(IMessageModel messageModel)
         {
-            Header = messageModel.Header == null ? "" : messageModel.Header;
-            UserSend = messageModel.UserSend == null ? "" : messageModel.UserSend;
-            Content = messageModel.Content == null ? "" : messageModel.Content;
+            Header = messageModel.Header ?? "";
+            UserSend = messageModel.UserSend ?? "";
+            Content = messageModel.Content ?? "";
         }
 
         private async void SendMessage()
         {
             if (string.IsNullOrEmpty(UserSend) || string.IsNullOrEmpty(Header) || string.IsNullOrEmpty(Content))
             {
-                MessageDialog message = new MessageDialog("Введены не все данные");
+                var message = new MessageDialog("Введены не все данные");
                 await message.ShowAsync();
-                return;
             }
             else
             {
-                StringBuilder postData = new StringBuilder();
+                var postData = new StringBuilder();
                 postData.Append("username=" + UserSend + "&");
                 postData.Append("subject=" + Header + "&");
                 postData.Append("message=" + Content);
-                await HttpRequest.PostRequestFormData(ComposeMessageUrl, HostMessage, Origin, postData.ToString());
+                await _httpRequest.PostRequestFormData(ComposeMessageUrl, HostMessage, Origin, postData.ToString());
                 NavigationService.GoBack();
             }
         }

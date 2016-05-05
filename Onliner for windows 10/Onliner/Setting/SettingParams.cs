@@ -9,7 +9,7 @@ namespace Onliner.Setting
 {
     public static class SettingParams
     {
-        private static ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+        private static readonly ApplicationDataContainer LocalSettings = ApplicationData.Current.LocalSettings;
 
         public const string AvatarKey = "Avatar";
         public const string NickNameKey = "NickName";
@@ -43,17 +43,17 @@ namespace Onliner.Setting
 
         public static void SetParamsSetting(string key, string value)
         {
-            localSettings.Values[key] = value;
+            LocalSettings.Values[key] = value;
         }
 
         public static object GetParamsSetting(string key)
         {
-            return localSettings.Values[key];
+            return LocalSettings.Values[key];
         }
 
         public static void RemoveparamsSetting(string key)
         {
-            localSettings.Values.Remove(key);
+            LocalSettings.Values.Remove(key);
         }
 
     }

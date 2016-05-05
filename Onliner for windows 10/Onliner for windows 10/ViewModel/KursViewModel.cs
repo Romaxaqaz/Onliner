@@ -15,8 +15,8 @@ namespace Onliner_for_windows_10.View_Model
     {
         private readonly string KursUrlApi = "http://kurs.onliner.by/";
 
-        private HttpRequest HttpRequest = new HttpRequest();
-        private HtmlDocument resultat = new HtmlDocument();
+        private readonly HttpRequest _httpRequest = new HttpRequest();
+        private readonly HtmlDocument _resultat = new HtmlDocument();
 
         #region Methods
 
@@ -25,19 +25,17 @@ namespace Onliner_for_windows_10.View_Model
         /// </summary>
         private async void LoadKursOnliner()
         {
-            var content = await HttpRequest.GetRequestOnlinerAsync(KursUrlApi);
-            resultat.LoadHtml(content);
+            var content = await _httpRequest.GetRequestOnlinerAsync(KursUrlApi);
+            _resultat.LoadHtml(content);
 
-            List<HtmlNode> tagList = resultat.DocumentNode.Descendants().Where
+            var tagList = _resultat.DocumentNode.Descendants().Where
                 (x => (x.Name == "table" && x.Attributes["class"] != null && x.Attributes["class"].Value.Contains
                 ("b-currency-table__best"))).ToList();
 
-            Kurs kurs;
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
-                kurs = new Kurs();
-                var tdlist = tagList[i].Descendants("tr").
-                             Where(div => div.GetAttributeValue("class", string.Empty) == "tr-main").FirstOrDefault().Descendants("td").ToList();
+                var kurs = new Kurs();
+                var tdlist = tagList[i].Descendants("tr").FirstOrDefault(div => div.GetAttributeValue("class", string.Empty) == "tr-main").Descendants("td").ToList();
 
                 kurs.TypeMethod = GetContentTag(tdlist, 0, "abbr rate");
                 kurs.BankBuy = GetContentTag(tdlist, 1, "value");
@@ -56,10 +54,11 @@ namespace Onliner_for_windows_10.View_Model
         /// <param name="node"></param>
         /// <param name="index">number td in tr</param>
         /// <param name="attributeName"></param>
-        /// <param name="OrAttName"></param>
+        /// <param name="orAttName"></param>
         /// <returns></returns>
-        private string GetContentTag(List<HtmlNode> node, int index, string attributeName, string OrAttName = "")
+        private string GetContentTag(List<HtmlNode> node, int index, string attributeName, string orAttName = "")
         {
+            if (node == null) throw new ArgumentNullException(nameof(node));
             var tagContent = node[index].Descendants("p").FirstOrDefault();
             return tagContent != null ? tagContent.InnerText : "";
         }
@@ -72,20 +71,20 @@ namespace Onliner_for_windows_10.View_Model
         #endregion
 
         #region Collections
-        private ObservableCollection<Kurs> kursCollection = new ObservableCollection<Kurs>();
+        private ObservableCollection<Kurs> _kursCollection = new ObservableCollection<Kurs>();
         public ObservableCollection<Kurs> KursCollection
         {
-            get { return kursCollection; }
-            set { Set(ref kursCollection, value); }
+            get { return _kursCollection; }
+            set { Set(ref _kursCollection, value); }
         }
         #endregion
 
         #region 
-        private bool progressLoadRing = true;
+        private bool _progressLoadRing = true;
         public bool ProgressLoadRing
         {
-            get { return progressLoadRing; }
-            set { Set(ref progressLoadRing, value); }
+            get { return _progressLoadRing; }
+            set { Set(ref _progressLoadRing, value); }
         }
 
         #endregion

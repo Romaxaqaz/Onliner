@@ -34,25 +34,23 @@ namespace Onliner.ParsingHtml
         private readonly string AttributeTagSRC = "src";
         #endregion
 
-        private string urlPageNews = string.Empty;
-        private string loadePage = string.Empty;
-        private string newsID = string.Empty;
+        private string _urlPageNews = string.Empty;
 
-        private HttpRequest HttpRequest = new HttpRequest();
-        private HtmlDocument htmlDoc = new HtmlDocument();
-        private List<FullItemNews> listNews = new List<FullItemNews>();
-        private ObservableCollection<Comments> listComments = new ObservableCollection<Comments>();
-        private List<string> listDataContent = new List<string>();
-        private List<CommetsLike> listItem = new List<CommetsLike>();
-        private ObservableCollection<ListViewItemSelectorModel> NewsListItem = new ObservableCollection<ListViewItemSelectorModel>();
+        private readonly HttpRequest _httpRequest = new HttpRequest();
+        private readonly HtmlDocument _htmlDoc = new HtmlDocument();
+        private List<FullItemNews> _listNews = new List<FullItemNews>();
+        private ObservableCollection<Comments> _listComments = new ObservableCollection<Comments>();
+        private List<string> _listDataContent = new List<string>();
+        private List<CommetsLike> _listItem = new List<CommetsLike>();
+        private ObservableCollection<ListViewItemSelectorModel> _newsListItem = new ObservableCollection<ListViewItemSelectorModel>();
 
-        public string LoadePage { get { return loadePage; } }
-        public string NewsID { get { return newsID; } }
+        public string LoadePage { get; set; }
+        public string NewsId { get; private set; } = string.Empty;
 
         public ParsingFullNewsPage(string page, string urlPage)
         {
-            loadePage = page;
-            urlPageNews = urlPage;
+            LoadePage = page;
+            _urlPageNews = urlPage;
         }
 
         /// <summary>
@@ -61,39 +59,39 @@ namespace Onliner.ParsingHtml
         /// <returns>news item object</returns>
         public async Task<ObservableCollection<ListViewItemSelectorModel>> NewsMainInfo()
         {
-            FullItemNews fullNews = new FullItemNews();
+            var fullNews = new FullItemNews();
 
-            htmlDoc.LoadHtml(LoadePage);
+            _htmlDoc.LoadHtml(LoadePage);
 
-            newsID = htmlDoc.DocumentNode.Descendants(NameTagSpan).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "news_view_count").FirstOrDefault().Attributes["news_id"].Value;
+            NewsId = _htmlDoc.DocumentNode.Descendants(NameTagSpan).FirstOrDefault(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "news_view_count").Attributes["news_id"].Value;
 
-            string likeApiUrl = GetUrlLikeApi(urlPageNews, newsID);
-            var likeDataCollection = await HttpRequest.GetTypeRequestOnlinerAsync(likeApiUrl);
+            var likeApiUrl = GetUrlLikeApi(_urlPageNews, NewsId);
+            var likeDataCollection = await _httpRequest.GetTypeRequestOnlinerAsync(likeApiUrl);
             SetCommentsList(likeDataCollection);
 
-            string _category = htmlDoc.DocumentNode.Descendants(NameTagDiv).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-post-tags-1").LastOrDefault().Descendants(NameTagStrong).LastOrDefault().Descendants(NameTagA).LastOrDefault().InnerText;
-            string _time = htmlDoc.DocumentNode.Descendants(NameTagDiv).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-post-tags-1").LastOrDefault().Descendants("time").FirstOrDefault().InnerText;
-            string _title = htmlDoc.DocumentNode.Descendants("h3").Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-posts-1-item__title").LastOrDefault().Descendants(NameTagA).FirstOrDefault().InnerText;
-            string _image = htmlDoc.DocumentNode.Descendants(NameTagFigure).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-posts-1-item__image").LastOrDefault().Descendants(NameTagImg).FirstOrDefault().Attributes[AttributeTagSRC].Value;
+            var category = _htmlDoc.DocumentNode.Descendants(NameTagDiv).LastOrDefault(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-post-tags-1").Descendants(NameTagStrong).LastOrDefault().Descendants(NameTagA).LastOrDefault().InnerText;
+            var time = _htmlDoc.DocumentNode.Descendants(NameTagDiv).LastOrDefault(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-post-tags-1").Descendants("time").FirstOrDefault().InnerText;
+            var title = _htmlDoc.DocumentNode.Descendants("h3").LastOrDefault(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-posts-1-item__title").Descendants(NameTagA).FirstOrDefault().InnerText;
+            var image = _htmlDoc.DocumentNode.Descendants(NameTagFigure).LastOrDefault(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-posts-1-item__image").Descendants(NameTagImg).FirstOrDefault().Attributes[AttributeTagSRC].Value;
 
-            NewsListItem.Add(new ListViewItemSelectorModel("header", _category, _time));
-            NewsListItem.Add(new ListViewItemSelectorModel("title", _title));
-            NewsListItem.Add(new ListViewItemSelectorModel("picture", _image));
+            _newsListItem.Add(new ListViewItemSelectorModel("header", category, time));
+            _newsListItem.Add(new ListViewItemSelectorModel("title", title));
+            _newsListItem.Add(new ListViewItemSelectorModel("picture", image));
 
             //footer
-            var footerNews = htmlDoc.DocumentNode.Descendants("footer").Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-inner-pages-footer-1").FirstOrDefault().InnerHtml;
+            var footerNews = _htmlDoc.DocumentNode.Descendants("footer").FirstOrDefault(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-inner-pages-footer-1").InnerHtml;
 
             // p tag collection
-            var ListPTag = htmlDoc.DocumentNode.Descendants(NameTagDiv).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-posts-1-item__text").ToList();
-            htmlDoc.LoadHtml(ListPTag[0].InnerHtml);
+            var listPTag = _htmlDoc.DocumentNode.Descendants(NameTagDiv).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-posts-1-item__text").ToList();
+            _htmlDoc.LoadHtml(listPTag[0].InnerHtml);
 
-            foreach (var item in htmlDoc.DocumentNode.ChildNodes)
+            foreach (var item in _htmlDoc.DocumentNode.ChildNodes)
             {
                 if (item.Name.Equals("p"))
                 {
                     if (item.InnerHtml.Contains("<img"))
                     {
-                        NewsListItem.Add(new ListViewItemSelectorModel("image", ParsingUrlImage(item)));
+                        _newsListItem.Add(new ListViewItemSelectorModel("image", ParsingUrlImage(item)));
                     }
                     else if (item.InnerHtml.Contains("iframe"))
                     {
@@ -102,77 +100,72 @@ namespace Onliner.ParsingHtml
                             try
                             {
                                 var uri = await ParsingYouTubeUrl(item);
-                                NewsListItem.Add(new ListViewItemSelectorModel("video", uri.Uri));
+                                _newsListItem.Add(new ListViewItemSelectorModel("video", uri.Uri));
                             }
                             catch (YouTubeUriNotFoundException)
                             {
-                                NewsListItem.Add(new ListViewItemSelectorModel("web", item.InnerHtml));
+                                _newsListItem.Add(new ListViewItemSelectorModel("web", item.InnerHtml));
                             }
                         }
                         else
                         {
-                            NewsListItem.Add(new ListViewItemSelectorModel("web", item.InnerHtml));
+                            _newsListItem.Add(new ListViewItemSelectorModel("web", item.InnerHtml));
                         }
                     }
                     else
                     {
-                        NewsListItem.Add(new ListViewItemSelectorModel("story", item.InnerHtml));
+                        _newsListItem.Add(new ListViewItemSelectorModel("story", item.InnerHtml));
                     }
                 }
                 if (item.Name.Equals("ul"))
                 {
-                    NewsListItem.Add(new ListViewItemSelectorModel("story", ParsingLiCollection(item.InnerHtml)));
+                    _newsListItem.Add(new ListViewItemSelectorModel("story", ParsingLiCollection(item.InnerHtml)));
                 }
             }
-            NewsListItem.Add(new ListViewItemSelectorModel("story", footerNews));
-            return NewsListItem;
+            _newsListItem.Add(new ListViewItemSelectorModel("story", footerNews));
+            return _newsListItem;
         }
 
-        private string ParsingUrlImage(HtmlNode node)
-        {
-            return node.Descendants("img").FirstOrDefault().Attributes["src"].Value;
-        }
+        private string ParsingUrlImage(HtmlNode node) =>
+            node.Descendants("img").FirstOrDefault().Attributes["src"].Value;
 
         private async Task<YouTubeUri> ParsingYouTubeUrl(HtmlNode node)
         {
-            YouTubeUri uri = new YouTubeUri();
-            string linkVideo = node.Descendants("iframe").FirstOrDefault().Attributes["src"].Value;
+            var uri = new YouTubeUri();
+            var linkVideo = node.Descendants("iframe").FirstOrDefault().Attributes["src"].Value;
             return await GetYouTubeYriForControl(linkVideo);
         }
 
         private string ParsingLiCollection(string parsingContent)
         {
-            HtmlDocument htmlDoc = new HtmlDocument();
+            var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(parsingContent);
 
             var liCollection = htmlDoc.DocumentNode.Descendants("li").ToList();
-            string html = string.Empty;
-            foreach (var it in liCollection)
-            {
-                html = html + it.InnerHtml + "<br>";
-            }
-            return html;
+            return liCollection.Aggregate(string.Empty, (current, it) => current + it.InnerHtml + "<br>");
         }
 
         private void SetCommentsList(string collectionJSon)
         {
             var commentsValue = JsonConvert.DeserializeObject<CommentsClass>(collectionJSon);
-            foreach (dynamic item in commentsValue.comments)
+            foreach (var item in commentsValue.Comments)
             {
                 string value = item.Value.ToString();
-                CommetsLike commment = new CommetsLike();
-                commment.ID = item.Name;
-                commment.Item = JsonConvert.DeserializeObject<Item>(value);
-                listItem.Add(commment);
+                var commment = new CommetsLike
+                {
+                    ID = item.Name,
+                    Item = JsonConvert.DeserializeObject<Item>(value)
+                };
+                _listItem.Add(commment);
             }
         }
 
         private async Task<YouTubeUri> GetYouTubeYriForControl(string url)
         {
-            string pattern = @"(embed\/[-A-Za-z0-9]+)";
+            var pattern = @"(embed\/[-A-Za-z0-9]+)";
             var regex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.Multiline);
             var clearUrl = regex.Match(url);
-            string path = clearUrl.ToString().Replace("embed/", "");
+            var path = clearUrl.ToString().Replace("embed/", "");
             var pathUri = await YouTube.GetVideoUriAsync(path, YouTubeQuality.Quality360P);
             return pathUri;
         }
@@ -184,40 +177,43 @@ namespace Onliner.ParsingHtml
         public async Task<ObservableCollection<Comments>> CommentsMainInfo()
         {
             Comments commentsParams;
-            htmlDoc.LoadHtml(LoadePage);
+            _htmlDoc.LoadHtml(LoadePage);
             await Task.Run(() =>
             {
-                var commentsList = htmlDoc.DocumentNode.Descendants(NameTagLi).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-comments-1__list-item commentListItem").ToList();
+                var commentsList = _htmlDoc.DocumentNode.Descendants(NameTagLi).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "b-comments-1__list-item commentListItem").ToList();
 
                 foreach (var item in commentsList)
                 {
                     commentsParams = new Comments();
                     commentsParams.ID = item.Attributes["data-comment-id"].Value;
-                    commentsParams.Nickname = item.Descendants(NameTagStrong).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "author").FirstOrDefault().InnerText;
+                    commentsParams.Nickname = item.Descendants(NameTagStrong).FirstOrDefault(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "author").InnerText;
                     commentsParams.UserId = item.Attributes["data-author-id"].Value;
-                    commentsParams.Time = item.Descendants(NameTagSpan).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "date").FirstOrDefault().InnerText;
-                    commentsParams.Image = "https:" + item.Descendants(NameTagFigure).Where(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "author-image").FirstOrDefault().Descendants(NameTagImg).FirstOrDefault().Attributes[AttributeTagSRC].Value;
+                    commentsParams.Time = item.Descendants(NameTagSpan).FirstOrDefault(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "date").InnerText;
+                    commentsParams.Image = "https:" + item.Descendants(NameTagFigure).FirstOrDefault(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "author-image").Descendants(NameTagImg).FirstOrDefault().Attributes[AttributeTagSRC].Value;
                     commentsParams.Data = item.InnerHtml;
 
-                    var commentsLikeCount = listItem.FirstOrDefault(x => x.ID == commentsParams.ID);
+                    var @params = commentsParams;
+                    var commentsLikeCount = _listItem.FirstOrDefault(x => x.ID == @params.ID);
                     if (commentsLikeCount != null)
                     {
-                        commentsParams.Like = commentsLikeCount.Item.like;
-                        commentsParams.LikeCount = commentsLikeCount.Item.counter;
-                        commentsParams.Best = commentsLikeCount.Item.best;
+                        commentsParams.Like = commentsLikeCount.Item.Like;
+                        commentsParams.LikeCount = commentsLikeCount.Item.Counter;
+                        commentsParams.Best = commentsLikeCount.Item.Best;
                     }
 
-                    listComments.Add(commentsParams);
+                    _listComments.Add(commentsParams);
                 }
             });
-            return listComments;
+            return _listComments;
         }
 
         private HtmlView PostItemTextBlock(string text)
         {
-            HtmlView textBlock = new HtmlView();
-            textBlock.Html = text;
-            textBlock.Margin = new Thickness(10);
+            var textBlock = new HtmlView
+            {
+                Html = text,
+                Margin = new Thickness(10)
+            };
             return textBlock;
         }
 
@@ -246,14 +242,18 @@ namespace Onliner.ParsingHtml
 
     public class CommentsClass
     {
-        public dynamic comments { get; set; }
+        [JsonProperty("comments")]
+        public dynamic Comments { get; set; }
     }
 
     public class Item
     {
-        public string counter { get; set; }
-        public bool best { get; set; }
-        public bool like { get; set; }
+        [JsonProperty("counter")]
+        public string Counter { get; set; }
+        [JsonProperty("best")]
+        public bool Best { get; set; }
+        [JsonProperty("like")]
+        public bool Like { get; set; }
     }
 
     public class CommetsLike

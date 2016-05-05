@@ -17,26 +17,26 @@ namespace Onliner_for_windows_10.View_Model
 {
     public class ViewNewsViewModel : ViewModelBase
     {
-        private ParsingFullNewsPage FullPageParser;
-        private FullItemNews fullItem = new FullItemNews();
-        private HttpRequest HttpRequest = new HttpRequest();
-        private string loaderPage = string.Empty;
-        private string NewsID = string.Empty;
-        private string NewsUrl = string.Empty;
+        private ParsingFullNewsPage _fullPageParser;
+        private FullItemNews _fullItem = new FullItemNews();
+        private readonly HttpRequest _httpRequest = new HttpRequest();
+        private string _loaderPage = string.Empty;
+        private string _newsId = string.Empty;
+        private string _newsUrl = string.Empty;
 
         #region Constructor
         public ViewNewsViewModel()
         {
-            CommentsAdd = new RelayCommand<object>((obj) => AddComments(obj));
-            SendButtonActive = new RelayCommand(() => ActiveSendButton());
-            ChangeCommetnsGridVisible = new RelayCommand(() => VisibleCommentsGrid());
+            CommentsAdd = new RelayCommand<object>(AddComments);
+            SendButtonActive = new RelayCommand(ActiveSendButton);
+            ChangeCommetnsGridVisible = new RelayCommand(VisibleCommentsGrid);
             OpenNewsInBrowser = new RelayCommand<object>(async (obj) => await OpenLink(obj));
-            SaveNewsInDB = new RelayCommand<object>((obj) => SaveNewsDB(obj));
+            SaveNewsInDb = new RelayCommand<object>(SaveNewsDB);
             UpdateCommentsList = new RelayCommand(async () => await UpdateCommets());
-            AnswerCommentCommand = new RelayCommand<object>((obj) => AnswerComment(obj));
-            AnswerQuoteCommentCommand = new RelayCommand<object>((obj) => AnswerQuoteComment(obj));
-            LikeCommentsCommand = new RelayCommand<object>((obj) => LikeComments(obj));
-            UserProfileCommand = new RelayCommand<object>((obj) => UserProfileNavigate(obj));
+            AnswerCommentCommand = new RelayCommand<object>(AnswerComment);
+            AnswerQuoteCommentCommand = new RelayCommand<object>(AnswerQuoteComment);
+            LikeCommentsCommand = new RelayCommand<object>(LikeComments);
+            UserProfileCommand = new RelayCommand<object>(UserProfileNavigate);
 
             var boolAuthorization = Convert.ToBoolean(GetParamsSetting(AuthorizationKey));
             if (boolAuthorization)
@@ -54,18 +54,18 @@ namespace Onliner_for_windows_10.View_Model
         /// <returns></returns>
         private async Task LoadNewsData(string urlPage)
         {
-            NewsUrl = urlPage;
+            _newsUrl = urlPage;
 
-            var htmlPage = await HttpRequest.GetRequestOnlinerAsync(NewsUrl);
+            var htmlPage = await _httpRequest.GetRequestOnlinerAsync(_newsUrl);
 
-            FullPageParser = new ParsingFullNewsPage(htmlPage, NewsUrl);
+            _fullPageParser = new ParsingFullNewsPage(htmlPage, _newsUrl);
             //news data
-            NewsItemContent = await FullPageParser.NewsMainInfo();
+            NewsItemContent = await _fullPageParser.NewsMainInfo();
             //comments data
-            Comments = await FullPageParser.CommentsMainInfo();
+            Comments = await _fullPageParser.CommentsMainInfo();
 
             CommentsProgressRing = false;
-            await HttpRequest.ViewNewsSet(FullPageParser.NewsID);
+            await _httpRequest.ViewNewsSet(_fullPageParser.NewsId);
         }
 
      
@@ -73,10 +73,10 @@ namespace Onliner_for_windows_10.View_Model
         {
             CommentsProgressRing = true;
 
-            var htmlPage = await HttpRequest.GetRequestOnlinerAsync(NewsUrl);
-            FullPageParser = new ParsingFullNewsPage(htmlPage, NewsUrl);
+            var htmlPage = await _httpRequest.GetRequestOnlinerAsync(_newsUrl);
+            _fullPageParser = new ParsingFullNewsPage(htmlPage, _newsUrl);
 
-            Comments = await FullPageParser.CommentsMainInfo();
+            Comments = await _fullPageParser.CommentsMainInfo();
 
             CommentsProgressRing = false;
             await Task.CompletedTask;
@@ -103,7 +103,7 @@ namespace Onliner_for_windows_10.View_Model
         /// <param name="obj">News item</param>
         private async void SaveNewsDB(object obj)
         {
-            MessageDialog msg = new MessageDialog("Coming soon");
+            var msg = new MessageDialog("Coming soon");
             await msg.ShowAsync();
         }
 
@@ -117,14 +117,16 @@ namespace Onliner_for_windows_10.View_Model
 
             if (boolAuthorization)
             {
-                var result = await HttpRequest.AddComments(FullPageParser.NewsID, obj.ToString(), LinkNews);
+                var result = await _httpRequest.AddComments(_fullPageParser.NewsId, obj.ToString(), LinkNews);
                 if (result)
                 {
-                    Comments comItem = new Onliner.Model.News.Comments();
-                    comItem.Nickname = ShellViewModel.Instance.Login;
-                    comItem.Image = ShellViewModel.Instance.AvatarUrl;
-                    comItem.Time = "Только что";
-                    comItem.Data = obj.ToString();
+                    var comItem = new Onliner.Model.News.Comments
+                    {
+                        Nickname = ShellViewModel.Instance.Login,
+                        Image = ShellViewModel.Instance.AvatarUrl,
+                        Time = "Только что",
+                        Data = obj.ToString()
+                    };
                     Comments.Add(comItem);
                 }
                 Message = string.Empty;
@@ -179,13 +181,13 @@ namespace Onliner_for_windows_10.View_Model
         {
             if (!commentItem.Like)
             {
-                var likeCount = await HttpRequest.LikeComment(commentItem.ID, LinkNews, LikeType.Like);
+                var likeCount = await _httpRequest.LikeComment(commentItem.ID, LinkNews, LikeType.Like);
                 commentItem.LikeCount = likeCount;
                 commentItem.Like = true;
             }
             else
             {
-                var likeCount = await HttpRequest.LikeComment(commentItem.ID, LinkNews, LikeType.UnLike);
+                var likeCount = await _httpRequest.LikeComment(commentItem.ID, LinkNews, LikeType.UnLike);
                 commentItem.LikeCount = likeCount;
                 commentItem.Like = false;
             }
@@ -194,7 +196,8 @@ namespace Onliner_for_windows_10.View_Model
         private async void AnswerQuoteComment(object obj)
         {
             var item = obj as Comments;
-            var quoteMessage = await HttpRequest.QuoteComment(item.ID, LinkNews);
+            if (item == null) return;
+            var quoteMessage = await _httpRequest.QuoteComment(item.ID, LinkNews);
             Message = QuoteMessageGenerate(quoteMessage, item.Nickname);
         }
 
@@ -228,111 +231,110 @@ namespace Onliner_for_windows_10.View_Model
         {
             LinkNews = parameter?.ToString();
 
-            if (HttpRequest.HasInternet())
+            if (_httpRequest.HasInternet())
             {
                 await LoadNewsData(LinkNews);
                 ProgressRing = false;
             }
             else
             {
-                await HttpRequest.Message("Упс, вы не подключены к интернету :(");
+                await _httpRequest.Message("Упс, вы не подключены к интернету :(");
             }
             await Task.CompletedTask;
         }
         #endregion
 
         #region Collections
-        private ObservableCollection<ListViewItemSelectorModel> newsItem;
-        private ObservableCollection<Comments> commentsItem;
+        private ObservableCollection<ListViewItemSelectorModel> _newsItem;
+        private ObservableCollection<Comments> _commentsItem = new ObservableCollection<Onliner.Model.News.Comments>();
 
         public ObservableCollection<ListViewItemSelectorModel> NewsItemContent
         {
-            get { return newsItem; }
-            set { Set(ref newsItem, value); }
+            get { return _newsItem; }
+            set { Set(ref _newsItem, value); }
         }
         public ObservableCollection<Comments> Comments
         {
-            get { return commentsItem; }
-            set { Set(ref commentsItem, value); }
+            get { return _commentsItem; }
+            set { Set(ref _commentsItem, value); }
         }
         #endregion
 
         #region Properties
-        private string _Value = "Default";
-        public string LinkNews { get { return _Value; } set { Set(ref _Value, value); } }
+        private string _value = "Default";
+        public string LinkNews { get { return _value; } set { Set(ref _value, value); } }
 
-        private bool progressRing = true;
+        private bool _progressRing = true;
         public bool ProgressRing
         {
             get
             {
-                return this.progressRing;
+                return this._progressRing;
             }
             set
             {
-                Set(ref progressRing, value);
+                Set(ref _progressRing, value);
             }
         }
 
-        private bool commentsProgressRing = true;
+        private bool _commentsProgressRing = true;
         public bool CommentsProgressRing
         {
             get
             {
-                return this.commentsProgressRing;
+                return this._commentsProgressRing;
             }
             set
             {
-                Set(ref commentsProgressRing, value);
+                Set(ref _commentsProgressRing, value);
             }
         }
 
-        private bool sendButton = false;
+        private bool _sendButton = false;
         public bool SendButton
         {
             get
             {
-                return this.sendButton;
+                return this._sendButton;
             }
             set
             {
-                Set(ref sendButton, value);
+                Set(ref _sendButton, value);
             }
         }
 
-        private bool commentsVisible = false;
+        private bool _commentsVisible = false;
         public bool CommentsVisible
         {
             get
             {
-                return this.commentsVisible;
+                return this._commentsVisible;
             }
             set
             {
-                Set(ref commentsVisible, value);
+                Set(ref _commentsVisible, value);
             }
         }
 
-        private bool commentsButtonVisible = false;
+        private bool _commentsButtonVisible = false;
         public bool CommentsButtonVisible
         {
             get
             {
-                return this.commentsButtonVisible;
+                return this._commentsButtonVisible;
             }
             set
             {
-                Set(ref commentsButtonVisible, value);
+                Set(ref _commentsButtonVisible, value);
             }
         }
 
 
-        private string message;
-
+        private string _message;
         public string Message
         {
-            get { return message; }
-            set { Set(ref message, value); }
+            get { return _message; }
+            set { Set(ref _message, value); }
         }
 
 
@@ -342,7 +344,7 @@ namespace Onliner_for_windows_10.View_Model
         #region Commands
         public RelayCommand<object> CommentsAdd { get; private set; }
         public RelayCommand<object> OpenNewsInBrowser { get; private set; }
-        public RelayCommand<object> SaveNewsInDB { get; private set; }
+        public RelayCommand<object> SaveNewsInDb { get; private set; }
         public RelayCommand SendButtonActive { get; private set; }
         public RelayCommand ChangeCommetnsGridVisible { get; private set; }
         public RelayCommand UpdateCommentsList { get; private set; }
@@ -350,6 +352,12 @@ namespace Onliner_for_windows_10.View_Model
         public RelayCommand<object> AnswerQuoteCommentCommand { get; private set; }
         public RelayCommand<object> LikeCommentsCommand { get; private set; }
         public RelayCommand<object> UserProfileCommand { get; private set; }
+
+        public object Value
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         #endregion
     }
 }

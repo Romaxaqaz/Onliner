@@ -11,7 +11,7 @@ using HtmlAgilityPack;
 using Onliner.Model.News;
 using Onliner.Http;
 using Onliner.Model.OpinionsModel;
-using static Onliner.SQLiteDataBase.SQLiteDB;
+using static Onliner.SQLiteDataBase.SqLiteDb;
 using Onliner.SQLiteDataBase;
 using System.Net;
 using Newtonsoft.Json;
@@ -22,30 +22,27 @@ namespace Onliner.ParsingHtml
     public class ParsingNewsSection : IEnumerable
     {
         #region Classes
-        private ObservableCollection<ItemsNews> myItems;
-        private HtmlDocument resultat = new HtmlDocument();
-        private HttpRequest HttpRequest = new HttpRequest();
+        private ObservableCollection<ItemsNews> _myItems;
+        private readonly HtmlDocument _resultat = new HtmlDocument();
+        private readonly HttpRequest _httpRequest = new HttpRequest();
         private ItemsNews _itemNews;
-        private OpinionModel opinionModel;
-        private HttpClient client = new HttpClient();
+        private OpinionModel _opinionModel;
+        private readonly HttpClient _client = new HttpClient();
         #endregion
 
-        Dictionary<string, string> com = new Dictionary<string, string>();
+        Dictionary<string, string> _com = new Dictionary<string, string>();
 
         #region Collections
         private ObservableCollection<OpinionModel> _opinionsItems = new ObservableCollection<OpinionModel>();
-        private ObservableCollection<ItemsNews> oldNewsItem;
-        private List<string> NewsListId = new List<string>();
+        private List<string> _newsListId = new List<string>();
 
-        public ObservableCollection<ItemsNews> OldNewsForUpdate
-        {
-            get { return oldNewsItem; }
-        }
+        public ObservableCollection<ItemsNews> OldNewsForUpdate { get; private set; }
+
         #endregion
 
         #region Variables
-        private string ResultHtmlPage = string.Empty;
-        string urlNewsView = string.Empty;
+        private string _resultHtmlPage = string.Empty;
+        string _urlNewsView = string.Empty;
         #endregion
 
         #region Constructor
@@ -61,64 +58,62 @@ namespace Onliner.ParsingHtml
         #endregion
 
         #region Methods
+
         /// <summary>
         /// Parsing news section page
         /// </summary>
         /// <param name="path"></param>
-        /// <param name="section"></param>
+        /// <param name="pathDb"></param>
         /// <returns></returns>
-        public async Task<ObservableCollection<ItemsNews>> NewsItemList(string path, string pathDB)
+        public async Task<ObservableCollection<ItemsNews>> NewsItemList(string path, string pathDb)
         {
-            if (!HttpRequest.HasInternet()) return null;
-            myItems = new ObservableCollection<ItemsNews>();
+            if (!_httpRequest.HasInternet()) return null;
+            _myItems = new ObservableCollection<ItemsNews>();
 
             await Task.Run(async () =>
             {
-                HttpClient httpClient = new HttpClient();
-                oldNewsItem = new ObservableCollection<ItemsNews>();
-                ResultHtmlPage = await HttpRequest.GetRequestOnlinerAsync(path);
-                resultat.LoadHtml(ResultHtmlPage);
+                var httpClient = new HttpClient();
+                OldNewsForUpdate = new ObservableCollection<ItemsNews>();
+                _resultHtmlPage = await _httpRequest.GetRequestOnlinerAsync(path);
+                _resultat.LoadHtml(_resultHtmlPage);
 
-                List<HtmlNode> titleList = resultat.DocumentNode.Descendants().Where
+                var titleList = _resultat.DocumentNode.Descendants().Where
                 (x => (x.Name == "article" && x.Attributes["class"] != null && x.Attributes["class"].Value.Contains
                 ("b-posts-1-item b-content-posts-1-item news_for_copy"))).ToList();
 
                 //db news collections
-                var DBNewsList = await GetNeedList(pathDB);
+                var dbNewsList = await GetNeedList(pathDb);
 
                 foreach (var item in titleList)
                 {
                     _itemNews = new ItemsNews();
-                    _itemNews.NewsID = item.Descendants("span").
-                             Where(div => div.GetAttributeValue("class", string.Empty) == "show_news_view_count").FirstOrDefault().Attributes["news_id"].Value;
-                    NewsListId.Add(QueryString(_itemNews.NewsID));
+                    _itemNews.NewsId = item.
+                             Descendants("span").FirstOrDefault(div => div.GetAttributeValue("class", string.Empty) == "show_news_view_count").Attributes["news_id"].Value;
+                    _newsListId.Add(QueryString(_itemNews.NewsId));
 
                     //data for update
-                    _itemNews.LinkNews = item.Descendants("h3").
-                                            Where(div => div.GetAttributeValue("class", string.Empty) == "b-posts-1-item__title").FirstOrDefault().Descendants("a").FirstOrDefault().Attributes["href"].Value;
+                    _itemNews.LinkNews = item.
+                                            Descendants("h3").FirstOrDefault(div => div.GetAttributeValue("class", string.Empty) == "b-posts-1-item__title").Descendants("a").FirstOrDefault().Attributes["href"].Value;
                     _itemNews.CountViews = GetFirstOrDefaultTwoTagInARowHtmlInnerText(item, "a", "span");
-                    _itemNews.Footer = Regex.Replace(item.Descendants("span").
-                                            Where(div => div.GetAttributeValue("class", string.Empty) == "right-side").LastOrDefault().InnerText.Replace("\n", "").Trim(), @"\s+", " ");
+                    _itemNews.Footer = Regex.Replace(item.
+                                            Descendants("span").LastOrDefault(div => div.GetAttributeValue("class", string.Empty) == "right-side").InnerText.Replace("\n", "").Trim(), @"\s+", " ");
 
-                    var popularCount = item?.Descendants("span").Where(div => div.GetAttributeValue("class", string.Empty) == "popular-count").FirstOrDefault();
+                    var popularCount = (item?.Descendants("span")).FirstOrDefault(div => div.GetAttributeValue("class", string.Empty) == "popular-count");
                     if (popularCount != null)
                         _itemNews.Popularcount = popularCount.InnerText;
 
-                    if (DBNewsList != null)
+                    var containItem = dbNewsList?.FirstOrDefault(x => x.LinkNews == _itemNews.LinkNews);
+                    if (containItem != null)
                     {
-                        var containItem = DBNewsList.FirstOrDefault(x => x.LinkNews == _itemNews.LinkNews);
-                        if (containItem != null)
-                        {
-                            oldNewsItem.Add(_itemNews);
-                            continue;
-                        }
+                        OldNewsForUpdate.Add(_itemNews);
+                        continue;
                     }
 
                     _itemNews.Themes = GetFirstOrDefaultTwoTagInARowHtmlInnerText(item, "div", "strong");
                     _itemNews.Title = GetFirstOrDefaultThreeTagInARowHtmlInnerText(item, "h3", "a", "span");
 
-                    string clearLink = ClearImageLink(GetFirstOrDefaultTwoTagInARowHtmlInnerHtml(item, "figure", "a"));
-                    _itemNews.Image = await client.GetByteArrayAsync(clearLink);
+                    var clearLink = ClearImageLink(GetFirstOrDefaultTwoTagInARowHtmlInnerHtml(item, "figure", "a"));
+                    _itemNews.Image = await _client.GetByteArrayAsync(clearLink);
                     _itemNews.Description = ScrubHtml(item.Descendants("div").LastOrDefault().Descendants("p").First().InnerText.Trim());
 
                     //photo
@@ -126,21 +121,21 @@ namespace Onliner.ParsingHtml
                     //video
                     _itemNews.Mediaicongray = GetFirstOrDefaultTagHtmlInnerText(item, "span", "class", "b-mediaicon gray");
 
-                    myItems.Add(_itemNews);
+                    _myItems.Add(_itemNews);
                 }
-                UpdateViewNews(oldNewsItem, path);
+                UpdateViewNews(OldNewsForUpdate, path);
             });
-            return myItems;
+            return _myItems;
 
         }
 
         private async void UpdateViewNews(IEnumerable<INewsItems> collections, string pathNews)
         {
-            var viewNewsComment = await HttpRequest.NewsViewAll(pathNews, string.Join("", NewsListId));
-            var m_res = JsonConvert.DeserializeObject<CounterNewsJsonClass>(viewNewsComment);
-            foreach (dynamic numb in m_res.count)
+            var viewNewsComment = await _httpRequest.NewsViewAll(pathNews, string.Join("", _newsListId));
+            var mRes = JsonConvert.DeserializeObject<CounterNewsJsonClass>(viewNewsComment);
+            foreach (dynamic numb in mRes.count)
             {
-                var item = collections.Where(x => x.NewsID.Equals(numb.Name.ToString())).FirstOrDefault();
+                var item = collections.FirstOrDefault(x => x.NewsId.Equals(numb.Name.ToString()));
                 if (item != null)
                     item.Popularcount = numb.Value.ToString();
             }
@@ -158,10 +153,8 @@ namespace Onliner.ParsingHtml
         /// <returns></returns>
         private string GetFirstOrDefaultTagHtmlInnerText(HtmlNode node, string tag, string attributeType, string attributeValue)
         {
-            var value = node.Descendants(tag).Where(div => div.GetAttributeValue(attributeType, string.Empty) == attributeValue).FirstOrDefault();
-            if (value != null)
-                return value.InnerText;
-            return string.Empty;
+            var value = node.Descendants(tag).FirstOrDefault(div => div.GetAttributeValue(attributeType, string.Empty) == attributeValue);
+            return value != null ? value.InnerText : string.Empty;
         }
 
         /// <summary>
@@ -174,9 +167,7 @@ namespace Onliner.ParsingHtml
         private string GetFirstOrDefaultTwoTagInARowHtmlInnerText(HtmlNode node, string firstTag, string secondTag)
         {
             var value = node.Descendants(firstTag).FirstOrDefault().Descendants(secondTag).FirstOrDefault();
-            if (value != null)
-                return value.InnerText.Trim();
-            return string.Empty;
+            return value != null ? value.InnerText.Trim() : string.Empty;
         }
 
         /// <summary>
@@ -189,9 +180,7 @@ namespace Onliner.ParsingHtml
         private string GetFirstOrDefaultTwoTagInARowHtmlInnerHtml(HtmlNode node, string firstTag, string secondTag)
         {
             var value = node.Descendants(firstTag).FirstOrDefault().Descendants(secondTag).FirstOrDefault();
-            if (value != null)
-                return value.InnerHtml.Trim();
-            return string.Empty;
+            return value != null ? value.InnerHtml.Trim() : string.Empty;
         }
 
         /// <summary>
@@ -205,20 +194,18 @@ namespace Onliner.ParsingHtml
         private string GetFirstOrDefaultThreeTagInARowHtmlInnerText(HtmlNode node, string firstTag, string secondTag, string thirdTag)
         {
             var value = node.Descendants(firstTag).FirstOrDefault().Descendants(secondTag).FirstOrDefault().Descendants(thirdTag).FirstOrDefault();
-            if (value != null)
-                return value.InnerText.Trim();
-            return string.Empty;
+            return value != null ? value.InnerText.Trim() : string.Empty;
         }
 
         /// <summary>
         /// Gets the collection of data base
         /// </summary>
-        /// <param name="section"></param>
+        /// <param name="pathDb"></param>
         /// <returns></returns>
-        private async Task<IEnumerable<ItemsNews>> GetNeedList(string pathDB)
+        private async Task<IEnumerable<ItemsNews>> GetNeedList(string pathDb)
         {
-            IEnumerable<ItemsNews> resultItems = new ObservableCollection<ItemsNews>();
-            resultItems = await SQLiteDB.GetAllNews(pathDB);
+            IEnumerable<ItemsNews> resultItems;
+            resultItems = await SqLiteDb.GetAllNews(pathDb);
             return resultItems;
         }
 
@@ -229,28 +216,27 @@ namespace Onliner.ParsingHtml
         /// <returns></returns>
         public ObservableCollection<OpinionModel> OpinionList(string path)
         {
-            HttpRequest.GetRequestOnliner(path);
-            ResultHtmlPage = HttpRequest.ResultGetRequsetString;
-            resultat.LoadHtml(ResultHtmlPage);
+            _httpRequest.GetRequestOnliner(path);
+            _resultHtmlPage = _httpRequest.ResultGetRequsetString;
+            _resultat.LoadHtml(_resultHtmlPage);
 
-            List<HtmlNode> opinionsItems = resultat.DocumentNode.Descendants().Where
-            (x => (x.Name == "div" && x.Attributes["class"] != null && x.Attributes["class"].Value.Contains("b-opinions-body"))).
-            FirstOrDefault().Descendants("div").Where(y => y.Attributes["class"].Value.Contains("b-opinions-list-item")).ToList();
-            int step = 0;
+            var opinionsItems = _resultat.DocumentNode.Descendants().
+            FirstOrDefault(x => (x.Name == "div" && x.Attributes["class"] != null && x.Attributes["class"].Value.Contains("b-opinions-body"))).Descendants("div").Where(y => y.Attributes["class"].Value.Contains("b-opinions-list-item")).ToList();
+            var step = 0;
             foreach (var item in opinionsItems)
             {
                 if (step == 0 || step % 2 == 0)
                 {
-                    opinionModel = new OpinionModel();
+                    _opinionModel = new OpinionModel();
 
-                    opinionModel.LinkNews = item.Descendants("div").Where(div => div.GetAttributeValue("class", string.Empty) == "b-opinions-list-item__header").FirstOrDefault().Descendants("a").FirstOrDefault().Attributes["href"].Value;
-                    opinionModel.Header = item.Descendants("div").Where(div => div.GetAttributeValue("class", string.Empty) == "b-opinions-list-item__header").FirstOrDefault().Descendants("a").FirstOrDefault().Descendants("h2").FirstOrDefault().InnerText;
-                    opinionModel.Body = item.Descendants("p").FirstOrDefault().InnerText.Trim();
-                    opinionModel.ImageUrl = item.Descendants("div").Where(div => div.GetAttributeValue("class", string.Empty) == "person-portrait").FirstOrDefault().Attributes["style"].Value;
-                    opinionModel.PersonAbout = item.Descendants("div").Where(div => div.GetAttributeValue("class", string.Empty) == "person-about").FirstOrDefault().InnerText.Trim();
-                    opinionModel.CommentsCount = item.Descendants("div").Where(div => div.GetAttributeValue("class", string.Empty) == "b-opinions-list-item__header").FirstOrDefault().Descendants("a").LastOrDefault().Descendants("span").FirstOrDefault().InnerText;
+                    _opinionModel.LinkNews = item.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", string.Empty) == "b-opinions-list-item__header").Descendants("a").FirstOrDefault().Attributes["href"].Value;
+                    _opinionModel.Header = item.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", string.Empty) == "b-opinions-list-item__header").Descendants("a").FirstOrDefault().Descendants("h2").FirstOrDefault().InnerText;
+                    _opinionModel.Body = item.Descendants("p").FirstOrDefault().InnerText.Trim();
+                    _opinionModel.ImageUrl = item.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", string.Empty) == "person-portrait").Attributes["style"].Value;
+                    _opinionModel.PersonAbout = item.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", string.Empty) == "person-about").InnerText.Trim();
+                    _opinionModel.CommentsCount = item.Descendants("div").FirstOrDefault(div => div.GetAttributeValue("class", string.Empty) == "b-opinions-list-item__header").Descendants("a").LastOrDefault().Descendants("span").FirstOrDefault().InnerText;
 
-                    _opinionsItems.Add(opinionModel);
+                    _opinionsItems.Add(_opinionModel);
                 }
                 step++;
             }
@@ -263,11 +249,7 @@ namespace Onliner.ParsingHtml
         /// <returns>items</returns>
         public IEnumerator GetEnumerator()
         {
-            foreach (var item in myItems)
-            {
-                yield return item;
-            }
-
+            return _myItems.GetEnumerator();
         }
 
         /// <summary>
@@ -289,15 +271,12 @@ namespace Onliner.ParsingHtml
         /// <returns></returns>
         private string ClearImageLink(string html)
         {
-            string pattern = @"https?://[\w./]+\/[\w./]+\.(bmp|png|jpg|gif|jpeg)";
-            Regex htmlreg = new Regex("(?<=src=\").*?(?=\")");
-            string result = htmlreg.Match(html).ToString();
-            if (string.IsNullOrEmpty(result))
-            {
-                Regex imageUrlPattern = new Regex(pattern);
-                result = imageUrlPattern.Match(html).ToString();
-            }
-            return result;
+            var pattern = @"https?://[\w./]+\/[\w./]+\.(bmp|png|jpg|gif|jpeg)";
+            var htmlreg = new Regex("(?<=src=\").*?(?=\")");
+            var result = htmlreg.Match(html).ToString();
+            if (!string.IsNullOrEmpty(result)) return result;
+            var imageUrlPattern = new Regex(pattern);
+            return imageUrlPattern.Match(html).ToString();
         }
 
         public async Task<byte[]> GetBytesFromStream(IRandomAccessStream randomStream)
@@ -309,9 +288,9 @@ namespace Onliner.ParsingHtml
             return bytes;
         }
 
-        private string QueryString(string newsID)
+        private string QueryString(string newsId)
         {
-            var strings = $"news%5B%5D={newsID}";
+            var strings = $"news%5B%5D={newsId}";
             return strings + "&";
         }
 

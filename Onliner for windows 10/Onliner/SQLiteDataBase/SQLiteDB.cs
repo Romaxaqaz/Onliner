@@ -14,9 +14,9 @@ using System;
 
 namespace Onliner.SQLiteDataBase
 {
-    public static class SQLiteDB
+    public static class SqLiteDb
     {
-        private static HttpRequest HttpRequest = new HttpRequest();
+        public static readonly HttpRequest HttpRequest = new HttpRequest();
         private static SQLiteConnection DbConnection
         {
             get
@@ -40,12 +40,12 @@ namespace Onliner.SQLiteDataBase
         #endregion
 
         #region Methods
-        public static async Task UpdateAndCollectionInDB(ObservableCollection<ItemsNews> itemsNews, string dbPath)
+        public static async Task UpdateAndCollectionInDb(ObservableCollection<ItemsNews> itemsNews, string dbPath)
         {
             await CreateDatabase(itemsNews, dbPath);
         }
 
-        public static async Task UpdateItemDB(ObservableCollection<ItemsNews> itemsNews, string dbPath)
+        public static async Task UpdateItemDb(ObservableCollection<ItemsNews> itemsNews, string dbPath)
         {
             using (var db = new SQLiteConnection(new SQLitePlatformWinRT(), dbPath))
             {
@@ -57,13 +57,14 @@ namespace Onliner.SQLiteDataBase
 
         private async static Task<ObservableCollection<ItemsNews>> CreateDatabase(ObservableCollection<ItemsNews> itemsNews, string path)
         {
-            ObservableCollection<ItemsNews> resultItems = new ObservableCollection<ItemsNews>();
+            if (itemsNews == null) throw new ArgumentNullException(nameof(itemsNews));
+            var resultItems = new ObservableCollection<ItemsNews>();
             if (!HttpRequest.HasInternet()) return await GetAllNews(path);
+            var maxCountNews = 25;
             using (var db = new SQLiteConnection(new SQLitePlatformWinRT(), path))
             {
-                var maxCountNews = 25;
-                var c = db.CreateTable<ItemsNews>();
-                var info = db.GetMapping(typeof(ItemsNews));
+                db.CreateTable<ItemsNews>();
+                db.GetMapping(typeof(ItemsNews));
 
                 var items = (from p in db.Table<ItemsNews>()
                              select p).ToList();
@@ -80,7 +81,7 @@ namespace Onliner.SQLiteDataBase
 
                 if (itemsCount > maxCountNews && itemsCount != 0)
                 {
-                    for (int i = itemsNews.Count-1; i > maxCountNews; i--)
+                    for (var i = itemsNews.Count-1; i > maxCountNews; i--)
                     {
                         var lasts = itemsNews[i];
                         itemsNews.Remove(lasts);
@@ -114,31 +115,37 @@ namespace Onliner.SQLiteDataBase
 
         }
 
-        public static long GetSizeByteDB()
+        public static long SizeByteDB
         {
-            long DBsize = 0;
-            foreach (var item in PathCollection)
+            get
             {
-                DBsize += SizeByteDB(item);
+                long dBsize = 0;
+                foreach (var item in PathCollection)
+                {
+                    dBsize += SizeByteFile(item);
+                }
+                return dBsize;
             }
-            return DBsize;
         }
 
-        private static long SizeByteDB(string path)
+        public static long SizeByteFile(string path)
         {
             long fileLength = -1;
             try
             {
-                using (IsolatedStorageFile ISF = IsolatedStorageFile.GetUserStoreForApplication())
-                using (IsolatedStorageFileStream file = ISF.OpenFile(path, FileMode.Open))
+                using (var isf = IsolatedStorageFile.GetUserStoreForApplication())
+                using (var file = isf.OpenFile(path, FileMode.Open))
                     fileLength = file.Length;
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
 
             return fileLength;
         }
 
-        public enum SectionNewsDB
+        public enum SectionNewsDb
         {
             Tech,
             Auto,
