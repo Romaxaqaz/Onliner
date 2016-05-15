@@ -1,16 +1,15 @@
-﻿using MyToolkit.Command;
-using Onliner.Http;
-using Onliner.Model.Message;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Template10.Mvvm;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
+using MyToolkit.Command;
+using Onliner.Http;
+using Onliner.Model.Message;
+using Template10.Mvvm;
 
-namespace Onliner_for_windows_10.View_Model.Message
+namespace OnlinerApp.ViewModel.Message
 {
     public class MessageSenderViewModel : ViewModelBase
     {

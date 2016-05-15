@@ -3,17 +3,18 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Template10.Common;
 using System;
-using Onliner_for_windows_10.View_Model.Settings;
 using Windows.ApplicationModel;
+using OnlinerApp.ViewModel.Settings;
 using Template10.Controls;
 using static Onliner.Setting.SettingParams;
-using Onliner_for_windows_10.Views;
+using OnlinerApp.Views;
+using NewsPage = OnlinerApp.Views.NewsPage;
 
-namespace Onliner_for_windows_10
+namespace OnlinerApp
 {
-    sealed partial class App : BootStrapper
+    public sealed partial class App : BootStrapper
     {
-        private SettingViewModel setting = new SettingViewModel();
+        private readonly SettingViewModel _setting = new SettingViewModel();
 
         public App()
         {
@@ -22,13 +23,12 @@ namespace Onliner_for_windows_10
 
         public override async Task OnInitializeAsync(IActivatedEventArgs args)
         {
-
-            if (Window.Current.Content as ModalDialog == null)
+            if (!(Window.Current.Content is ModalDialog))
             {
                 // create a new frame 
                 var nav = NavigationServiceFactory(BackButton.Attach, ExistingContent.Include);
                 // create modal root
-                setting.GetThemeApp();
+                _setting.GetThemeApp();
                 Window.Current.Content = new ModalDialog
                 {
                     DisableBackButtonWhenModal = true,
@@ -40,24 +40,15 @@ namespace Onliner_for_windows_10
 
         public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
-            var authorization = GetParamsSetting(AuthorizationKey);
-            if (authorization == null) authorization = false;
+            var authorization = GetParamsSetting(AuthorizationKey) ?? false;
             var boolAuth = Convert.ToBoolean(authorization);
-            if (boolAuth)
-            {
-                NavigationService.Navigate(typeof(NewsPage));
-            }
-            else
-            {
-                NavigationService.Navigate(typeof(MainPage));
-            }
+            NavigationService.Navigate(boolAuth ? typeof(NewsPage) : typeof(MainPage));
             await Task.CompletedTask;
         }
 
-        public async override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
+        public override async Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
         {
             await Task.CompletedTask;
         }
-
     }
 }

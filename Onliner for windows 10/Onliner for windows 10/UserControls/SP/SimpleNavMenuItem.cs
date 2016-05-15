@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml.Controls;
 
-namespace Onliner_for_windows_10.UserControls.SP
+namespace OnlinerApp.UserControls.SP
 {
     public sealed class SimpleNavMenuItem : INavigationMenuItem
     {

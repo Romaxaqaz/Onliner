@@ -1,17 +1,14 @@
 ﻿<Page
-    x:Class="Onliner_for_windows_10.MainPage"
+    x:Class="OnlinerApp.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Onliner_for_windows_10"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:Behaviors="using:Template10.Behaviors"
-    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:controls="using:Template10.Controls"
-    mc:Ignorable="d" x:Name="ThisPage">
+    mc:Ignorable="d">
 
     <Grid>
+        
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisualStateGroup">
                 <VisualState x:Name="VisualStateMobile">
@@ -75,7 +72,7 @@
                        Foreground="{ThemeResource ForegroundCustomBlackBrush}"/>
         </StackPanel>
         <StackPanel x:Name="InputControlStackpanel" 
-                    Grid.Row="1" 
+                    Grid.Row="1" Grid.Column="0"
                     HorizontalAlignment="Center" 
                     VerticalAlignment="Center">
             <TextBox  Name="LoginTextBox" 
@@ -133,8 +130,8 @@
                       HorizontalAlignment="Center" 
                       VerticalAlignment="Center" 
                       Foreground="Blue"
-                      Grid.ColumnSpan="2" 
-                      Grid.RowSpan="2"
+                      Grid.ColumnSpan="2" Grid.Column="0"
+                      Grid.Row="0" Grid.RowSpan="2"
                       IsActive="{Binding ProgressRing}"/>
     </Grid>
     </Grid>

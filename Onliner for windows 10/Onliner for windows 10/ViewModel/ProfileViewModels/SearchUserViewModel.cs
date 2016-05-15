@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Template10.Mvvm;
 
-namespace Onliner_for_windows_10.View_Model.ProfileViewModels
+namespace OnlinerApp.View_Model.ProfileViewModels
 {
     public class SearchUserViewModel : ViewModelBase
     {
@@ -35,7 +35,7 @@ namespace Onliner_for_windows_10.View_Model.ProfileViewModels
         private void SelectedItem(object obj)
         {
             var item = obj as ProfileSearchModel;
-            if (item != null) NavigationService.Navigate(typeof(ProfilePage.ProfilePage), item.IdUser);
+            if (item != null) NavigationService.Navigate(typeof(Views.ProfilePage), item.IdUser);
         }
 
         private async Task SearchUsers()

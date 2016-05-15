@@ -1,18 +1,16 @@
-﻿using Windows.UI.Xaml;
+﻿using Windows.Phone.UI.Input;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.Phone.UI.Input;
-using Onliner_for_windows_10.View_Model;
+using OnlinerApp.ViewModel;
 
-namespace Onliner_for_windows_10.ProfilePage
+namespace OnlinerApp.Views
 {
     public sealed partial class ProfilePage : Page
     {
-        private ProfileViewModel viewModel = new ProfileViewModel();
-
         public ProfilePage()
         {
             this.InitializeComponent();
-            this.DataContext = viewModel;
+            this.DataContext = new ProfileViewModel();
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
             {
                 Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
@@ -21,12 +19,10 @@ namespace Onliner_for_windows_10.ProfilePage
 
         private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
-            if (Frame.CanGoBack)
-            {
-                e.Handled = true;
-                Frame.GoBack();
-            }
+            var rootFrame = Window.Current.Content as Frame;
+            if (!Frame.CanGoBack) return;
+            e.Handled = true;
+            Frame.GoBack();
         }
 
 

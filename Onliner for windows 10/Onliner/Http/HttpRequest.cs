@@ -53,7 +53,6 @@ namespace Onliner.Http
         #region Properties
         private string _jsonRequest = string.Empty;
 
-        private string ResultResponceToken { get; set; }
         public string ResultGetRequsetString { get; set; }
         public string ResultPostRequest { get; set; } = string.Empty;
 
@@ -249,7 +248,7 @@ namespace Onliner.Http
             if (!HasInternet()) throw new WebException();
 
             var httpClient = new HttpClient(HandlerCookie());
-            var finalURl = GetApionLinks(linkNews) + ConvertToAjaxTime.ConvertToUnixTimestamp().ToString();
+            var finalURl = GetApionLinks(linkNews) + ConvertToAjaxTime.ConvertToUnixTimestamp();
             var postRequest = new HttpRequestMessage(HttpMethod.Post, finalURl);
             postRequest.Headers.Add("Accept", "application/json, text/javascript, */*; q=0.01");
             postRequest.Headers.Add("Accept-Encoding", "gzip, deflate");
@@ -359,17 +358,17 @@ namespace Onliner.Http
         public async Task<MessageJson> Message(string f, string p)
         {
             MessageJson message = null;
-            var url = $"https://profile.onliner.by/messages/load/?f={f}&p={p}&token=" + ConvertToAjaxTime.ConvertToUnixTimestamp().ToString();
+            var url = $"https://profile.onliner.by/messages/load/?f={f}&p={p}&token=" + ConvertToAjaxTime.ConvertToUnixTimestamp();
             try
             {
                 if (!HasInternet()) return null;
                 var httpClient = new HttpClient(HandlerCookie());
-                var response = httpClient.SendAsync(new HttpRequestMessage(System.Net.Http.HttpMethod.Get, url)).Result;
+                var response = httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, url)).Result;
                 var resultJson = await response.Content.ReadAsStringAsync();
 
                 var regex = new Regex("(\"m\\d+\":)", RegexOptions.Compiled | RegexOptions.Multiline);
                 var myString = regex.Replace(resultJson, "").Replace("\"messages\":{", "\"messages\":[").Replace("}}}", "}]}");
-                message = (MessageJson)JsonConvert.DeserializeObject<MessageJson>(myString);
+                message = JsonConvert.DeserializeObject<MessageJson>(myString);
             }
             catch (WebException) { }
             return message;
@@ -598,7 +597,7 @@ namespace Onliner.Http
             return pattern.Match(resultJson).ToString();
         }
 
-        private string GenerateApiLikeOnliner(string url)
+        private static string GenerateApiLikeOnliner(string url)
         {
             if (url.Contains("tech.onliner.by")) return "https://tech.onliner.by/sdapi/news.api/tech/comments/";
             if (url.Contains("people.onliner.by")) return "https://people.onliner.by/sdapi/news.api/people/comments/";
@@ -609,7 +608,7 @@ namespace Onliner.Http
 
         public async Task<string> QuoteComment(string commentId, string url)
         {
-            var quoteUrl = QuoteMessageUrlGenerate(url) + commentId + "?" + ConvertToAjaxTime.ConvertToUnixTimestamp().ToString();
+            var quoteUrl = QuoteMessageUrlGenerate(url) + commentId + "?" + ConvertToAjaxTime.ConvertToUnixTimestamp();
 
             if (!HasInternet()) throw new WebException();
             var handler = new HttpClientHandler();
@@ -626,7 +625,7 @@ namespace Onliner.Http
             return Regex.Unescape(resultJson);
         }
 
-        private string QuoteMessageUrlGenerate(string url)
+        private static string QuoteMessageUrlGenerate(string url)
         {
             if (url.Contains("tech.onliner.by")) return "https://tech.onliner.by/api/quote/";
             if (url.Contains("people.onliner.by")) return "https://people.onliner.by/api/quote/";
@@ -635,7 +634,7 @@ namespace Onliner.Http
             return string.Empty;
         }
 
-        private string GetApionLinks(string link)
+        private static string GetApionLinks(string link)
         {
             if (link.Contains("tech.onliner.by")) return CommentsApiTech;
             if (link.Contains("people.onliner.by")) return CommentsApiPeople;
@@ -647,7 +646,7 @@ namespace Onliner.Http
 
         public async Task<string> NewsViewAll(string url, string newsIdList)
         {
-            var quoteUrl = url + "viewcounter/count/?" + newsIdList + "token=" + ConvertToAjaxTime.ConvertToUnixTimestamp().ToString();
+            var quoteUrl = url + "viewcounter/count/?" + newsIdList + "token=" + ConvertToAjaxTime.ConvertToUnixTimestamp();
 
             if (!HasInternet()) throw new WebException();
             var handler = new HttpClientHandler();
@@ -675,7 +674,7 @@ namespace Onliner.Http
 
             var postData = new StringBuilder();
             postData.Append("usersIds[]=" + WebUtility.UrlEncode(userId));
-            await PostRequestFormData(url + ConvertToAjaxTime.ConvertToUnixTimestamp().ToString(),
+            await PostRequestFormData(url + ConvertToAjaxTime.ConvertToUnixTimestamp(),
                  "profile.onliner.by",
                  "https://profile.onliner.by",
                  postData.ToString());
@@ -704,7 +703,7 @@ namespace Onliner.Http
             postRequest.Headers.Add("Accept-Encoding", "gzip, deflate");
             postRequest.Headers.Add("Accept-Language", "en-US,en;q=0.8,ru;q=0.6");
             postRequest.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36");
-            postRequest.Content = new System.Net.Http.StringContent(postData.ToString(), Encoding.UTF8, "application/x-www-form-urlencoded");
+            postRequest.Content = new StringContent(postData.ToString(), Encoding.UTF8, "application/x-www-form-urlencoded");
             _response = httpClient.SendAsync(postRequest).Result;
             await Task.CompletedTask;
 

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Template10.Mvvm;
 using Windows.System;
 using MyToolkit.Command;
 using Onliner.Http;
-using static Onliner.Setting.SettingParams;
+using Onliner.Setting;
+using OnlinerApp.Views;
+using Template10.Mvvm;
 
-namespace Onliner_for_windows_10.View_Model
+namespace OnlinerApp.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
@@ -108,8 +109,8 @@ namespace Onliner_for_windows_10.View_Model
                 var status = await _httpRequestToApi.PostRequestUserApi(Login, Password);
                 if (status)
                 {
-                    SetParamsSetting(AuthorizationKey, "true");
-                    NavigationService.Navigate(typeof(ProfilePage.ProfilePage));
+                    SettingParams.SetParamsSetting(SettingParams.AuthorizationKey, "true");
+                    NavigationService.Navigate(typeof(Views.ProfilePage));
                 }
                 else
                 {
@@ -127,8 +128,8 @@ namespace Onliner_for_windows_10.View_Model
 
         private void AuthorizationLater()
         {
-            SetParamsSetting(AuthorizationKey, "false");
-            NavigationService.Navigate(typeof(Views.NewsPage));
+            SettingParams.SetParamsSetting(SettingParams.AuthorizationKey, "false");
+            NavigationService.Navigate(typeof(NewsPage));
         }
         #endregion
     }

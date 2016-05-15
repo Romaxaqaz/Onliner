@@ -2,26 +2,22 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using Template10.Mvvm;
-using Windows.System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
 using MyToolkit.Command;
-using Onliner.ParsingHtml;
 using Onliner.Http;
-using Onliner.Model.News;
 using Onliner.Model.DataTemplateSelector;
-using static Onliner.Setting.SettingParams;
+using Onliner.Model.News;
+using Onliner.ParsingHtml;
+using Onliner.Setting;
+using Template10.Mvvm;
 
-namespace Onliner_for_windows_10.View_Model
+namespace OnlinerApp.ViewModel
 {
     public class ViewNewsViewModel : ViewModelBase
     {
         private ParsingFullNewsPage _fullPageParser;
-        private FullItemNews _fullItem = new FullItemNews();
         private readonly HttpRequest _httpRequest = new HttpRequest();
-        private string _loaderPage = string.Empty;
-        private string _newsId = string.Empty;
         private string _newsUrl = string.Empty;
 
         #region Constructor
@@ -30,15 +26,15 @@ namespace Onliner_for_windows_10.View_Model
             CommentsAdd = new RelayCommand<object>(AddComments);
             SendButtonActive = new RelayCommand(ActiveSendButton);
             ChangeCommetnsGridVisible = new RelayCommand(VisibleCommentsGrid);
-            OpenNewsInBrowser = new RelayCommand<object>(async (obj) => await OpenLink(obj));
-            SaveNewsInDb = new RelayCommand<object>(SaveNewsDB);
+            OpenNewsInBrowser = new RelayCommand<object>(async (obj) => await OpenLink());
+            SaveNewsInDb = new RelayCommand<object>(SaveNewsDb);
             UpdateCommentsList = new RelayCommand(async () => await UpdateCommets());
             AnswerCommentCommand = new RelayCommand<object>(AnswerComment);
             AnswerQuoteCommentCommand = new RelayCommand<object>(AnswerQuoteComment);
             LikeCommentsCommand = new RelayCommand<object>(LikeComments);
             UserProfileCommand = new RelayCommand<object>(UserProfileNavigate);
 
-            var boolAuthorization = Convert.ToBoolean(GetParamsSetting(AuthorizationKey));
+            var boolAuthorization = Convert.ToBoolean(SettingParams.GetParamsSetting(SettingParams.AuthorizationKey));
             if (boolAuthorization)
             {
                 CommentsButtonVisible = true;
@@ -83,25 +79,24 @@ namespace Onliner_for_windows_10.View_Model
         }
 
         private void ActiveSendButton() =>
-            SendButton = !string.IsNullOrEmpty(Message) ? true : false;
+            SendButton = !string.IsNullOrEmpty(Message);
 
         /// <summary>
         /// Open link in webBrowser
         /// </summary>
-        /// <param name="obj">string url</param>
         /// <returns></returns>
-        private async Task OpenLink(object obj)
+        private async Task OpenLink()
         {
-            string app = LinkNews;
+            var app = LinkNews;
             var uri = new Uri(app);
-            var success = await Windows.System.Launcher.LaunchUriAsync(uri);
+            await Windows.System.Launcher.LaunchUriAsync(uri);
         }
 
         /// <summary>
         /// Save item News in DB
         /// </summary>
         /// <param name="obj">News item</param>
-        private async void SaveNewsDB(object obj)
+        private static async void SaveNewsDb(object obj)
         {
             var msg = new MessageDialog("Coming soon");
             await msg.ShowAsync();
@@ -113,14 +108,14 @@ namespace Onliner_for_windows_10.View_Model
         /// <param name="obj">comments data</param>
         private async void AddComments(object obj)
         {
-            var boolAuthorization = Convert.ToBoolean(GetParamsSetting(AuthorizationKey));
+            var boolAuthorization = Convert.ToBoolean(SettingParams.GetParamsSetting(SettingParams.AuthorizationKey));
 
             if (boolAuthorization)
             {
                 var result = await _httpRequest.AddComments(_fullPageParser.NewsId, obj.ToString(), LinkNews);
                 if (result)
                 {
-                    var comItem = new Onliner.Model.News.Comments
+                    var comItem = new Comments
                     {
                         Nickname = ShellViewModel.Instance.Login,
                         Image = ShellViewModel.Instance.AvatarUrl,
@@ -162,7 +157,7 @@ namespace Onliner_for_windows_10.View_Model
         /// <param name="obj"></param>
         private void LikeComments(object obj)
         {
-            var boolAuthorization = Convert.ToBoolean(GetParamsSetting(AuthorizationKey));
+            var boolAuthorization = Convert.ToBoolean(SettingParams.GetParamsSetting(SettingParams.AuthorizationKey));
 
             if (boolAuthorization)
             {
@@ -223,7 +218,7 @@ namespace Onliner_for_windows_10.View_Model
         private void UserProfileNavigate(object obj)
         {
            // var item = obj as Comments;
-            NavigationService.Navigate(typeof(ProfilePage.ProfilePage), obj.ToString());
+            NavigationService.Navigate(typeof(Views.ProfilePage), obj.ToString());
         }
 
 
@@ -246,7 +241,7 @@ namespace Onliner_for_windows_10.View_Model
 
         #region Collections
         private ObservableCollection<ListViewItemSelectorModel> _newsItem;
-        private ObservableCollection<Comments> _commentsItem = new ObservableCollection<Onliner.Model.News.Comments>();
+        private ObservableCollection<Comments> _commentsItem = new ObservableCollection<Comments>();
 
         public ObservableCollection<ListViewItemSelectorModel> NewsItemContent
         {
@@ -269,7 +264,7 @@ namespace Onliner_for_windows_10.View_Model
         {
             get
             {
-                return this._progressRing;
+                return _progressRing;
             }
             set
             {
@@ -282,7 +277,7 @@ namespace Onliner_for_windows_10.View_Model
         {
             get
             {
-                return this._commentsProgressRing;
+                return _commentsProgressRing;
             }
             set
             {
@@ -290,12 +285,12 @@ namespace Onliner_for_windows_10.View_Model
             }
         }
 
-        private bool _sendButton = false;
+        private bool _sendButton;
         public bool SendButton
         {
             get
             {
-                return this._sendButton;
+                return _sendButton;
             }
             set
             {
@@ -303,12 +298,12 @@ namespace Onliner_for_windows_10.View_Model
             }
         }
 
-        private bool _commentsVisible = false;
+        private bool _commentsVisible;
         public bool CommentsVisible
         {
             get
             {
-                return this._commentsVisible;
+                return _commentsVisible;
             }
             set
             {
@@ -316,12 +311,12 @@ namespace Onliner_for_windows_10.View_Model
             }
         }
 
-        private bool _commentsButtonVisible = false;
+        private bool _commentsButtonVisible;
         public bool CommentsButtonVisible
         {
             get
             {
-                return this._commentsButtonVisible;
+                return _commentsButtonVisible;
             }
             set
             {

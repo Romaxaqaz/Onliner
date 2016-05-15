@@ -1,16 +1,14 @@
 ﻿using Windows.UI.Xaml.Controls;
-using Onliner_for_windows_10.View_Model;
+using OnlinerApp.ViewModel;
 
-namespace Onliner_for_windows_10
+namespace OnlinerApp
 {
     public sealed partial class MainPage : Page
     {
-        private MainViewModel viewModel = new MainViewModel();
-
         public MainPage()
         {
             this.InitializeComponent();
-            this.DataContext = viewModel;
+            this.DataContext = new MainViewModel();
         }
     }
 }

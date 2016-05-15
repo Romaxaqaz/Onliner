@@ -8,12 +8,12 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using MyToolkit.Command;
 using Newtonsoft.Json;
-using Template10.Mvvm;
 using Onliner.Http;
 using Onliner.Model.JsonModel.Weather;
-using static Onliner.Setting.SettingParams;
+using Onliner.Setting;
+using Template10.Mvvm;
 
-namespace Onliner_for_windows_10.View_Model
+namespace OnlinerApp.ViewModel
 {
     public class WeatherViewModel : ViewModelBase
     {
@@ -21,7 +21,7 @@ namespace Onliner_for_windows_10.View_Model
         private readonly HttpRequest _httpRequest = new HttpRequest();
         private ObservableCollection<Forecast> _forecastItems;
         private ObservableCollection<object> _weatherTodayItems;
-        public ObservableCollection<TownWeatherId> TownList { get; private set; }
+        public ObservableCollection<TownWeatherId> TownList { get; }
         public Now now;
 
         public WeatherViewModel()
@@ -84,7 +84,6 @@ namespace Onliner_for_windows_10.View_Model
                 ForecastItems = responsseObject.forecast;
                 WeatherTodayItems = temperatureToday;
                 Now = responsseObject.now;
-
                 CurrentProgress = false;
             }
             catch (Exception)
@@ -120,7 +119,7 @@ namespace Onliner_for_windows_10.View_Model
         {
             get
             {
-                var town = GetParamsSetting(TownWeatherIdKey);
+                var town = SettingParams.GetParamsSetting(SettingParams.TownWeatherIdKey);
                 return town == null ? 0 : GetIndex(town.ToString());
             }
         }

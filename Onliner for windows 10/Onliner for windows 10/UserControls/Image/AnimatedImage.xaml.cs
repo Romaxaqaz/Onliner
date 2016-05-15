@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 
-namespace Onliner_for_windows_10.UserControls.Image
+namespace OnlinerApp.UserControls.Image
 {
     /// <summary>
     /// An image control that allows specifying a placeholder image

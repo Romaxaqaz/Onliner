@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Onliner.Http;
 
-namespace Onliner_for_windows_10.UserControls
+namespace OnlinerApp.UserControls
 {
     public sealed partial class CommentsContentViewer : UserControl
     {

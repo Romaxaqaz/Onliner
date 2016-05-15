@@ -8,7 +8,7 @@ namespace Onliner.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            BitmapImage image = (BitmapImage)value;
+            var image = (BitmapImage)value;
             var bitmapImage = new BitmapImage(new Uri(image.UriSource.ToString())) { CreateOptions = BitmapCreateOptions.IgnoreImageCache };
             return bitmapImage;
         }

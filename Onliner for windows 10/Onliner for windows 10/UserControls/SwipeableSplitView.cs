@@ -9,7 +9,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Shapes;
 
-namespace Onliner_for_windows_10.UserControls
+namespace OnlinerApp.UserControls
 {
     public sealed class SwipeableSplitView : SplitView
     {

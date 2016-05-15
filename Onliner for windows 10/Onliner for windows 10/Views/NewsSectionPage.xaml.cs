@@ -1,40 +1,32 @@
-﻿using Windows.UI.Xaml;
+﻿using Windows.Phone.UI.Input;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.Phone.UI.Input;
-using Onliner_for_windows_10.View_Model;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Input;
-using Onliner.Model.News;
-using Windows.Foundation;
-using Windows.UI.Xaml.Media;
+using OnlinerApp.ViewModel;
 
-namespace Onliner_for_windows_10.Views
+namespace OnlinerApp.Views
 {
     public sealed partial class NewsPage : Page
     {
-        private NewsSectionViewModel newsModel = new NewsSectionViewModel();
         public NewsPage()
         {
             this.InitializeComponent();
-            this.DataContext = newsModel;
+            this.DataContext = new NewsSectionViewModel();
             this.Loaded += MainOageLoaded;
         }
 
         private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
-            if (Frame.CanGoBack)
-            {
-                e.Handled = true;
-                Frame.GoBack();
-            }
+            var rootFrame = Window.Current.Content as Frame;
+            if (!Frame.CanGoBack) return;
+            e.Handled = true;
+            Frame.GoBack();
         }
 
         private void MainOageLoaded(object sender, RoutedEventArgs e)
         {
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
             {
-                Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
+                HardwareButtons.BackPressed += HardwareButtons_BackPressed;
             }
         }
 

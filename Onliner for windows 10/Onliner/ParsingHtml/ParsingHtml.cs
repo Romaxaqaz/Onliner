@@ -1,10 +1,6 @@
 ﻿using HtmlAgilityPack;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Onliner.ParsingHtml
 {
@@ -30,7 +26,6 @@ namespace Onliner.ParsingHtml
         /// <summary>
         /// Parsing html
         /// </summary>
-        /// <example><(1)div (2)class="(3)one"><(4)span></div></example>
         /// <param name="tagName"></param>
         /// <param name="className"></param>
         /// <param name="elementTag"></param>
@@ -41,12 +36,12 @@ namespace Onliner.ParsingHtml
             var node = resultat.DocumentNode.
                Descendants(tagName).
                FirstOrDefault(div => div.GetAttributeValue(className, string.Empty) == elementTag);
-            return node.InnerText.ToString();
+            return node.InnerText;
         }
 
         public string ParsElementHtml(string[] paramsPars, HtmlDocument htmldoc)
         {
-            var finalResult = "";
+            string finalResult;
             if (paramsPars[3] != "")
             {
                 var htmlreg = new Regex(paramsPars[3]);

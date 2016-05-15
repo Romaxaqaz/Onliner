@@ -6,7 +6,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 
-namespace Onliner_for_windows_10
+namespace OnlinerApp
 {
     public static class Extensions
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Onliner_for_windows_10.UserControls.SP
+namespace OnlinerApp.UserControls.SP
 {
     public interface INavigationMenuItem
     {

@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 
-namespace Onliner_for_windows_10.UserControls.SP
+namespace OnlinerApp.UserControls.SP
 {
     public sealed class NavMenuListView : ListView
     {

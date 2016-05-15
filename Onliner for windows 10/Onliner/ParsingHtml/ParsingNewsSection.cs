@@ -12,8 +12,6 @@ using Onliner.Model.News;
 using Onliner.Http;
 using Onliner.Model.OpinionsModel;
 using static Onliner.SQLiteDataBase.SqLiteDb;
-using Onliner.SQLiteDataBase;
-using System.Net;
 using Newtonsoft.Json;
 using Onliner.Interface.News;
 
@@ -42,19 +40,12 @@ namespace Onliner.ParsingHtml
 
         #region Variables
         private string _resultHtmlPage = string.Empty;
-        string _urlNewsView = string.Empty;
+
         #endregion
 
         #region Constructor
-        public ParsingNewsSection() { }
-        /// <summary>
-        /// parsing list news
-        /// </summary>
-        /// <param name="path">url page section news</param>
-        public ParsingNewsSection(string path)
-        {
 
-        }
+        public ParsingNewsSection() { }
         #endregion
 
         #region Methods
@@ -72,7 +63,6 @@ namespace Onliner.ParsingHtml
 
             await Task.Run(async () =>
             {
-                var httpClient = new HttpClient();
                 OldNewsForUpdate = new ObservableCollection<ItemsNews>();
                 _resultHtmlPage = await _httpRequest.GetRequestOnlinerAsync(path);
                 _resultat.LoadHtml(_resultHtmlPage);
@@ -133,7 +123,7 @@ namespace Onliner.ParsingHtml
         {
             var viewNewsComment = await _httpRequest.NewsViewAll(pathNews, string.Join("", _newsListId));
             var mRes = JsonConvert.DeserializeObject<CounterNewsJsonClass>(viewNewsComment);
-            foreach (dynamic numb in mRes.count)
+            foreach (dynamic numb in mRes.Count)
             {
                 var item = collections.FirstOrDefault(x => x.NewsId.Equals(numb.Name.ToString()));
                 if (item != null)
@@ -202,10 +192,9 @@ namespace Onliner.ParsingHtml
         /// </summary>
         /// <param name="pathDb"></param>
         /// <returns></returns>
-        private async Task<IEnumerable<ItemsNews>> GetNeedList(string pathDb)
+        private static async Task<IEnumerable<ItemsNews>> GetNeedList(string pathDb)
         {
-            IEnumerable<ItemsNews> resultItems;
-            resultItems = await SqLiteDb.GetAllNews(pathDb);
+            IEnumerable<ItemsNews> resultItems = await GetAllNews(pathDb);
             return resultItems;
         }
 
@@ -299,6 +288,6 @@ namespace Onliner.ParsingHtml
 
     public class CounterNewsJsonClass
     {
-        public dynamic count { get; set; }
+        public dynamic Count { get; set; }
     }
 }

@@ -1,37 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.UI;
+﻿using Windows.UI;
 using Windows.UI.Xaml.Media;
 
-namespace Onliner_for_windows_10.Tiles
+namespace OnlinerApp.Tiles
 {
-    class DesignTimeData
+    internal class DesignTimeData
     {
-        public string Title
-        {
-            get { return "Roma-qaz"; }
-        }
+        public string Title => "Roma-qaz";
 
-        public int Number
-        {
-            get
-            { return 15; }
-        }
+        public int Number => 15;
 
-        public string Img
-        {
-            get { return "/ImageCollection/logoApp.png"; }
-        }
+        public string Img => "/ImageCollection/logoApp.png";
 
-        public SolidColorBrush BackgroundColour
-        {
-            get
-            {
-                return new SolidColorBrush(Colors.Aquamarine);
-            }
-        }
+        public SolidColorBrush BackgroundColour => new SolidColorBrush(Colors.Aquamarine);
     }
 }

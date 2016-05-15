@@ -1,15 +1,15 @@
 ﻿<Page
-    x:Class="Onliner_for_windows_10.testpage"
+    x:Class="OnlinerApp.testpage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Onliner_for_windows_10.UserControls"
+    xmlns:local="using:OnlinerApp.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:control="using:Onliner_for_windows_10.UserControls"
+    xmlns:control="using:OnlinerApp.UserControls"
     xmlns:Controls="using:Template10.Controls"
-    xmlns:MyControls="using:Onliner_for_windows_10.UserControls"
-    xmlns:views="using:Onliner_for_windows_10"
-    xmlns:viewsSetting="using:Onliner_for_windows_10.Views.Setting"
+    xmlns:MyControls="using:OnlinerApp.UserControls"
+    xmlns:views="using:OnlinerApp"
+    xmlns:viewsSetting="using:OnlinerApp.Views.Setting"
     mc:Ignorable="d">
 
     <Page.Resources>

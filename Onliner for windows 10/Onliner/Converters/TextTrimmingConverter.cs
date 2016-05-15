@@ -8,8 +8,8 @@ namespace Onliner.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            Uri iri = (Uri)value;
-            BitmapImage image = new BitmapImage(iri);
+            var iri = (Uri)value;
+            var image = new BitmapImage(iri);
             return image;
         }
 

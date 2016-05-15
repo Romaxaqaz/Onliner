@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
 
 namespace Onliner.Converters.DateTimeConverter
@@ -13,7 +9,7 @@ namespace Onliner.Converters.DateTimeConverter
         {
             try
             {
-                DateTime date = (DateTime)value;
+                var date = (DateTime)value;
                 return new DateTimeOffset(date);
             }
            catch(Exception)
@@ -26,7 +22,7 @@ namespace Onliner.Converters.DateTimeConverter
         {
             try
             {
-                DateTimeOffset dto = (DateTimeOffset)value;
+                var dto = (DateTimeOffset)value;
                 return dto.DateTime;
             }
             catch(Exception)

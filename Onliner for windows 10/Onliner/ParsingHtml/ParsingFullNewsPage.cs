@@ -1,22 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml;
 using Onliner.Http;
 using Onliner.Model.News;
 using Onliner.Model.DataTemplateSelector;
 using HtmlAgilityPack;
 using MyToolkit.Multimedia;
-using MyToolkit.Controls;
-using Newtonsoft.Json.Linq;
-using System.IO;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
-using Windows.UI.Popups;
 
 namespace Onliner.ParsingHtml
 {
@@ -34,7 +26,7 @@ namespace Onliner.ParsingHtml
         private readonly string AttributeTagSRC = "src";
         #endregion
 
-        private string _urlPageNews = string.Empty;
+        private string _urlPageNews;
 
         private readonly HttpRequest _httpRequest = new HttpRequest();
         private readonly HtmlDocument _htmlDoc = new HtmlDocument();
@@ -59,7 +51,6 @@ namespace Onliner.ParsingHtml
         /// <returns>news item object</returns>
         public async Task<ObservableCollection<ListViewItemSelectorModel>> NewsMainInfo()
         {
-            var fullNews = new FullItemNews();
 
             _htmlDoc.LoadHtml(LoadePage);
 
@@ -126,17 +117,16 @@ namespace Onliner.ParsingHtml
             return _newsListItem;
         }
 
-        private string ParsingUrlImage(HtmlNode node) =>
+        private static string ParsingUrlImage(HtmlNode node) =>
             node.Descendants("img").FirstOrDefault().Attributes["src"].Value;
 
-        private async Task<YouTubeUri> ParsingYouTubeUrl(HtmlNode node)
+        private static async Task<YouTubeUri> ParsingYouTubeUrl(HtmlNode node)
         {
-            var uri = new YouTubeUri();
             var linkVideo = node.Descendants("iframe").FirstOrDefault().Attributes["src"].Value;
             return await GetYouTubeYriForControl(linkVideo);
         }
 
-        private string ParsingLiCollection(string parsingContent)
+        private static string ParsingLiCollection(string parsingContent)
         {
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(parsingContent);
@@ -160,9 +150,9 @@ namespace Onliner.ParsingHtml
             }
         }
 
-        private async Task<YouTubeUri> GetYouTubeYriForControl(string url)
+        private static async Task<YouTubeUri> GetYouTubeYriForControl(string url)
         {
-            var pattern = @"(embed\/[-A-Za-z0-9]+)";
+            const string pattern = @"(embed\/[-A-Za-z0-9]+)";
             var regex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.Multiline);
             var clearUrl = regex.Match(url);
             var path = clearUrl.ToString().Replace("embed/", "");
@@ -184,13 +174,28 @@ namespace Onliner.ParsingHtml
 
                 foreach (var item in commentsList)
                 {
-                    commentsParams = new Comments();
-                    commentsParams.ID = item.Attributes["data-comment-id"].Value;
-                    commentsParams.Nickname = item.Descendants(NameTagStrong).FirstOrDefault(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "author").InnerText;
-                    commentsParams.UserId = item.Attributes["data-author-id"].Value;
-                    commentsParams.Time = item.Descendants(NameTagSpan).FirstOrDefault(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "date").InnerText;
-                    commentsParams.Image = "https:" + item.Descendants(NameTagFigure).FirstOrDefault(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "author-image").Descendants(NameTagImg).FirstOrDefault().Attributes[AttributeTagSRC].Value;
-                    commentsParams.Data = item.InnerHtml;
+                    commentsParams = new Comments
+                    {
+                        ID = item.Attributes["data-comment-id"].Value,
+                        Nickname =
+                            item.Descendants(NameTagStrong)
+                                .FirstOrDefault(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "author")
+                                .InnerText,
+                        UserId = item.Attributes["data-author-id"].Value,
+                        Time =
+                            item.Descendants(NameTagSpan)
+                                .FirstOrDefault(div => div.GetAttributeValue(TagTypeClass, string.Empty) == "date")
+                                .InnerText,
+                        Image =
+                            "https:" +
+                            item.Descendants(NameTagFigure)
+                                .FirstOrDefault(
+                                    div => div.GetAttributeValue(TagTypeClass, string.Empty) == "author-image")
+                                .Descendants(NameTagImg)
+                                .FirstOrDefault()
+                                .Attributes[AttributeTagSRC].Value,
+                        Data = item.InnerHtml
+                    };
 
                     var @params = commentsParams;
                     var commentsLikeCount = _listItem.FirstOrDefault(x => x.ID == @params.ID);
@@ -207,17 +212,7 @@ namespace Onliner.ParsingHtml
             return _listComments;
         }
 
-        private HtmlView PostItemTextBlock(string text)
-        {
-            var textBlock = new HtmlView
-            {
-                Html = text,
-                Margin = new Thickness(10)
-            };
-            return textBlock;
-        }
-
-        private string GetUrlLikeApi(string url, string newsId)
+        private static string GetUrlLikeApi(string url, string newsId)
         {
             if (url.Contains("tech.onliner.by"))
             {

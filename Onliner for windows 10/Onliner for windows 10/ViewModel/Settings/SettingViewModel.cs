@@ -1,8 +1,8 @@
-﻿using System.Reflection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Reflection;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI;
@@ -10,14 +10,15 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using MyToolkit.Command;
-using Template10.Mvvm;
 using Newtonsoft.Json;
 using Onliner.Expansion;
-using Onliner.SQLiteDataBase;
 using Onliner.Http;
-using static Onliner.Setting.SettingParams;
+using Onliner.Setting;
+using Onliner.SQLiteDataBase;
+using OnlinerApp.View_Model;
+using Template10.Mvvm;
 
-namespace Onliner_for_windows_10.View_Model.Settings
+namespace OnlinerApp.ViewModel.Settings
 {
     public class SettingViewModel : ViewModelBase
     {
@@ -39,7 +40,7 @@ namespace Onliner_for_windows_10.View_Model.Settings
         private void CurrentTypeChanged(object obj)
         {
             var current = obj.ToString();
-            SetParamsSetting(CurrentTypeKey, current);
+            SettingParams.SetParamsSetting(SettingParams.CurrentTypeKey, current);
             CurrentType = current;
             UpdateCurrent();
         }
@@ -50,7 +51,7 @@ namespace Onliner_for_windows_10.View_Model.Settings
             var value = type.GetProperty("Value");
             var valueObj = value.GetValue(obj, null);
 
-            SetParamsSetting(BankActionKey, valueObj.ToString());
+            SettingParams.SetParamsSetting(SettingParams.BankActionKey, valueObj.ToString());
             BankAction = valueObj.ToString();
             UpdateCurrent();
         }
@@ -81,22 +82,22 @@ namespace Onliner_for_windows_10.View_Model.Settings
         /// Set theme
         /// </summary>
         /// <param name="index">Ligth = 0, Dark = 1</param>
-        private void SetThemeApp(int index)
+        private static void SetThemeApp(int index)
         {
             switch (index)
             {
                 case 0:
-                    SetParamsSetting(ThemeAppKey, index.ToString());
+                    SettingParams.SetParamsSetting(SettingParams.ThemeAppKey, index.ToString());
                     SetLigthThemeApp();
                     break;
                 case 1:
-                    SetParamsSetting(ThemeAppKey, index.ToString());
+                    SettingParams.SetParamsSetting(SettingParams.ThemeAppKey, index.ToString());
                     SetDarkThemeApp();
                     break;
             }
         }
 
-        private void SetDarkThemeApp()
+        private static void SetDarkThemeApp()
         {
             if (ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
             {
@@ -116,26 +117,25 @@ namespace Onliner_for_windows_10.View_Model.Settings
                     titleBar.ForegroundColor = Colors.White;
                 }
             }
+            SetResourcesColor("BackGroundCustomColorBrush", Colors.Black);
+            SetResourcesColor("BackGroundCustomNewsColorBrush", Colors.Black);
+            SetResourcesColor("BackGroundCustomNewsItemColorBrush", Color.FromArgb(255, 43, 43, 43));
+            SetResourcesColor("BackGroundCustomNewsHeaderColorBrush", Color.FromArgb(255, 76, 74, 75));
+            SetResourcesColor("BackgroundCommentsColorBrush", Color.FromArgb(255, 43, 43, 43));
 
-            (Application.Current.Resources["BackGroundCustomColorBrush"] as SolidColorBrush).Color = Colors.Black;
-            (Application.Current.Resources["BackGroundCustomNewsColorBrush"] as SolidColorBrush).Color = Colors.Black;
-            (Application.Current.Resources["BackGroundCustomNewsItemColorBrush"] as SolidColorBrush).Color = Color.FromArgb(255, 43, 43, 43);
-            (Application.Current.Resources["BackGroundCustomNewsHeaderColorBrush"] as SolidColorBrush).Color = Color.FromArgb(255, 76, 74, 75);
-            (Application.Current.Resources["BackgroundCommentsColorBrush"] as SolidColorBrush).Color = Color.FromArgb(255, 43, 43, 43);
+            SetResourcesColor("ForegroundCustomBlackBrush", Colors.Gray);
+            SetResourcesColor("ForegroundCustomOtherBlackBrush", Colors.White);
+            SetResourcesColor("BackGroundCustomYellowColorBrush", Color.FromArgb(255, 43, 43, 43));
+            SetResourcesColor("BackGroundCustomHeaderColorBrush", Color.FromArgb(255, 43, 43, 43));
+            SetResourcesColor("BackGroundCustomHeaderChildColorBrush", Color.FromArgb(255, 43, 43, 43));
 
-            (Application.Current.Resources["ForegroundCustomBlackBrush"] as SolidColorBrush).Color = Colors.Gray;
-            (Application.Current.Resources["ForegroundCustomOtherBlackBrush"] as SolidColorBrush).Color = Colors.White;
-            (Application.Current.Resources["BackGroundCustomYellowColorBrush"] as SolidColorBrush).Color = Color.FromArgb(255, 43, 43, 43);
-            (Application.Current.Resources["BackGroundCustomHeaderColorBrush"] as SolidColorBrush).Color = Color.FromArgb(255, 43, 43, 43);
-            (Application.Current.Resources["BackGroundCustomHeaderChildColorBrush"] as SolidColorBrush).Color = Color.FromArgb(255, 43, 43, 43);
-
-            (Application.Current.Resources["ForegroundCustomWhiteBrush"] as SolidColorBrush).Color = Colors.Black;
-            (Application.Current.Resources["ForegroundCustomTextOnBlackBlackBrush"] as SolidColorBrush).Color = Color.FromArgb(255, 170, 170, 170);
-            (Application.Current.Resources["FillIcoCustomColorBrush"] as SolidColorBrush).Color = Colors.White;
-            (Application.Current.Resources["BackGroundCustomMainElementColorBrush"] as SolidColorBrush).Color = Color.FromArgb(255, 43, 43, 43);
+            SetResourcesColor("ForegroundCustomWhiteBrush", Colors.Black);
+            SetResourcesColor("ForegroundCustomTextOnBlackBlackBrush", Color.FromArgb(255, 170, 170, 170));
+            SetResourcesColor("FillIcoCustomColorBrush", Colors.White);
+            SetResourcesColor("BackGroundCustomMainElementColorBrush", Color.FromArgb(255, 43, 43, 43));
         }
 
-        private void SetLigthThemeApp()
+        private static void SetLigthThemeApp()
         {
             //mobile customization
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
@@ -158,27 +158,34 @@ namespace Onliner_for_windows_10.View_Model.Settings
                 }
             }
 
-            (Application.Current.Resources["BackGroundCustomColorBrush"] as SolidColorBrush).Color = Colors.White;
-            (Application.Current.Resources["BackGroundCustomNewsColorBrush"] as SolidColorBrush).Color = Colors.Gainsboro;
-            (Application.Current.Resources["BackGroundCustomNewsItemColorBrush"] as SolidColorBrush).Color = Colors.White;
-            (Application.Current.Resources["BackGroundCustomNewsHeaderColorBrush"] as SolidColorBrush).Color = Colors.White;
-            (Application.Current.Resources["BackgroundCommentsColorBrush"] as SolidColorBrush).Color = Color.FromArgb(255, 255, 247, 247);
+            SetResourcesColor("BackGroundCustomColorBrush", Colors.White);
+            SetResourcesColor("BackGroundCustomNewsColorBrush", Colors.Gainsboro);
+            SetResourcesColor("BackGroundCustomNewsItemColorBrush", Colors.White);
+            SetResourcesColor("BackGroundCustomNewsHeaderColorBrush", Colors.White);
+            SetResourcesColor("BackgroundCommentsColorBrush", Color.FromArgb(255, 255, 247, 247));
 
-            (Application.Current.Resources["ForegroundCustomBlackBrush"] as SolidColorBrush).Color = Colors.Black;
-            (Application.Current.Resources["ForegroundCustomOtherBlackBrush"] as SolidColorBrush).Color = Colors.Black;
-            (Application.Current.Resources["BackGroundCustomYellowColorBrush"] as SolidColorBrush).Color = Colors.Yellow;
-            (Application.Current.Resources["BackGroundCustomHeaderColorBrush"] as SolidColorBrush).Color = Colors.Yellow;
-            (Application.Current.Resources["BackGroundCustomHeaderChildColorBrush"] as SolidColorBrush).Color = Colors.White;
+            SetResourcesColor("ForegroundCustomBlackBrush", Colors.Black);
+            SetResourcesColor("ForegroundCustomOtherBlackBrush", Colors.Black);
+            SetResourcesColor("BackGroundCustomYellowColorBrush", Colors.Yellow);
+            SetResourcesColor("BackGroundCustomHeaderColorBrush", Colors.Yellow);
+            SetResourcesColor("BackGroundCustomHeaderChildColorBrush", Colors.White);
 
-            (Application.Current.Resources["ForegroundCustomWhiteBrush"] as SolidColorBrush).Color = Colors.White;
-            (Application.Current.Resources["ForegroundCustomTextOnBlackBlackBrush"] as SolidColorBrush).Color = Colors.Black;
-            (Application.Current.Resources["FillIcoCustomColorBrush"] as SolidColorBrush).Color = Colors.LightBlue;
-            (Application.Current.Resources["BackGroundCustomMainElementColorBrush"] as SolidColorBrush).Color = Colors.Yellow;
+            SetResourcesColor("ForegroundCustomWhiteBrush", Colors.White);
+            SetResourcesColor("ForegroundCustomTextOnBlackBlackBrush", Colors.Yellow);
+            SetResourcesColor("FillIcoCustomColorBrush", Colors.Black);
+            SetResourcesColor("BackGroundCustomMainElementColorBrush", Colors.LightBlue);
+
+            SetResourcesColor("BackGroundCustomMainElementColorBrush", Colors.Yellow);
+        }
+
+        private static void SetResourcesColor(string key, Color value)
+        {
+            ((SolidColorBrush) Application.Current.Resources[key]).Color = value;
         }
 
         public void GetThemeApp()
         {
-            var indexValue = GetParamsSetting(ThemeAppKey) ?? 0;
+            var indexValue = SettingParams.GetParamsSetting(SettingParams.ThemeAppKey) ?? 0;
             _themeAppIndex = Convert.ToInt32(indexValue);
             SetThemeApp(_themeAppIndex);
 
@@ -204,8 +211,8 @@ namespace Onliner_for_windows_10.View_Model.Settings
         /// <param name="filename"></param>
         public async void RemoveFile(string filename)
         {
-            StorageFolder localFolder = ApplicationData.Current.LocalFolder;
-            StorageFile sampleFile = await localFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
+            var localFolder = ApplicationData.Current.LocalFolder;
+            var sampleFile = await localFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
             await sampleFile.DeleteAsync();
         }
 
@@ -217,21 +224,21 @@ namespace Onliner_for_windows_10.View_Model.Settings
         private string BytesToDouble(long byteCount)
         {
             string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
-            long bytes = Math.Abs(byteCount);
+            var bytes = Math.Abs(byteCount);
             if (bytes == 0) return "0 " + suf[0];
-            int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
-            double num = Math.Round(bytes / Math.Pow(1024, place), 1);
-            return (Math.Sign(byteCount) * num).ToString() + suf[place];
+            var place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
+            var num = Math.Round(bytes / Math.Pow(1024, place), 1);
+            return (Math.Sign(byteCount) * num) + suf[place];
         }
 
         private void ChangedNumberNewsCache()
         {
             var index = NumberNewsCache[NewsItemloadIndex];
-            SetParamsSetting(NumberOfNewsitemsToTheCacheKey, index);
+            SettingParams.SetParamsSetting(SettingParams.NumberOfNewsitemsToTheCacheKey, index);
         }
         #endregion
 
-        private void PivotSelectedIndexEvent(object obj)
+        private static void PivotSelectedIndexEvent(object obj)
         {
             var index = (int)obj;
         }
@@ -244,9 +251,9 @@ namespace Onliner_for_windows_10.View_Model.Settings
         {
             var town = obj as TownWeatherId;
             if (town == null) return;
-            SetParamsSetting(TownWeatherIdKey, town.Id);
+            SettingParams.SetParamsSetting(SettingParams.TownWeatherIdKey, town.Id);
             var weather = await _requset.Weather(town.Id);
-            ShellViewModel.Instance.Weather = weather == null ? (string)GetParamsSetting(LastWeatherKey) : weather.now.temperature;
+            ShellViewModel.Instance.Weather = weather == null ? (string)SettingParams.GetParamsSetting(SettingParams.LastWeatherKey) : weather.now.temperature;
         }
 
         /// <summary>
@@ -275,17 +282,17 @@ namespace Onliner_for_windows_10.View_Model.Settings
             switch ((string)obj)
             {
                 case "LoadImageCheckBox":
-                    var boolValue = GetParamsSetting(LoadImageKey);
+                    var boolValue = SettingParams.GetParamsSetting(SettingParams.LoadImageKey);
                     LoadImage = ChangeBool(boolValue);
                     break;
             }
         }
 
-        private bool ChangeBool(object boolValue)
+        private static bool ChangeBool(object boolValue)
         {
             if (boolValue == null) boolValue = false;
             var value = Convert.ToBoolean(boolValue);
-            value = value == false ? true : false;
+            value = value == false;
             return value;
         }
 
@@ -294,13 +301,13 @@ namespace Onliner_for_windows_10.View_Model.Settings
         {
             get
             {
-                var boolValue = GetParamsSetting(AutoLoadNewsAtStartUpAppKey) ?? true;
+                var boolValue = SettingParams.GetParamsSetting(SettingParams.AutoLoadNewsAtStartUpAppKey) ?? true;
                 _autoUpdateCheked = Convert.ToBoolean(boolValue);
                 return _autoUpdateCheked;
             }
             set
             {
-                SetParamsSetting(AutoLoadNewsAtStartUpAppKey, value.ToString());
+                SettingParams.SetParamsSetting(SettingParams.AutoLoadNewsAtStartUpAppKey, value.ToString());
                 Set(ref _autoUpdateCheked, value);
             }
         }
@@ -310,14 +317,14 @@ namespace Onliner_for_windows_10.View_Model.Settings
         {
             get
             {
-                var boolValue = GetParamsSetting(LoadImageKey) ?? false;
+                var boolValue = SettingParams.GetParamsSetting(SettingParams.LoadImageKey) ?? false;
                 var value = Convert.ToBoolean(boolValue);
                 _loadImage = value;
                 return _loadImage;
             }
             set
             {
-                SetParamsSetting(LoadImageKey, value.ToString());
+                SettingParams.SetParamsSetting(SettingParams.LoadImageKey, value.ToString());
                 Set(ref _loadImage, value);
             }
         }
@@ -327,13 +334,13 @@ namespace Onliner_for_windows_10.View_Model.Settings
         {
             get
             {
-                var indexValue = GetParamsSetting(ThemeAppKey) ?? 0;
+                var indexValue = SettingParams.GetParamsSetting(SettingParams.ThemeAppKey) ?? 0;
                 _themeAppIndex = Convert.ToInt32(indexValue);
                 return _themeAppIndex;
             }
             set
             {
-                SetParamsSetting(ThemeAppKey, value.ToString());
+                SettingParams.SetParamsSetting(SettingParams.ThemeAppKey, value.ToString());
                 Set(ref _themeAppIndex, value);
             }
         }
@@ -343,13 +350,13 @@ namespace Onliner_for_windows_10.View_Model.Settings
         {
             get
             {
-                var indexValue = GetParamsSetting(NumberOfNewsitemsToTheCacheKey) ?? "50";
+                var indexValue = SettingParams.GetParamsSetting(SettingParams.NumberOfNewsitemsToTheCacheKey) ?? "50";
                 _newsItemloadIndex = NumberNewsCache.IndexOf((string)indexValue);
                 return _newsItemloadIndex;
             }
             set
             {
-                SetParamsSetting(NumberOfNewsitemsToTheCacheKey, NumberNewsCache[value]);
+                SettingParams.SetParamsSetting(SettingParams.NumberOfNewsitemsToTheCacheKey, NumberNewsCache[value]);
                 Set(ref _newsItemloadIndex, value);
             }
         }
@@ -373,7 +380,7 @@ namespace Onliner_for_windows_10.View_Model.Settings
         {
             get
             {
-                var town = GetParamsSetting(TownWeatherIdKey);
+                var town = SettingParams.GetParamsSetting(SettingParams.TownWeatherIdKey);
                 if (town == null) return 0;
                 _townWeatherIdindex = GetIndex(town.ToString());
                 return _townWeatherIdindex;
@@ -389,7 +396,7 @@ namespace Onliner_for_windows_10.View_Model.Settings
         {
             get
             {
-                var toggle = GetParamsSetting(ToggleSwitchNewsDataTemplateTypeKey);
+                var toggle = SettingParams.GetParamsSetting(SettingParams.ToggleSwitchNewsDataTemplateTypeKey);
                 if (toggle == null) return true;
                 _toggleSwitchNewsDataTemplateType = Convert.ToBoolean(toggle);
                 return _toggleSwitchNewsDataTemplateType;
@@ -397,30 +404,22 @@ namespace Onliner_for_windows_10.View_Model.Settings
             set
             {
                 SetDataTemplateType(value);
-                SetParamsSetting(ToggleSwitchNewsDataTemplateTypeKey, value.ToString());
+                SettingParams.SetParamsSetting(SettingParams.ToggleSwitchNewsDataTemplateTypeKey, value.ToString());
                 Set(ref _toggleSwitchNewsDataTemplateType, value);
             }
         }
 
-        private void SetDataTemplateType(bool value) => 
-            SetParamsSetting(NewsDataTemplateKey, value == true ? TileDataTemplate : ListDataTemplate);
+        private static void SetDataTemplateType(bool value) => 
+            SettingParams.SetParamsSetting(SettingParams.NewsDataTemplateKey, value ? SettingParams.TileDataTemplate : SettingParams.ListDataTemplate);
 
-        public bool ToggleSwitchNewsDataTemplateTypeIsEnable
-        {
-            get
-            {
-                if (DeviceType.IsMobile)
-                    return true;
-                return false;
-            }
-        }
+        public bool ToggleSwitchNewsDataTemplateTypeIsEnable => DeviceType.IsMobile;
 
         private string _currentType;
         public string CurrentType
         {
             get
             {
-                var current = GetParamsSetting(CurrentTypeKey);
+                var current = SettingParams.GetParamsSetting(SettingParams.CurrentTypeKey);
                 return current == null ? "USD" : current.ToString();
             }
             set { Set(ref _currentType, value); }
@@ -431,7 +430,7 @@ namespace Onliner_for_windows_10.View_Model.Settings
         {
             get
             {
-                var bankAction = GetParamsSetting(BankActionKey);
+                var bankAction = SettingParams.GetParamsSetting(SettingParams.BankActionKey);
                 return bankAction == null ? "nbrb" : bankAction.ToString();
             }
             set { Set(ref _bankAction, value); }
@@ -449,7 +448,7 @@ namespace Onliner_for_windows_10.View_Model.Settings
         {
             get
             {
-                var town = GetParamsSetting(CurrentTypeKey);
+                var town = SettingParams.GetParamsSetting(SettingParams.CurrentTypeKey);
                 if (town == null) return 0;
                 _currentIndex = CurrentTypeList.IndexOf(town.ToString());
                 return _currentIndex;
@@ -466,7 +465,7 @@ namespace Onliner_for_windows_10.View_Model.Settings
             get
             {
                 var index = 0;
-                var town = GetParamsSetting(BankActionKey);
+                var town = SettingParams.GetParamsSetting(SettingParams.BankActionKey);
                 if (town == null) return 0;
                 foreach (var item in BankActionDictionary)
                 {

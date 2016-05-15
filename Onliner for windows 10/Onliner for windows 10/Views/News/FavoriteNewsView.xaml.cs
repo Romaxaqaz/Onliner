@@ -7,7 +7,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 
-namespace Onliner_for_windows_10.Views.News
+namespace OnlinerApp.Views.News
 {
     public sealed partial class FavoriteNewsView : Page
     {

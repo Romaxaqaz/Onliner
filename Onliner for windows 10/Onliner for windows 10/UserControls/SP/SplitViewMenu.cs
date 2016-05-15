@@ -6,7 +6,7 @@ using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Onliner_for_windows_10.UserControls.SP
+namespace OnlinerApp.UserControls.SP
 {
     public sealed class SplitViewMenu : Control
     {

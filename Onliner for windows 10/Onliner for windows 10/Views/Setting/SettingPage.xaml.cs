@@ -1,31 +1,29 @@
-﻿using Onliner_for_windows_10.View_Model.Settings;
-using System;
+﻿using System;
 using Windows.ApplicationModel.Email;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using OnlinerApp.ViewModel.Settings;
 
-namespace Onliner_for_windows_10.Views.Setting
+namespace OnlinerApp.Views.Setting
 {
     public sealed partial class SettingPage : Page
     {
-        SettingViewModel viewModel = new SettingViewModel();
-
         public SettingPage()
         {
             this.InitializeComponent();
-            this.DataContext = viewModel;
+            this.DataContext = new SettingViewModel();
         }
 
         private async void RecallButton_Click(object sender, RoutedEventArgs e)
         {
-            string app = "https://www.microsoft.com/store/apps/9nblggh645s7";
+            const string app = "https://www.microsoft.com/store/apps/9nblggh645s7";
             var uri = new Uri(app);
-            var success = await Windows.System.Launcher.LaunchUriAsync(uri);
+            await Windows.System.Launcher.LaunchUriAsync(uri);
         }
 
         private async void Developer_Click(object sender, RoutedEventArgs e)
         {
-            EmailMessage emailMessage = new EmailMessage();
+            var emailMessage = new EmailMessage();
             emailMessage.To.Add(new EmailRecipient("win10app@outlook.com"));
             await EmailManager.ShowComposeNewEmailAsync(emailMessage);
 

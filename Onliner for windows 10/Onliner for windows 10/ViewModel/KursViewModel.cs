@@ -1,15 +1,14 @@
-﻿using HtmlAgilityPack;
-using Onliner.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Template10.Mvvm;
 using Windows.UI.Xaml.Navigation;
+using HtmlAgilityPack;
+using Onliner.Http;
+using Template10.Mvvm;
 
-namespace Onliner_for_windows_10.View_Model
+namespace OnlinerApp.ViewModel
 {
     public class KursViewModel : ViewModelBase
     {
@@ -37,10 +36,10 @@ namespace Onliner_for_windows_10.View_Model
                 var kurs = new Kurs();
                 var tdlist = tagList[i].Descendants("tr").FirstOrDefault(div => div.GetAttributeValue("class", string.Empty) == "tr-main").Descendants("td").ToList();
 
-                kurs.TypeMethod = GetContentTag(tdlist, 0, "abbr rate");
-                kurs.BankBuy = GetContentTag(tdlist, 1, "value");
-                kurs.BankSale = GetContentTag(tdlist, 2, "value");
-                kurs.Nbrb = GetContentTag(tdlist, 3, "value fall");
+                kurs.TypeMethod = GetContentTag(tdlist, 0);
+                kurs.BankBuy = GetContentTag(tdlist, 1);
+                kurs.BankSale = GetContentTag(tdlist, 2);
+                kurs.Nbrb = GetContentTag(tdlist, 3);
 
                 KursCollection.Add(kurs);
             }
@@ -53,10 +52,8 @@ namespace Onliner_for_windows_10.View_Model
         /// </summary>
         /// <param name="node"></param>
         /// <param name="index">number td in tr</param>
-        /// <param name="attributeName"></param>
-        /// <param name="orAttName"></param>
         /// <returns></returns>
-        private string GetContentTag(List<HtmlNode> node, int index, string attributeName, string orAttName = "")
+        private string GetContentTag(List<HtmlNode> node, int index)
         {
             if (node == null) throw new ArgumentNullException(nameof(node));
             var tagContent = node[index].Descendants("p").FirstOrDefault();

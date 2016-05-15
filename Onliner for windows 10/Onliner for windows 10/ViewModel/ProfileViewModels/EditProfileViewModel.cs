@@ -1,18 +1,16 @@
-﻿using HtmlAgilityPack;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Windows.UI.Xaml.Navigation;
+using HtmlAgilityPack;
 using MyToolkit.Command;
 using Onliner.Http;
 using Onliner.Model.JsonModel.Profile;
 using Onliner.Model.ProfileModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Template10.Mvvm;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 
-namespace Onliner_for_windows_10.View_Model.ProfileViewModels
+namespace OnlinerApp.ViewModel.ProfileViewModels
 {
     public class EditProfileViewModel : ViewModelBase
     {
@@ -24,18 +22,18 @@ namespace Onliner_for_windows_10.View_Model.ProfileViewModels
         private List<object> ParamsList = new List<object>();
 
         #region Variables
-        private string EditProfilePageContent = string.Empty;
-        private string[] BirthdayView = new string[] { "yymmdd", "mmdd", "yyyy", "" };
-        private string[] BirthdayViewName = new string[] { "полностью", "день и месяц", "только год", "не показывать" };
+        private string EditProfilePageContent;
+        private readonly string[] BirthdayView = new string[] { "yymmdd", "mmdd", "yyyy", "" };
+        private readonly string[] BirthdayViewName = new string[] { "полностью", "день и месяц", "только год", "не показывать" };
         #endregion
 
         #region Constructor
         public EditProfileViewModel()
         {
-            SaveMainInforamtionCommand = new RelayCommand(() => SaveMainInforamtion());
-            SaveAdditionalInforamtionCommand = new RelayCommand(() => SaveAdditionalInforamtion());
-            ChangePasswordCommand = new RelayCommand(() => ChangePassword());
-            ChangePivotCommand = new RelayCommand<object>((obj) => SelectedChangePivot(obj));
+            SaveMainInforamtionCommand = new RelayCommand(SaveMainInforamtion);
+            SaveAdditionalInforamtionCommand = new RelayCommand(SaveAdditionalInforamtion);
+            ChangePasswordCommand = new RelayCommand(ChangePassword);
+            ChangePivotCommand = new RelayCommand<object>(SelectedChangePivot);
         }
         #endregion
 
@@ -58,11 +56,11 @@ namespace Onliner_for_windows_10.View_Model.ProfileViewModels
         /// </summary>
         private void SaveAdditionalInforamtion()
         {
-            string PmNotification = CheckBoolValue(PmNotificationCheckBox).ToString();
-            string OnlineStatus = CheckBoolValue(HideOnlineStatusCheckBox).ToString();
-            string ShowEmail = CheckBoolValue(ShowEmailCheckBox).ToString();
-            string BirthDay = BirthdayView[BirthDayComboBox];
-            HttpRequest.EditPreferencesProfile(PmNotification, OnlineStatus, ShowEmail, BirthDay);
+            var pmNotification = CheckBoolValue(PmNotificationCheckBox).ToString();
+            var onlineStatus = CheckBoolValue(HideOnlineStatusCheckBox).ToString();
+            var showEmail = CheckBoolValue(ShowEmailCheckBox).ToString();
+            var birthDay = BirthdayView[BirthDayComboBox];
+            HttpRequest.EditPreferencesProfile(pmNotification, onlineStatus, showEmail, birthDay);
         }
 
         /// <summary>
@@ -81,11 +79,10 @@ namespace Onliner_for_windows_10.View_Model.ProfileViewModels
         public async Task ShowParamsProfile()
         {
             ParamsList.Clear();
-            List<EditProfileData> profileDataEdit = new List<EditProfileData>();
             EditProfilePageContent = await HttpRequest.GetRequestOnlinerAsync(UrlProfileEdit);
             resultat.LoadHtml(EditProfilePageContent);
 
-            List<HtmlNode> editDataList = resultat.DocumentNode.Descendants().Where
+            var editDataList = resultat.DocumentNode.Descendants().Where
            (x => (x.Name == "div" && x.Attributes["class"] != null && x.Attributes["class"].Value.Contains("uprofile-form"))).ToList();
 
             var divList = editDataList[0].Descendants("div").ToList();
@@ -93,7 +90,7 @@ namespace Onliner_for_windows_10.View_Model.ProfileViewModels
             {
                 if (item.InnerHtml.Contains("<input"))
                 {
-                    ParamsList.Add(item.Descendants("input").FirstOrDefault().Attributes["value"].Value.ToString());
+                    ParamsList.Add(item.Descendants("input").FirstOrDefault().Attributes["value"].Value);
                 }
                 else if (item.InnerHtml.Contains("<textarea"))
                 {
@@ -150,18 +147,20 @@ namespace Onliner_for_windows_10.View_Model.ProfileViewModels
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        private BirthDayDate GetBirthDay(List<HtmlNode> list)
+        private static BirthDayDate GetBirthDay(IReadOnlyList<HtmlNode> list)
         {
-            BirthDayDate bDay = new BirthDayDate();
-            bDay.Day = GetListParams(list[0].Descendants("option").ToList());
-            bDay.Mounth = GetListParams(list[1].Descendants("option").ToList());
-            bDay.Year = GetListParams(list[2].Descendants("option").ToList());
+            var bDay = new BirthDayDate
+            {
+                Day = GetListParams(list[0].Descendants("option").ToList()),
+                Mounth = GetListParams(list[1].Descendants("option").ToList()),
+                Year = GetListParams(list[2].Descendants("option").ToList())
+            };
             return bDay;
         }
 
-        private string GetListParams(List<HtmlNode> list)
+        private static string GetListParams(IEnumerable<HtmlNode> list)
         {
-            string result = string.Empty;
+            var result = string.Empty;
             foreach (var item in list)
             {
                 if ((item.Name == "option") && (item.OuterHtml.Contains("selected")))
@@ -180,7 +179,7 @@ namespace Onliner_for_windows_10.View_Model.ProfileViewModels
             CityText = ParamsList[0].ToString();
             OccupationText = ParamsList[1].ToString();
             InterestsText = ParamsList[2].ToString();
-            BirthdaDatePicker = new System.DateTime(int.Parse(bday.Year), System.DateTime.Parse("1." + bday.Mounth + " 2008").Month, int.Parse(bday.Day));
+            BirthdaDatePicker = new DateTime(int.Parse(bday.Year), DateTime.Parse("1." + bday.Mounth + " 2008").Month, int.Parse(bday.Day));
             JabberText = ParamsList[3].ToString();
             IcqText = ParamsList[4].ToString();
             SkypeText = ParamsList[5].ToString();
@@ -225,15 +224,14 @@ namespace Onliner_for_windows_10.View_Model.ProfileViewModels
             return paramsBdayIndex;
         }
 
-        private int CheckBoolValue(bool check)
+        private static int CheckBoolValue(bool check)
         {
-            int value = 0;
-            return value = check == true ? 1 : 0;
+            return check ? 1 : 0;
         }
 
-        private bool GetIsCheckValue(HtmlNode item, string checkParams)
+        private static bool GetIsCheckValue(HtmlNode item, string checkParams)
         {
-            return item.InnerHtml.Contains(checkParams) == true ? true : false;
+            return item.InnerHtml.Contains(checkParams);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)
@@ -254,138 +252,138 @@ namespace Onliner_for_windows_10.View_Model.ProfileViewModels
 
         #region Properties
 
-        private string cityText;
+        private string _cityText;
         public string CityText
         {
-            get { return cityText; }
-            set { Set(ref cityText, value); }
+            get { return _cityText; }
+            set { Set(ref _cityText, value); }
         }
 
-        private string occupationText;
+        private string _occupationText;
         public string OccupationText
         {
-            get { return occupationText; }
-            set { Set(ref occupationText, value); }
+            get { return _occupationText; }
+            set { Set(ref _occupationText, value); }
         }
 
-        private string interestsText;
+        private string _interestsText;
         public string InterestsText
         {
-            get { return interestsText; }
-            set { Set(ref interestsText, value); }
+            get { return _interestsText; }
+            set { Set(ref _interestsText, value); }
         }
 
-        private DateTime birthdaDatePicker = new DateTime();
+        private DateTime _birthdaDatePicker;
         public DateTime BirthdaDatePicker
         {
-            get { return birthdaDatePicker; }
-            set { Set(ref birthdaDatePicker, value); }
+            get { return _birthdaDatePicker; }
+            set { Set(ref _birthdaDatePicker, value); }
         }
 
-        private string jabberText;
+        private string _jabberText;
         public string JabberText
         {
-            get { return jabberText; }
-            set { Set(ref jabberText, value); }
+            get { return _jabberText; }
+            set { Set(ref _jabberText, value); }
         }
 
-        private string icqText;
+        private string _icqText;
         public string IcqText
         {
-            get { return icqText; }
-            set { Set(ref icqText, value); }
+            get { return _icqText; }
+            set { Set(ref _icqText, value); }
         }
 
-        private string skypeText;
+        private string _skypeText;
         public string SkypeText
         {
-            get { return skypeText; }
-            set { Set(ref skypeText, value); }
+            get { return _skypeText; }
+            set { Set(ref _skypeText, value); }
         }
 
-        private string aimText;
+        private string _aimText;
         public string AimText
         {
-            get { return aimText; }
-            set { Set(ref aimText, value); }
+            get { return _aimText; }
+            set { Set(ref _aimText, value); }
         }
 
-        private string websitetext;
+        private string _websitetext;
         public string WebsiteText
         {
-            get { return websitetext; }
-            set { Set(ref websitetext, value); }
+            get { return _websitetext; }
+            set { Set(ref _websitetext, value); }
         }
 
-        private string blogText;
+        private string _blogText;
         public string BlogText
         {
-            get { return blogText; }
-            set { Set(ref blogText, value); }
+            get { return _blogText; }
+            set { Set(ref _blogText, value); }
         }
 
-        private string devicesText;
+        private string _devicesText;
         public string DevicesText
         {
-            get { return devicesText; }
-            set { Set(ref devicesText, value); }
+            get { return _devicesText; }
+            set { Set(ref _devicesText, value); }
         }
 
-        private string signatureText;
+        private string _signatureText;
         public string SignatureText
         {
-            get { return signatureText; }
-            set { Set(ref signatureText, value); }
+            get { return _signatureText; }
+            set { Set(ref _signatureText, value); }
         }
 
-        private string oldPassword;
+        private string _oldPassword;
         public string OldPassword
         {
-            get { return oldPassword; }
-            set { Set(ref oldPassword, value); }
+            get { return _oldPassword; }
+            set { Set(ref _oldPassword, value); }
         }
 
-        private string newPassword;
+        private string _newPassword;
         public string NewPassword
         {
-            get { return newPassword; }
-            set { Set(ref newPassword, value); }
+            get { return _newPassword; }
+            set { Set(ref _newPassword, value); }
         }
 
-        private bool pmNotificationCheckBox;
+        private bool _pmNotificationCheckBox;
         public bool PmNotificationCheckBox
         {
-            get { return pmNotificationCheckBox; }
-            set { Set(ref pmNotificationCheckBox, value); }
+            get { return _pmNotificationCheckBox; }
+            set { Set(ref _pmNotificationCheckBox, value); }
         }
 
-        private bool hideOnlineStatusCheckBox;
+        private bool _hideOnlineStatusCheckBox;
         public bool HideOnlineStatusCheckBox
         {
-            get { return hideOnlineStatusCheckBox; }
-            set { Set(ref hideOnlineStatusCheckBox, value); }
+            get { return _hideOnlineStatusCheckBox; }
+            set { Set(ref _hideOnlineStatusCheckBox, value); }
         }
 
-        private bool showEmailCheckBox;
+        private bool _showEmailCheckBox;
         public bool ShowEmailCheckBox
         {
-            get { return showEmailCheckBox; }
-            set { Set(ref showEmailCheckBox, value); }
+            get { return _showEmailCheckBox; }
+            set { Set(ref _showEmailCheckBox, value); }
         }
 
-        private int birthDayComboBox;
+        private int _birthDayComboBox;
         public int BirthDayComboBox
         {
-            get { return birthDayComboBox; }
-            set { Set(ref birthDayComboBox, value); }
+            get { return _birthDayComboBox; }
+            set { Set(ref _birthDayComboBox, value); }
         }
 
-        private int selectedIndexPivot = 0;
+        private int _selectedIndexPivot;
 
         public int SelectedIndexPivot
         {
-            get { return selectedIndexPivot = 0; }
-            set { Set(ref selectedIndexPivot, value); }
+            get { return _selectedIndexPivot = 0; }
+            set { Set(ref _selectedIndexPivot, value); }
         }
 
 

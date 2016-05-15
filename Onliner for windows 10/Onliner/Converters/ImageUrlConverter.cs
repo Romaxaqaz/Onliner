@@ -8,13 +8,13 @@ namespace Onliner.Converters
 {
     public class ImageUrlConverters : IValueConverter
     {
-        BitmapImage bitmapImage;
+        private BitmapImage _bitmapImage;
+
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            byte[] byteArray = value as byte[];
-            var img = new BitmapImage();
+            var byteArray = value as byte[];
             CreateBitmap(byteArray);
-            return bitmapImage;
+            return _bitmapImage;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -24,7 +24,7 @@ namespace Onliner.Converters
 
         public static async Task<BitmapImage> GetImageFromStream(IRandomAccessStream stream)
         {
-            BitmapImage bmp = new BitmapImage();
+            var bmp = new BitmapImage();
             await bmp.SetSourceAsync(stream);
             return bmp;
         }
@@ -34,18 +34,18 @@ namespace Onliner.Converters
         {
             try
             {
-                bitmapImage = new BitmapImage();
-                IRandomAccessStream stream = await ConvertToRandomAccessStream(array);
-                bitmapImage.SetSource(stream);
+                _bitmapImage = new BitmapImage();
+                var stream = await ConvertToRandomAccessStream(array);
+                _bitmapImage.SetSource(stream);
             }
             catch
             {
-             
+                // ignored
             }
         }
 
 
-        private async Task<IRandomAccessStream> ConvertToRandomAccessStream(byte[] bytes)
+        private static async Task<IRandomAccessStream> ConvertToRandomAccessStream(byte[] bytes)
         {
             var randomAccessStream = new InMemoryRandomAccessStream();
             using (var writer = new DataWriter(randomAccessStream))

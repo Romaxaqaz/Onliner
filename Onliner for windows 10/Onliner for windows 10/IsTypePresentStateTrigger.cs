@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 
-namespace Onliner_for_windows_10
+namespace OnlinerApp
 {
     public class IsTypePresentStateTrigger : StateTriggerBase
     {

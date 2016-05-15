@@ -3,49 +3,46 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using MyToolkit.Command;
-using Template10.Mvvm;
 using Windows.UI.Core;
-using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Navigation;
+using MyToolkit.Command;
 using Onliner.Model.News;
 using Onliner.Model.OpinionsModel;
 using Onliner.ParsingHtml;
-using Onliner_for_windows_10.Views;
-using static Onliner.SQLiteDataBase.SqLiteDb;
-using static Onliner.Setting.SettingParams;
+using Onliner.Setting;
+using Onliner.SQLiteDataBase;
+using OnlinerApp.Views;
+using OnlinerApp.View_Model;
+using Template10.Mvvm;
 
-namespace Onliner_for_windows_10.View_Model
+namespace OnlinerApp.ViewModel
 {
     public class NewsSectionViewModel : ViewModelBase
     {
         private readonly ParsingNewsSection _parsNewsSection = new ParsingNewsSection();
-        private readonly CoreDispatcher _dispatcher = Windows.UI.Core.CoreWindow.GetForCurrentThread().Dispatcher;
+        private readonly CoreDispatcher _dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
 
         #region url news
-        private readonly string TechUrlNews = "http://tech.onliner.by/";
-        private readonly string PeoplehUrlNews = "http://people.onliner.by/";
-        private readonly string AutohUrlNews = "http://auto.onliner.by/";
-        private readonly string RealtUrlNews = "http://realt.onliner.by/";
-        private readonly string OpinionUrlNews = "http://people.onliner.by/category/opinions";
+
+        private const string TechUrlNews = "http://tech.onliner.by/";
+        private const string PeoplehUrlNews = "http://people.onliner.by/";
+        private const string AutohUrlNews = "http://auto.onliner.by/";
+        private const string RealtUrlNews = "http://realt.onliner.by/";
+        private const string OpinionUrlNews = "http://people.onliner.by/category/opinions";
         #endregion
 
         #region Constructor
-        public NewsSectionViewModel(RelayCommand testCommand)
+        public NewsSectionViewModel()
         {
-            TestCommand = testCommand;
-
-            PivotOrFlipViewSelectionChange = new RelayCommand<object>(ChangeNewsSection);
+            PivotOrFlipViewSelectionChange = new RelayCommand<object>(async (obj) => await ChangeNewsSection(obj));
             OpenFullNewsCommandNav = new RelayCommand<object>(async (obj) => await DetailsPage(obj));
             FavoritePageCommand = new RelayCommand(FavoritePage);
-            UpdateNewsSectionCommand = new RelayCommand(UpdateNewsSection);
+            UpdateNewsSectionCommand = new RelayCommand( async () => await  UpdateNewsSection());
             AddToDataBaseCommand = new RelayCommand<object>(AddItemToDataBas);
             ChangeDataTemplateNewsCommand = new RelayCommand(ChangeDataTemplateNews);
         }
 
-        public NewsSectionViewModel()
-        {
-        }
 
         private void AddItemToDataBas(object obj)
         {
@@ -58,7 +55,7 @@ namespace Onliner_for_windows_10.View_Model
         /// Selection change pivot event
         /// </summary>
         /// <param name="obj"></param>
-        private async void ChangeNewsSection(object obj)
+        private async Task ChangeNewsSection(object obj)
         {
             try
             {
@@ -83,40 +80,40 @@ namespace Onliner_for_windows_10.View_Model
                 case 0:
                     if (ShellViewModel.Instance.TechSectionNewsFirstLoad)
                     {
-                        await AddAndUpdateCollectionNews(TechNewsList, DB_PATH_TECH, TechUrlNews);
+                        await AddAndUpdateCollectionNews(TechNewsList, SqLiteDb.DbPathTech, TechUrlNews);
                         ShellViewModel.Instance.TechSectionNewsFirstLoad = false;
                     }
                     else
                     {
-                        TechNewsList = await GetAllNews(DB_PATH_TECH);
+                        TechNewsList = await SqLiteDb.GetAllNews(SqLiteDb.DbPathTech);
                     }
                     break;
                 case 1:
-                    PeopleNewsList = await GetAllNews(DB_PATH_PEOPLE);
+                    PeopleNewsList = await SqLiteDb.GetAllNews(SqLiteDb.DbPathPeople);
                     if (ShellViewModel.Instance.PeopleSectionNewsFirstLoad)
                     {
-                        await AddAndUpdateCollectionNews(PeopleNewsList, DB_PATH_PEOPLE, PeoplehUrlNews);
+                        await AddAndUpdateCollectionNews(PeopleNewsList, SqLiteDb.DbPathPeople, PeoplehUrlNews);
                         ShellViewModel.Instance.PeopleSectionNewsFirstLoad = false;
                     }
                     break;
                 case 2:
-                    AutoNewsList = await GetAllNews(DB_PATH_AUTO);
+                    AutoNewsList = await SqLiteDb.GetAllNews(SqLiteDb.DbPathAuto);
                     if (ShellViewModel.Instance.AutoSectionNewsFirstLoad)
                     {
-                        await AddAndUpdateCollectionNews(AutoNewsList, DB_PATH_AUTO, AutohUrlNews);
+                        await AddAndUpdateCollectionNews(AutoNewsList, SqLiteDb.DbPathAuto, AutohUrlNews);
                         ShellViewModel.Instance.AutoSectionNewsFirstLoad = false;
                     }
                     break;
                 case 3:
-                    HouseNewsList = await GetAllNews(DB_PATH_HOUSE);
+                    HouseNewsList = await SqLiteDb.GetAllNews(SqLiteDb.DbPathHouse);
                     if (ShellViewModel.Instance.HomeSectionNewsFirstLoad)
                     {
-                        await AddAndUpdateCollectionNews(HouseNewsList, DB_PATH_HOUSE, RealtUrlNews);
+                        await AddAndUpdateCollectionNews(HouseNewsList, SqLiteDb.DbPathHouse, RealtUrlNews);
                         ShellViewModel.Instance.HomeSectionNewsFirstLoad = false;
                     }
                     break;
             }
-            NewsSectionIndex = SelectedIndex;
+            SettingParams.NewsSectionIndex = SelectedIndex;
             ProgressRing = false;
             await Task.CompletedTask;
         }
@@ -131,7 +128,7 @@ namespace Onliner_for_windows_10.View_Model
         private async Task AddAndUpdateCollectionNews(ObservableCollection<ItemsNews> mainCollection, string pathDb, string urlNews)
         {
             if (mainCollection == null)
-                mainCollection = await GetAllNews(pathDb);
+                mainCollection = await SqLiteDb.GetAllNews(pathDb);
             //get new item news
             var newItemsNews = await GetNewsCollection(urlNews, pathDb);
             if (newItemsNews.Count != 0 && mainCollection.Count != 0)
@@ -156,7 +153,7 @@ namespace Onliner_for_windows_10.View_Model
             //update item in collection and database
             mainCollection = await UpdateOldItemInCollection(mainCollection, pathDb);
             //save database collection
-            await UpdateAndCollectionInDb(mainCollection, pathDb); 
+            await SqLiteDb.UpdateAndCollectionInDb(mainCollection, pathDb); 
         }
 
         /// <summary>
@@ -179,14 +176,14 @@ namespace Onliner_for_windows_10.View_Model
                 item.Footer = oldItem.Footer;
                 item.Popularcount = oldItem.Popularcount;
             }
-            await UpdateItemDb(items, pathDb);
+            await SqLiteDb.UpdateItemDb(items, pathDb);
             return items;
         }
 
         /// <summary>
         /// Update section news
         /// </summary>
-        private async void UpdateNewsSection()
+        private async Task UpdateNewsSection()
         {
             ProgressRing = true;
             switch (SelectedIndex)
@@ -234,28 +231,28 @@ namespace Onliner_for_windows_10.View_Model
 
         private void ChangeDataTemplateNews()
         {
-            var defDataTemplate = GetParamsSetting(NewsDataTemplateKey);
-            if (defDataTemplate == null || defDataTemplate.Equals(TileDataTemplate))
+            var defDataTemplate = SettingParams.GetParamsSetting(SettingParams.NewsDataTemplateKey);
+            if (defDataTemplate == null || defDataTemplate.Equals(SettingParams.TileDataTemplate))
             {
-                SetParamsSetting(NewsDataTemplateKey, ListDataTemplate);
-                NewsDataTemplate = (DataTemplate)App.Current.Resources[ListDataTemplate];
+                SettingParams.SetParamsSetting(SettingParams.NewsDataTemplateKey, SettingParams.ListDataTemplate);
+                NewsDataTemplate = (DataTemplate)App.Current.Resources[SettingParams.ListDataTemplate];
             }
-            if(defDataTemplate != null && defDataTemplate.Equals(ListDataTemplate))
+            if(defDataTemplate != null && defDataTemplate.Equals(SettingParams.ListDataTemplate))
             {
-                SetParamsSetting(NewsDataTemplateKey, TileDataTemplate);
-                NewsDataTemplate = (DataTemplate)App.Current.Resources[TileDataTemplate];
+                SettingParams.SetParamsSetting(SettingParams.NewsDataTemplateKey, SettingParams.TileDataTemplate);
+                NewsDataTemplate = (DataTemplate)App.Current.Resources[SettingParams.TileDataTemplate];
             }
         }
 
         private bool MobileType { get; } = Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons");
 
         private void FavoritePage() =>
-            NavigationService.Navigate(typeof(Views.News.FavoriteNewsView));
+            NavigationService.Navigate(typeof(OnlinerApp.Views.News.FavoriteNewsView));
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)
         {
             ProgressRing = true;
-            SelectedIndex = NewsSectionIndex;
+            SelectedIndex = SettingParams.NewsSectionIndex;
             await LoadNews();
             await Task.CompletedTask;
         }
@@ -265,7 +262,6 @@ namespace Onliner_for_windows_10.View_Model
         public RelayCommand<object> PivotOrFlipViewSelectionChange { get; private set; }
         public RelayCommand<object> OpenFullNewsCommandNav { get; private set; }
         public RelayCommand FavoritePageCommand { get; private set; }
-        public RelayCommand TestCommand { get; private set; }
         public RelayCommand UpdateNewsSectionCommand { get; private set; }
         public RelayCommand<object> AddToDataBaseCommand { get; private set; }
         public RelayCommand ChangeDataTemplateNewsCommand { get; private set; }
@@ -310,7 +306,7 @@ namespace Onliner_for_windows_10.View_Model
         {
             get
             {
-                return SelectedNews;
+                return _selectedNews;
             }
             set
             {
@@ -323,7 +319,7 @@ namespace Onliner_for_windows_10.View_Model
         {
             get
             {
-                return this._selectedIndex;
+                return _selectedIndex;
             }
             set
             {
@@ -336,7 +332,7 @@ namespace Onliner_for_windows_10.View_Model
         {
             get
             {
-                return this._progressRing;
+                return _progressRing;
             }
             set
             {
@@ -349,7 +345,7 @@ namespace Onliner_for_windows_10.View_Model
         {
             get
             {
-                return this._dataTemplateToggle;
+                return _dataTemplateToggle;
             }
             set
             {
@@ -361,17 +357,17 @@ namespace Onliner_for_windows_10.View_Model
         public DataTemplate NewsDataTemplate
         {
             get {
-                var defDataTemplate = GetParamsSetting(NewsDataTemplateKey);
+                var defDataTemplate = SettingParams.GetParamsSetting(SettingParams.NewsDataTemplateKey);
                 if (!MobileType)
                 {
                     DataTemplateToggle = false;
-                    _newsDataTemplate = (DataTemplate)App.Current.Resources[TileDataTemplate];
+                    _newsDataTemplate = (DataTemplate)App.Current.Resources[SettingParams.TileDataTemplate];
                 }
                 else
                 {
                     if (defDataTemplate == null)
                     {
-                        _newsDataTemplate = (DataTemplate)App.Current.Resources[TileDataTemplate];
+                        _newsDataTemplate = (DataTemplate)App.Current.Resources[SettingParams.TileDataTemplate];
                     }
                     else
                     {

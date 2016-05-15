@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using HtmlAgilityPack;
-using MyToolkit.Command;
-using Template10.Mvvm;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
+using HtmlAgilityPack;
+using MyToolkit.Command;
 using Onliner.Http;
-using Onliner.Model.ProfileModel;
-using Onliner_for_windows_10.Model.Message;
-using Onliner_for_windows_10.Views.Profile;
-using static Onliner.Setting.SettingParams;
 using Onliner.Model.Message;
-using Onliner_for_windows_10.Views.Message;
+using Onliner.Model.ProfileModel;
+using Onliner.Setting;
+using OnlinerApp.Views.Message;
+using OnlinerApp.Views.Profile;
+using OnlinerApp.View_Model;
+using Template10.Mvvm;
 
-namespace Onliner_for_windows_10.View_Model
+namespace OnlinerApp.ViewModel
 {
     public class ProfileViewModel : ViewModelBase
     {
@@ -129,7 +129,7 @@ namespace Onliner_for_windows_10.View_Model
             if (NewMethod(result) != 0) return;
             //remove the file with cookie
             _httpRequest.Remoovecookie();
-            SetParamsSetting(AuthorizationKey, "false");
+            SettingParams.SetParamsSetting(SettingParams.AuthorizationKey, "false");
             //reset splitview profile button content
             ResetShellData();
             NavigationService.Navigate(typeof(MainPage));
@@ -164,7 +164,7 @@ namespace Onliner_for_windows_10.View_Model
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> suspensionState)
         {
-            var auth = GetParamsSetting(AuthorizationKey);
+            var auth = SettingParams.GetParamsSetting(SettingParams.AuthorizationKey);
             var authBool = Convert.ToBoolean(auth);
             //if not logged in go to the login page
             if (!authBool)

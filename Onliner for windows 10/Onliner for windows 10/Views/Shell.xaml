@@ -1,23 +1,23 @@
 ﻿<Page
-    x:Class="Onliner_for_windows_10.Views.Shell"
+    x:Class="OnlinerApp.Views.Shell"
     x:Name="ShellView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="using:Onliner_for_windows_10"
-    xmlns:local2="using:Onliner_for_windows_10.Views"
-    xmlns:VM="using:Onliner_for_windows_10.View_Model"
-    xmlns:MessagePage="using:Onliner_for_windows_10.Model.Message"
-    xmlns:SettingPage="using:Onliner_for_windows_10.Views.Setting"
-    xmlns:KursPage="using:Onliner_for_windows_10.Views.KursCurrent"
-    xmlns:ProfilePage="using:Onliner_for_windows_10.ProfilePage"
-    xmlns:UserControl="using:Onliner_for_windows_10.UserControls"
+    xmlns:local="using:OnlinerApp"
+    xmlns:local2="using:OnlinerApp.Views"
+    xmlns:VM="using:OnlinerApp.View_Model"
+    xmlns:SettingPage="using:OnlinerApp.Views.Setting"
+    xmlns:KursPage="using:OnlinerApp.Views.KursCurrent"
+    xmlns:UserControl="using:OnlinerApp.UserControls"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:converter="using:Onliner.Converters"
     xmlns:controls="using:Template10.Controls"
-    xmlns:viewModel="using:Onliner_for_windows_10.View_Model"  
+    xmlns:viewModel="using:OnlinerApp.View_Model"
+    xmlns:views="using:OnlinerApp.Views"
+    xmlns:message="using:OnlinerApp.Views.Message"
     mc:Ignorable="d">
     
     <!--#region Resources-->
@@ -47,7 +47,7 @@
         <controls:HamburgerMenu.PrimaryButtons>
             
             <!--  Profile page  -->
-            <controls:HamburgerButtonInfo x:Name="Test" PageType="ProfilePage:ProfilePage">
+            <controls:HamburgerButtonInfo x:Name="Test" PageType="local2:ProfilePage">
                 <StackPanel Name="ProfileStackpanel" 
                             Height="48"
                             Orientation="Horizontal" 
@@ -65,7 +65,7 @@
                 </StackPanel>
             </controls:HamburgerButtonInfo>
             <!--  News page  -->
-            <controls:HamburgerButtonInfo ClearHistory="True" PageType="local2:NewsPage">
+            <controls:HamburgerButtonInfo ClearHistory="True" PageType="views:NewsPage">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Width="48" Height="48" Symbol="PreviewLink" />
                     <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="Новости" />
@@ -91,7 +91,7 @@
                 </StackPanel>
             </controls:HamburgerButtonInfo>
             <!--  Message page  -->
-            <controls:HamburgerButtonInfo PageType="MessagePage:MessagePage">
+            <controls:HamburgerButtonInfo PageType="message:MessagePage">
                 <controls:HamburgerButtonInfo.Content>
                     <StackPanel Name="MessageStackpanel" Orientation="Horizontal">
                         <SymbolIcon Width="48" Height="48" Symbol="Mail" />

@@ -7,8 +7,8 @@
     <ProjectGuid>{982A0616-4981-4BE6-A9E2-EF8739313A8E}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Onliner_for_windows_10</RootNamespace>
-    <AssemblyName>Onliner for windows 10</AssemblyName>
+    <RootNamespace>OnlinerApp</RootNamespace>
+    <AssemblyName>OnlinerApp</AssemblyName>
     <DefaultLanguage>ru-RU</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
@@ -92,7 +92,7 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
-    <DocumentationFile>bin\x86\Release\Onliner for windows 10.XML</DocumentationFile>
+    <DocumentationFile>bin\x86\Release\OnlinerApp.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->

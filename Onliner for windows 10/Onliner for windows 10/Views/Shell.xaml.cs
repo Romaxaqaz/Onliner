@@ -1,10 +1,10 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using OnlinerApp.ViewModel;
 using Template10.Services.NavigationService;
 using Template10.Controls;
-using Onliner_for_windows_10.View_Model;
 
-namespace Onliner_for_windows_10.Views
+namespace OnlinerApp.Views
 {
     public sealed partial class Shell : Page
     {
@@ -13,7 +13,7 @@ namespace Onliner_for_windows_10.Views
 
         public Shell()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             Instance = this;
             Loaded += Shell_Loaded;
         }

@@ -7,7 +7,7 @@ using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 
-namespace Onliner_for_windows_10.UserControls
+namespace OnlinerApp.UserControls
 {
     public class HorizontalStretchPanel : Panel
     {

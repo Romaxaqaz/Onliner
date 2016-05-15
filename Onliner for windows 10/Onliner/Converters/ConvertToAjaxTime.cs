@@ -14,8 +14,8 @@ namespace Onliner.Converters
                                 DateTime.Now.Second,
                                 DateTime.Now.Millisecond);
 
-            DateTime OLDtime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            TimeSpan diff = time.ToUniversalTime() - OLDtime;
+            var olDtime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            var diff = time.ToUniversalTime() - olDtime;
             return Math.Floor(diff.TotalMilliseconds);
         }
     }

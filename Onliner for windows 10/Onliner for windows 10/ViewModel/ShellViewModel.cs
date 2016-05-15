@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Template10.Mvvm;
 using Windows.UI.Xaml.Navigation;
 using Onliner.Http;
-using static Onliner.Setting.SettingParams;
+using Onliner.Setting;
+using Template10.Mvvm;
 
-namespace Onliner_for_windows_10.View_Model
+namespace OnlinerApp.ViewModel
 {
     public sealed class ShellViewModel : ViewModelBase
     {
@@ -34,11 +34,11 @@ namespace Onliner_for_windows_10.View_Model
         private void SetAutoLoadNews()
         {
             var boolValue = true;
-            var resultKeyValue = GetParamsSetting(AutoLoadNewsAtStartUpAppKey);
+            var resultKeyValue = SettingParams.GetParamsSetting(SettingParams.AutoLoadNewsAtStartUpAppKey);
             if (resultKeyValue != null)
-                boolValue = Convert.ToBoolean(GetParamsSetting(AutoLoadNewsAtStartUpAppKey));
+                boolValue = Convert.ToBoolean(SettingParams.GetParamsSetting(SettingParams.AutoLoadNewsAtStartUpAppKey));
 
-            SetParamsSetting(AutoLoadNewsAtStartUpAppKey, boolValue.ToString());
+            SettingParams.SetParamsSetting(SettingParams.AutoLoadNewsAtStartUpAppKey, boolValue.ToString());
             TechSectionNewsFirstLoad = boolValue;
             PeopleSectionNewsFirstLoad = boolValue;
             HomeSectionNewsFirstLoad = boolValue;
@@ -47,7 +47,7 @@ namespace Onliner_for_windows_10.View_Model
 
         private bool GetBoolAutoLoadNews()
         {
-            var boolValue = GetParamsSetting(AutoLoadNewsAtStartUpAppKey) ?? true;
+            var boolValue = SettingParams.GetParamsSetting(SettingParams.AutoLoadNewsAtStartUpAppKey) ?? true;
             return Convert.ToBoolean(boolValue);
         }
 
@@ -58,7 +58,7 @@ namespace Onliner_for_windows_10.View_Model
         private async Task GetWeatherNow()
         {
             var weatherJSon = await _httpRequest.Weather();
-            Weather = weatherJSon == null ? (string)GetParamsSetting(LastWeatherKey) : weatherJSon.now.temperature;
+            Weather = weatherJSon == null ? (string)SettingParams.GetParamsSetting(SettingParams.LastWeatherKey) : weatherJSon.now.temperature;
             await Task.CompletedTask;
         }
 
@@ -69,7 +69,7 @@ namespace Onliner_for_windows_10.View_Model
         private async Task GetCurrent()
         {
             var bestrateRespose = await _httpRequest.Bestrate();
-            Current = bestrateRespose == null ? (string)GetParamsSetting(LastCurrentKey) : bestrateRespose.Amount;
+            Current = bestrateRespose == null ? (string)SettingParams.GetParamsSetting(SettingParams.LastCurrentKey) : bestrateRespose.Amount;
             await Task.CompletedTask;
         }
 
@@ -82,7 +82,7 @@ namespace Onliner_for_windows_10.View_Model
             try
             {
                 var msg = await _httpRequest.MessageUnread();
-                Message = msg ?? (string)GetParamsSetting(LastMessageKey);
+                Message = msg ?? (string)SettingParams.GetParamsSetting(SettingParams.LastMessageKey);
             }
             catch (ArgumentException)
             {
@@ -123,7 +123,7 @@ namespace Onliner_for_windows_10.View_Model
             set
             {
                 Set(ref _weather, value);
-                SetParamsSetting(LastWeatherKey, value);
+                SettingParams.SetParamsSetting(SettingParams.LastWeatherKey, value);
             }
         }
 
@@ -134,7 +134,7 @@ namespace Onliner_for_windows_10.View_Model
             set
             {
                 Set(ref _message, value);
-                SetParamsSetting(LastMessageKey, value);
+                SettingParams.SetParamsSetting(SettingParams.LastMessageKey, value);
             }
         }
 
@@ -145,7 +145,7 @@ namespace Onliner_for_windows_10.View_Model
             set
             {
                 Set(ref _current, value);
-                SetParamsSetting(LastCurrentKey, value);
+                SettingParams.SetParamsSetting(SettingParams.LastCurrentKey, value);
             }
         }
 
@@ -165,13 +165,13 @@ namespace Onliner_for_windows_10.View_Model
         {
             get
             {
-                var avatar = GetParamsSetting(AvatarKey) ?? "/ImageCollection/default_avatar.png";
+                var avatar = SettingParams.GetParamsSetting(SettingParams.AvatarKey) ?? "/ImageCollection/default_avatar.png";
                 return avatar.ToString();
             }
             set
             {
                 if (value == null) value = "/ImageCollection/default_avatar.png";
-                SetParamsSetting(AvatarKey, value);
+                SettingParams.SetParamsSetting(SettingParams.AvatarKey, value);
                 Set(ref _avatarUrl, value);
             }
         }
@@ -181,13 +181,13 @@ namespace Onliner_for_windows_10.View_Model
         {
             get
             {
-                var profileName = GetParamsSetting(NickNameKey) ?? "Войти";
+                var profileName = SettingParams.GetParamsSetting(SettingParams.NickNameKey) ?? "Войти";
                 return profileName.ToString();
             }
             set
             {
                 if (value == null) value = "Войти";
-                SetParamsSetting(NickNameKey, value);
+                SettingParams.SetParamsSetting(SettingParams.NickNameKey, value);
                 Set(ref _login, value);
             }
         }

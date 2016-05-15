@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
-using Template10.Mvvm;
-using Template10.Services.NavigationService;
 using MyToolkit.Command;
-using Universal.UI.Xaml.Controls;
 using Onliner.Http;
 using Onliner.Model.JsonModel.Message;
 using Onliner.Model.Message;
-using Onliner_for_windows_10.Views.Message;
+using OnlinerApp.Views.Message;
+using Template10.Mvvm;
+using Template10.Services.NavigationService;
+using Universal.UI.Xaml.Controls;
 
-namespace Onliner_for_windows_10.View_Model
+namespace OnlinerApp.ViewModel
 {
     public class MessageViewModel : ViewModelBase
     {
@@ -120,7 +120,7 @@ namespace Onliner_for_windows_10.View_Model
         {
             await _httpRequest.PostRequestFormData(DeleteMessage, HostMessage, Origin, GeneratePostDataMessageId(_messageListforRawText.id));
             HtmlMessageContent = string.Empty;
-            RemoveMessageListItem(_messageListforRawText.id);
+            RemoveMessageListItem();
         }
         #endregion
 
@@ -132,7 +132,7 @@ namespace Onliner_for_windows_10.View_Model
         private async Task SpamMessage()
         {
             await _httpRequest.PostRequestFormData(MarkSpamUrl, HostMessage, Origin, GeneratePostDataMessageId(_messageListforRawText.id));
-            RemoveMessageListItem(_messageListforRawText.id);
+            RemoveMessageListItem();
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace Onliner_for_windows_10.View_Model
         private async Task SaveOneMessage()
         {
             await _httpRequest.PostRequestFormData(SaveMessageUrl, HostMessage, Origin, GeneratePostDataMessageId(_messageListforRawText.id));
-            RemoveMessageListItem(_messageListforRawText.id);
+            RemoveMessageListItem();
         }
 
         /// <summary>
@@ -218,7 +218,7 @@ namespace Onliner_for_windows_10.View_Model
 
         private void UserProfileNavigate(object obj)
         {
-            NavigationService.Navigate(typeof(ProfilePage.ProfilePage), obj.ToString());
+            NavigationService.Navigate(typeof(Views.ProfilePage), obj.ToString());
         }
 
         /// <summary>
@@ -417,8 +417,7 @@ namespace Onliner_for_windows_10.View_Model
         /// <summary>
         /// Remove list item message
         /// </summary>
-        /// <param name="id">message ID</param>
-        private void RemoveMessageListItem(string id)
+        private void RemoveMessageListItem()
         {
             var item = MessageList.FirstOrDefault(x => x.id.Equals(_messageListforRawText.id));
             if (item != null)

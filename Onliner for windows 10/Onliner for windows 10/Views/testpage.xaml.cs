@@ -9,9 +9,10 @@ using Windows.UI.Popups;
 using System.Text.RegularExpressions;
 
 using Onliner.Http;
-using Onliner_for_windows_10.Views;
+using OnlinerApp.Views;
+using NewsPage = OnlinerApp.Views.NewsPage;
 
-namespace Onliner_for_windows_10
+namespace OnlinerApp
 {
 
     public sealed partial class testpage : Page

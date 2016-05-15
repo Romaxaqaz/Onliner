@@ -17,6 +17,7 @@ namespace Onliner.SQLiteDataBase
     public static class SqLiteDb
     {
         public static readonly HttpRequest HttpRequest = new HttpRequest();
+
         private static SQLiteConnection DbConnection
         {
             get
@@ -26,17 +27,17 @@ namespace Onliner.SQLiteDataBase
         }
 
         #region TablesName
-        public static string DB_PATH_TECH = Path.Combine(ApplicationData.Current.LocalFolder.Path, "TechNewsdb.sqlite");
-        public static string DB_PATH_PEOPLE = Path.Combine(ApplicationData.Current.LocalFolder.Path, "PeopleNewsdb.sqlite");
-        public static string DB_PATH_AUTO = Path.Combine(ApplicationData.Current.LocalFolder.Path, "AutoNewsdb.sqlite");
-        public static string DB_PATH_HOUSE = Path.Combine(ApplicationData.Current.LocalFolder.Path, "HouseNewsdb.sqlite");
-        public static string DB_PATH_OPINIONS = Path.Combine(ApplicationData.Current.LocalFolder.Path, "Opiniom.sqlite");
-        private static string DB_PATH_FAVORITE = Path.Combine(ApplicationData.Current.LocalFolder.Path, "Favorite.sqlite");
+        public static string DbPathTech = Path.Combine(ApplicationData.Current.LocalFolder.Path, "TechNewsdb.sqlite");
+        public static string DbPathPeople = Path.Combine(ApplicationData.Current.LocalFolder.Path, "PeopleNewsdb.sqlite");
+        public static string DbPathAuto = Path.Combine(ApplicationData.Current.LocalFolder.Path, "AutoNewsdb.sqlite");
+        public static string DbPathHouse = Path.Combine(ApplicationData.Current.LocalFolder.Path, "HouseNewsdb.sqlite");
+        public static string DbPathOpinions = Path.Combine(ApplicationData.Current.LocalFolder.Path, "Opiniom.sqlite");
+        private static string _dbPathFavorite = Path.Combine(ApplicationData.Current.LocalFolder.Path, "Favorite.sqlite");
         #endregion
 
         #region Collections
         public static List<string> FileNameCollection = new List<string>() { "TechNewsdb.sqlite", "PeopleNewsdb.sqlite", "AutoNewsdb.sqlite", "HouseNewsdb.sqlite" };
-        private static List<string> PathCollection = new List<string>() { DB_PATH_TECH, DB_PATH_PEOPLE, DB_PATH_AUTO, DB_PATH_HOUSE };
+        private static readonly List<string> PathCollection = new List<string>() { DbPathTech, DbPathPeople, DbPathAuto, DbPathHouse };
         #endregion
 
         #region Methods
@@ -55,12 +56,12 @@ namespace Onliner.SQLiteDataBase
         }
 
 
-        private async static Task<ObservableCollection<ItemsNews>> CreateDatabase(ObservableCollection<ItemsNews> itemsNews, string path)
+        private static async Task<ObservableCollection<ItemsNews>> CreateDatabase(ObservableCollection<ItemsNews> itemsNews, string path)
         {
             if (itemsNews == null) throw new ArgumentNullException(nameof(itemsNews));
             var resultItems = new ObservableCollection<ItemsNews>();
             if (!HttpRequest.HasInternet()) return await GetAllNews(path);
-            var maxCountNews = 25;
+            const int maxCountNews = 25;
             using (var db = new SQLiteConnection(new SQLitePlatformWinRT(), path))
             {
                 db.CreateTable<ItemsNews>();
@@ -108,7 +109,7 @@ namespace Onliner.SQLiteDataBase
                     return new ObservableCollection<ItemsNews>(items);
                 }
             }
-            catch (SQLite.Net.SQLiteException)
+            catch (SQLiteException)
             {
                 return new ObservableCollection<ItemsNews>();
             }
@@ -119,12 +120,7 @@ namespace Onliner.SQLiteDataBase
         {
             get
             {
-                long dBsize = 0;
-                foreach (var item in PathCollection)
-                {
-                    dBsize += SizeByteFile(item);
-                }
-                return dBsize;
+                return PathCollection.Sum(item => SizeByteFile(item));
             }
         }
 

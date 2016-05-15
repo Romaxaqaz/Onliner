@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
-namespace Onliner_for_windows_10.Tiles.TileTemplates
+namespace OnlinerApp.Tiles.TileTemplates
 {
     public sealed partial class SquareTile : UserControl
     {
