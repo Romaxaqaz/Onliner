@@ -192,7 +192,7 @@
 
         <!--#region Page Header-->
         <controls:PageHeader x:Name="PageHeader" 
-                             Frame="{x:Bind Frame}"
+                             Frame="{Binding Frame}"
                              Background="{ThemeResource BackGroundCustomHeaderColorBrush}"
                              Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}"
                              VisualStateNarrowMinWidth="1">
@@ -263,7 +263,7 @@
                                     </TransitionCollection>
                                 </ListView.ItemContainerTransitions>
                                 <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="commentsModel:Comments">
+                                    <DataTemplate>
                                         <Border BorderThickness="0,0,0,1" BorderBrush="Gray">
                                             <Grid  HorizontalAlignment="Stretch">
                                                 <Grid.ColumnDefinitions>
@@ -283,26 +283,26 @@
                                                     <Ellipse.Fill>
                                                         <ImageBrush>
                                                             <ImageBrush.ImageSource>
-                                                                <BitmapImage DecodePixelHeight="250" DecodePixelWidth="250" UriSource="{x:Bind Image}"/>
+                                                                <BitmapImage DecodePixelHeight="250" DecodePixelWidth="250" UriSource="{Binding Image}"/>
                                                             </ImageBrush.ImageSource>
                                                         </ImageBrush>
                                                     </Ellipse.Fill>
                                                 </Ellipse>
                                                 <!--Name user-->
-                                                <HyperlinkButton x:Name="NickNameTextBlock" Content="{x:Bind Nickname}" Grid.Column="1" Grid.ColumnSpan="2" FontWeight="Bold" FontSize="14"  Margin="3,0,0,0" HorizontalAlignment="Left"  Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}" x:Phase="1">
+                                                <HyperlinkButton x:Name="NickNameTextBlock" Content="{Binding Nickname}" Grid.Column="1" Grid.ColumnSpan="2" FontWeight="Bold" FontSize="14"  Margin="3,0,0,0" HorizontalAlignment="Left"  Foreground="{ThemeResource ForegroundCustomOtherBlackBrush}">
 
                                                 </HyperlinkButton>
                                                 <!--Time-->
-                                                <TextBlock Text="{x:Bind Time}" Grid.Row="0" Grid.Column="3" FontSize="14" TextAlignment="Right" VerticalAlignment="Center" Margin="2" Foreground="Gray" Grid.ColumnSpan="2" FontFamily="Segoe UI Light" HorizontalAlignment="Stretch" x:Phase="3"/>
+                                                <TextBlock Text="{Binding Time}" Grid.Row="0" Grid.Column="3" FontSize="14" TextAlignment="Right" VerticalAlignment="Center" Margin="2" Foreground="Gray" Grid.ColumnSpan="2" FontFamily="Segoe UI Light" HorizontalAlignment="Stretch"/>
                                                 <!--Content Viewer-->
-                                                <userControl:CommentsContentViewer x:Name="CommentsContentViewer" userControl:CommentsContentViewer.HtmlString="{x:Bind Data}" BorderThickness="1" FontSize="14" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" x:Phase="0"/>
+                                                <userControl:CommentsContentViewer x:Name="CommentsContentViewer" userControl:CommentsContentViewer.HtmlString="{Binding Data}" BorderThickness="1" FontSize="14" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"/>
                                                 <!--Like-->
                                                 <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Margin="2" >
                                                     <Grid>
                                                         <TextBlock Text="&#xE006;" FontSize="14" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Foreground="Gray"/>
-                                                        <TextBlock Text="&#xE0A5;" FontSize="14" Foreground="Red" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Visibility="{x:Bind Like, Converter={StaticResource BooleToVisible}}" x:Phase="2"/>
+                                                        <TextBlock Text="&#xE0A5;" FontSize="14" Foreground="Red" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Visibility="{Binding Like, Converter={StaticResource BooleToVisible}}"/>
                                                     </Grid>
-                                                    <TextBlock Text="{x:Bind LikeCount}" FontSize="14" Margin="2" VerticalAlignment="Center" Foreground="Gray" x:Phase="4"/>
+                                                    <TextBlock Text="{Binding LikeCount}" FontSize="14" Margin="2" VerticalAlignment="Center" Foreground="Gray"/>
                                                     <interactivity:Interaction.Behaviors>
                                                         <core:EventTriggerBehavior EventName="Tapped">
                                                             <core:InvokeCommandAction Command="{Binding ElementName=CommentsView, Path=DataContext.LikeCommentsCommand}" 
@@ -318,7 +318,7 @@
                                                         <interactivity:Interaction.Behaviors>
                                                             <core:EventTriggerBehavior EventName="Tapped">
                                                                 <core:InvokeCommandAction Command="{Binding ElementName=CommentsView, Path=DataContext.AnswerCommentCommand}" 
-                                                                                              CommandParameter="{Binding ElementName=NickNameTextBlock, Path=Text}"/>
+                                                                                              CommandParameter="{Binding ElementName=CommentsListView, Path=SelectedItem}"/>
                                                             </core:EventTriggerBehavior>
                                                         </interactivity:Interaction.Behaviors>
                                                     </StackPanel>
@@ -337,70 +337,97 @@
                                         </Border>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
+       
                             </ListView>
                         </Grid>
                         <!--#endregion-->
 
                         <ProgressBar Foreground="Blue" Background="Transparent" IsIndeterminate="{Binding CommentsProgressRing}" VerticalAlignment="Top"/>
-                        <Button x:Name="DownListButton" Width="32" Height="32" Grid.Row="0" 
+                        <Grid Grid.Row="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Button x:Name="DownListButton" Width="32" Height="32" Grid.Row="0" 
                                 VerticalAlignment="Top"
                                 HorizontalAlignment="Right" Foreground="Gray"
                                 Margin="0,5,10,0" Click="DownListButton_Click">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Grid>
-                                        <Ellipse Stroke="Gray" StrokeThickness="1">
-                                        </Ellipse>
-                                        <ContentPresenter HorizontalAlignment="Center"  
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Grid>
+                                            <Ellipse Stroke="Gray" StrokeThickness="1">
+                                            </Ellipse>
+                                            <ContentPresenter HorizontalAlignment="Center"  
                                   VerticalAlignment="Center">
-                                            <TextBlock x:Name="Test" Text="&#xE019;" FontSize="18" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center"
+                                                <TextBlock x:Name="Test" Text="&#xE019;" FontSize="18" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center"
                                   VerticalAlignment="Center"  Foreground="Gray"/>
-                                        </ContentPresenter>
-                                    </Grid>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
-                        <Button x:Name="UpListButton" Width="32" Height="32" Grid.Row="0" 
+                                            </ContentPresenter>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                            <Button x:Name="UpListButton" Width="32" Height="32" Grid.Row="0" 
                                 VerticalAlignment="Top" Visibility="Collapsed"
                                 HorizontalAlignment="Right" Foreground="Gray"
                                 Margin="0,8,10,0" Click="DownListButton_Click">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Grid>
-                                        <Ellipse Stroke="Gray" StrokeThickness="1">
-                                        </Ellipse>
-                                        <ContentPresenter HorizontalAlignment="Center"  
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Grid>
+                                            <Ellipse Stroke="Gray" StrokeThickness="1">
+                                            </Ellipse>
+                                            <ContentPresenter HorizontalAlignment="Center"  
                                   VerticalAlignment="Center">
-                                            <TextBlock x:Name="Test" Text="&#xE018;" FontSize="18" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center"
+                                                <TextBlock x:Name="Test" Text="&#xE018;" FontSize="18" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center"
                                   VerticalAlignment="Center"  Foreground="Gray"/>
-                                        </ContentPresenter>
-                                    </Grid>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
+                                            </ContentPresenter>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                            <Button x:Name="UpDateListButton" Width="32" Height="32" Grid.Row="1" 
+                                VerticalAlignment="Top" Visibility="Visible"
+                                HorizontalAlignment="Right" Foreground="Gray"
+                                Margin="0,8,10,0" Command="{Binding UpdateCommentsList}">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Grid>
+                                            <Ellipse Stroke="Gray" StrokeThickness="1">
+                                            </Ellipse>
+                                            <ContentPresenter HorizontalAlignment="Center"  
+                                  VerticalAlignment="Center">
+                                                <TextBlock x:Name="Test" Text="&#xE72C;" FontSize="18" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"  Foreground="Gray"/>
+                                            </ContentPresenter>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </Grid>
+
 
                         <!--#region Comments add-->
-                        <Grid HorizontalAlignment="Stretch" Background="LightGray" Height="48" Grid.Row="1" VerticalAlignment="Bottom">
+                        <Grid HorizontalAlignment="Stretch" Background="LightGray"  Grid.Row="1" VerticalAlignment="Bottom">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBox Name="ContentCommentTextBox" 
-                                 VerticalAlignment="Center"
+                            <Grid Grid.Column="0">
+                                <TextBox Name="ContentCommentTextBox" 
+                                 VerticalAlignment="Stretch"
                                  Margin="5"
                                  Text="{Binding Message, Mode=TwoWay}"
                                  HorizontalAlignment="Stretch"
                                  AcceptsReturn="True"
-                                 Grid.Column="0"
                                  PlaceholderText="Введите сообщение"
                                  TextWrapping="Wrap"
                                  BorderThickness="0">
-                                <interactivity:Interaction.Behaviors>
-                                    <core:EventTriggerBehavior EventName="TextChanged">
-                                        <core:InvokeCommandAction Command="{Binding SendButtonActive}"/>
-                                    </core:EventTriggerBehavior>
-                                </interactivity:Interaction.Behaviors>
-                            </TextBox>
+                                    <interactivity:Interaction.Behaviors>
+                                        <core:EventTriggerBehavior EventName="TextChanged">
+                                            <core:InvokeCommandAction Command="{Binding SendButtonActive}"/>
+                                        </core:EventTriggerBehavior>
+                                    </interactivity:Interaction.Behaviors>
+                                </TextBox>
+                            </Grid>
                             <Button Name="AddCommentButton"
                                 Content="&#xE724;" 
                                 FontSize="18" 

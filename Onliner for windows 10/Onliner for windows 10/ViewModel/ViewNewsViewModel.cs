@@ -20,6 +20,10 @@ namespace OnlinerApp.ViewModel
         private readonly HttpRequest _httpRequest = new HttpRequest();
         private string _newsUrl = string.Empty;
 
+        public delegate void CommentsOpened(); 
+        public event CommentsOpened CommentsOpen;
+
+
         #region Constructor
         public ViewNewsViewModel()
         {
@@ -64,7 +68,7 @@ namespace OnlinerApp.ViewModel
             await _httpRequest.ViewNewsSet(_fullPageParser.NewsId);
         }
 
-     
+
         private async Task UpdateCommets()
         {
             CommentsProgressRing = true;
@@ -78,8 +82,10 @@ namespace OnlinerApp.ViewModel
             await Task.CompletedTask;
         }
 
-        private void ActiveSendButton() =>
-            SendButton = !string.IsNullOrEmpty(Message);
+        private void ActiveSendButton()
+        {
+            SendButton = Message != "";
+        }
 
         /// <summary>
         /// Open link in webBrowser
@@ -161,7 +167,7 @@ namespace OnlinerApp.ViewModel
 
             if (boolAuthorization)
             {
-                var item = obj as IComments;
+                var item = obj as Comments;
                 if (item != null)
                     LikeSetter(item);
             }
@@ -169,23 +175,14 @@ namespace OnlinerApp.ViewModel
             {
                 LogInMessageBox("Чтобы работать с комментарииями необходимо авторизоваться..");
             }
-
         }
 
         private async void LikeSetter(IComments commentItem)
         {
-            if (!commentItem.Like)
-            {
-                var likeCount = await _httpRequest.LikeComment(commentItem.ID, LinkNews, LikeType.Like);
-                commentItem.LikeCount = likeCount;
-                commentItem.Like = true;
-            }
-            else
-            {
-                var likeCount = await _httpRequest.LikeComment(commentItem.ID, LinkNews, LikeType.UnLike);
-                commentItem.LikeCount = likeCount;
-                commentItem.Like = false;
-            }
+            var likeType = commentItem.Like ? LikeType.UnLike : LikeType.Like;
+            var likeCount = await _httpRequest.LikeComment(commentItem.ID, LinkNews, likeType);
+            commentItem.LikeCount = likeCount;
+            commentItem.Like = !commentItem.Like;
         }
 
         private async void AnswerQuoteComment(object obj)
@@ -198,26 +195,30 @@ namespace OnlinerApp.ViewModel
 
         private void AnswerComment(object obj)
         {
-            var anwerUser = obj.ToString();
-            Message = AnswerMessageGenerate(anwerUser);
+            var item = obj as Comments;
+            if (item == null) return;
+            Message = AnswerMessageGenerate(item.Nickname);
         }
 
-        private void VisibleCommentsGrid() =>
-                         CommentsVisible = !CommentsVisible;
+        private void VisibleCommentsGrid()
+        {
+            CommentsVisible = !CommentsVisible;
+            CommentsOpen?.Invoke();
+        }
 
-        private string AnswerMessageGenerate(string userName)
+        private static string AnswerMessageGenerate(string userName)
         {
             return $"[b]{userName}[/b], ";
         }
 
-        private string QuoteMessageGenerate(string message, string userName)
+        private static string QuoteMessageGenerate(string message, string userName)
         {
             return $"[quote=\"{userName}\"]{message}[/quote]";
         }
 
         private void UserProfileNavigate(object obj)
         {
-           // var item = obj as Comments;
+            // var item = obj as Comments;
             NavigationService.Navigate(typeof(Views.ProfilePage), obj.ToString());
         }
 
